@@ -2452,7 +2452,7 @@
     }
     /* Hover：非 hover 全黑胶囊；hover 外轨变白 + Shoot 收窄露白。
        进场较短 / 退场略长 Material 常用缓动；只过渡 width/min-width（不占位 padding）。
-       JS：pointer enter/leave 后双 rAF 再 tick，避免与大段 DOM 度量同帧抢主线程卡顿。*/
+       JS：pointer enter/leave 后单帧 rAF 再 tick，压低与 CSS 同帧互抢。*/
     .phone-page-hover-btn {
       position: relative;
       width: 15em;
@@ -2467,15 +2467,15 @@
       box-sizing: border-box;
       overflow: hidden;
       contain: paint;
-      --phone-hover-pill-in: 0.3s;
-      --phone-hover-pill-out: 0.42s;
+      --phone-hover-pill-in: 0.2s;
+      --phone-hover-pill-out: 0.28s;
       --phone-hover-pill-ease-in: cubic-bezier(0.4, 0, 0.2, 1);
       --phone-hover-pill-ease-out: cubic-bezier(0, 0, 0.2, 1);
       transition: background-color 0s linear var(--phone-hover-pill-out);
     }
     .phone-page-hover-wrap:hover .phone-page-hover-btn {
       background-color: #fff;
-      transition: background-color 0.18s var(--phone-hover-pill-ease-out) 0s;
+      transition: background-color 0.12s var(--phone-hover-pill-ease-out) 0s;
     }
     .phone-page-hover-btn__shoot {
       position: absolute;
@@ -2531,11 +2531,11 @@
       color: #000;
       white-space: nowrap;
       opacity: 0;
-      transition: opacity 0.16s var(--phone-hover-pill-ease-in) 0s;
+      transition: opacity 0.11s var(--phone-hover-pill-ease-in) 0s;
     }
     .phone-page-hover-wrap:hover .phone-page-hover-btn__edit-text {
       opacity: 1;
-      transition: opacity 0.26s var(--phone-hover-pill-ease-out) 0.06s;
+      transition: opacity 0.18s var(--phone-hover-pill-ease-out) 0.03s;
     }
     .phone-page-hover-wrap:hover .phone-page-hover-btn__shoot-text {
       width: 0;
@@ -3957,9 +3957,7 @@
 
       if (phonePageHoverWrap) {
         function deferHoverLayoutTick() {
-          requestAnimationFrame(function () {
-            requestAnimationFrame(tick);
-          });
+          requestAnimationFrame(tick);
         }
         phonePageHoverWrap.addEventListener("pointerenter", function () {
           phonePageMode = "edit";
