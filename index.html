@@ -1245,7 +1245,7 @@
       background: linear-gradient(145deg, #22d3ee, #818cf8);
     }
 
-    /* Demo 右栏：独立样式，不复用 .intro-panel（其在 ≥1024px 为 overflow:hidden，会裁切/锁死双栏滚动） */
+    /* Demo 右栏：仅整块 .demo-panel 纵向滚动；内层不参与滚动避免套娃 */
     .demo-root .demo-panel {
       display: flex;
       flex-direction: column;
@@ -1263,7 +1263,8 @@
     @media (min-width: 640px) {
       .demo-root .demo-panel {
         max-height: 100%;
-        overflow-y: hidden;
+        overflow-y: auto;
+        scrollbar-gutter: stable;
       }
     }
     @media (min-width: 1024px) {
@@ -1277,27 +1278,23 @@
       animation: none;
       display: flex;
       flex-direction: column;
-      flex: 1 1 auto;
-      min-height: 0;
+      flex: none;
       min-width: 0;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
+      overflow: visible;
     }
-    @media (min-width: 640px) {
-      .demo-root .demo-panel-inner {
-        scrollbar-gutter: stable;
-      }
+    .demo-root .demo-panel .sidebar-stack {
+      flex: 0 0 auto;
+      min-height: 0;
     }
-    @media (min-width: 640px) {
-      .demo-root .demo-panel .sidebar-stack {
-        flex: 1 1 auto;
-        min-height: 0;
-      }
-      .demo-root .aux-panel {
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow: visible;
-      }
+    .demo-root .demo-panel .aux-panel {
+      flex: 0 0 auto;
+      min-height: 0;
+      overflow: visible;
+    }
+    .demo-root .page-head {
+      min-width: 0;
+      overflow-x: visible;
+      overflow-y: visible;
     }
 
     /* 欢迎页 / Demo 整页切换（View Transitions API，无支持或无动画偏好时由脚本直切） */
@@ -3174,9 +3171,6 @@
                 <span class="nav-mode-switch__track" aria-hidden="true"><span class="nav-mode-switch__thumb"></span></span>
               </label>
             </div>
-            <p class="sub" id="panelSubBlurb">
-              宽 <strong>360</strong>，屏高 <strong>H ∈ [600, 828]</strong>（<strong>H/W ∈ [5/3, 2.3]</strong>，约 <strong>1.667–2.3</strong>；参考市售 Android：经典矮屏约 <strong>16:9</strong> 及以下、主流约 <strong>18:9–21:9</strong>；本 Demo 上沿取 <strong>屏比 2.3</strong>）。<strong>画幅</strong>逻辑尺寸恒 <strong>360×640（16:9）</strong>；式中 <strong>「−48」</strong> 恒为 <strong>BottomButton 预留 48</strong>；<strong>NavigationBar</strong> 高度由标题旁开关切换（三键 48dp / 手势 24dp）；<strong>StatusBar</strong> 取系统实际高度（此处滑块模拟 24–48）。<strong>占据 BottomButton 仅 D/G 档</strong>，且 <strong>BottomButton 只有「完全占据」或「不占据」</strong>（无半占据）。
-            </p>
           </header>
           <div class="sidebar-stack">
           <section class="kpi-section" aria-label="关键摘要">
