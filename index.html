@@ -2448,6 +2448,8 @@
       position: relative;
       z-index: 6;
     }
+    /* Hover：非 hover 整颗黑底白字；hover 外轨为白。
+       退场：外轨保持白至 Shoot 恢复满宽后，白底瞬时切回黑（不做颜色插值），避免圆角处灰线/白描边感 */
     .phone-page-hover-btn {
       position: relative;
       width: 15em;
@@ -2456,35 +2458,50 @@
       margin: 0 auto;
       border: none;
       border-radius: 40px;
-      background: transparent;
+      background-color: #000;
       cursor: default;
       font-family: inherit;
       box-sizing: border-box;
+      overflow: hidden;
+      --phone-hover-pill-dur: 0.5s;
+      transition: background-color 0s linear var(--phone-hover-pill-dur);
+    }
+    .phone-page-hover-wrap:hover .phone-page-hover-btn {
+      background-color: #fff;
+      transition: background-color 0.25s ease 0s;
     }
     .phone-page-hover-btn__shoot {
       position: absolute;
       inset: 0;
       display: flex;
-      align-items: center;
+      align-items: stretch;
       justify-content: center;
-      transition: opacity 0.45s ease;
+      z-index: 2;
+      pointer-events: none;
     }
     .phone-page-hover-btn__shoot-text {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      height: 3em;
-      min-width: 11.5em;
-      max-width: calc(100% - 0.5em);
-      padding: 0 0.6em;
       box-sizing: border-box;
-      border-radius: 25px;
+      /* 与外轨同色铺满，非 hover 无白框；与外轨同色圆角对齐 */
+      --phone-hover-r: 40px;
+      --phone-hover-inset: 0px;
+      width: max(0px, calc(100% - 2 * var(--phone-hover-inset)));
+      min-width: max(0px, calc(100% - 2 * var(--phone-hover-inset)));
+      height: max(0px, calc(100% - 2 * var(--phone-hover-inset)));
+      padding: 0 0.6em;
+      border-radius: calc(var(--phone-hover-r) - var(--phone-hover-inset));
       background-color: #000;
       color: #fff;
       line-height: 1;
       font-size: 18px;
       letter-spacing: 3px;
       white-space: nowrap;
+      transition:
+        width var(--phone-hover-pill-dur) ease,
+        min-width var(--phone-hover-pill-dur) ease,
+        padding var(--phone-hover-pill-dur) ease;
     }
     .phone-page-hover-btn__edit {
       position: absolute;
@@ -2492,12 +2509,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border-radius: 40px;
-      background-color: #fff;
+      margin: 0;
+      padding: 0;
+      z-index: 1;
+      background: none;
       color: #000;
-      opacity: 0;
       pointer-events: none;
-      transition: opacity 0.4s ease;
+      box-sizing: border-box;
     }
     .phone-page-hover-btn__edit-text {
       font-size: 18px;
@@ -2505,17 +2523,27 @@
       font-weight: 600;
       line-height: 1;
       color: #000;
-    }
-    .phone-page-hover-wrap:hover .phone-page-hover-btn__shoot {
+      white-space: nowrap;
       opacity: 0;
+      transition: opacity 0.2s ease;
     }
-    .phone-page-hover-wrap:hover .phone-page-hover-btn__edit {
+    .phone-page-hover-wrap:hover .phone-page-hover-btn__edit-text {
       opacity: 1;
+      transition: opacity 0.35s ease 0.18s;
+    }
+    .phone-page-hover-wrap:hover .phone-page-hover-btn__shoot-text {
+      width: 0;
+      min-width: 0;
+      padding-left: 0;
+      padding-right: 0;
+      overflow: hidden;
     }
     @media (prefers-reduced-motion: reduce) {
-      .phone-page-hover-btn__shoot,
-      .phone-page-hover-btn__edit {
+      .phone-page-hover-btn__shoot-text,
+      .phone-page-hover-btn__edit-text,
+      .phone-page-hover-btn {
         transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
       }
     }
 
@@ -3149,11 +3177,11 @@
             role="group"
             aria-label="手机预览：移入查看 Edit，移开恢复 Shoot"
           >
-            <div class="phone-page-hover-btn__shoot">
-              <span class="phone-page-hover-btn__shoot-text">Shoot</span>
-            </div>
             <div class="phone-page-hover-btn__edit" aria-hidden="true">
               <span class="phone-page-hover-btn__edit-text">Edit</span>
+            </div>
+            <div class="phone-page-hover-btn__shoot">
+              <span class="phone-page-hover-btn__shoot-text">Shoot</span>
             </div>
           </div>
         </div>
