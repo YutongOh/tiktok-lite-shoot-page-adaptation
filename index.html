@@ -1,0 +1,3834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shoot 适配实验室 — A / B / C / D / H</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --w: 360px;
+      --bg-background: #0a0a0a;
+      --bg-panel: #0d0d0d;
+      --border-divider: #1e1e1e;
+      --border-subtle: rgba(255, 255, 255, 0.1);
+      --accent: #ff5656;
+      --accent-soft: rgba(255, 86, 86, 0.18);
+      --accent-border: rgba(255, 86, 86, 0.45);
+      --text-muted: #a3a3a3;
+      --text-faint: #737373;
+      --gradient-energy: linear-gradient(90deg, #ec4899 0%, #f97316 100%);
+      --brand-gray: var(--bg-panel);
+      --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --grid-max: 1280px;
+      --grid-columns: 12;
+      --grid-gutter: 20px;
+      --grid-row-gap: 20px;
+      --ui-shape-primary-4: rgba(255, 86, 86, 0.24);
+      --ui-image-overlay-dark: rgba(13, 13, 13, 0.72);
+      --ui-image-overlay-white-a20: rgba(255, 255, 255, 0.2);
+      --ui-image-overlay-white-a40: rgba(255, 255, 255, 0.4);
+      --bottom-button-fill: rgba(255, 86, 86, 0.18);
+      --preview-grad-a: rgba(236, 72, 153, 0.28);
+      --preview-grad-b: rgba(249, 115, 22, 0.14);
+    }
+
+    * { box-sizing: border-box; }
+    ::selection {
+      background: var(--accent-soft);
+      color: #fff;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg-background);
+      color: #fafafa;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* —— Aurora 风格欢迎页（无外链视频，用渐变模拟极光） —— */
+    .intro-gate {
+      min-height: 100vh;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 8px;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+    .intro-gate[hidden] {
+      display: none !important;
+    }
+    @media (min-width: 1024px) {
+      .intro-gate {
+        height: 100vh;
+        overflow: hidden;
+        padding: 16px;
+      }
+    }
+    .intro-split {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+    }
+    @media (min-width: 1024px) {
+      .intro-split {
+        flex-direction: row;
+        align-items: stretch;
+        gap: 16px;
+        height: 100%;
+      }
+    }
+    .intro-hero {
+      display: none;
+      position: relative;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      width: 100%;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(88, 28, 135, 0.22);
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.82),
+        0 0 100px rgba(30, 27, 75, 0.09),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      min-height: 220px;
+    }
+    @media (min-width: 1024px) {
+      .intro-hero {
+        display: flex;
+        width: 52%;
+        flex-shrink: 0;
+        min-height: 0;
+      }
+    }
+    /* 左侧容器：深蓝–紫动态场（mesh + 慢旋锥光 + 旋层 + 扫光）+ 玻璃蒙层，模拟全屏动态背景质感 */
+    .intro-hero-glow {
+      --bp-ink: #020208;
+      --bp-deep: #060612;
+      --bp-mid: #0c0c16;
+      --bp-violet: #3b0764;
+      --bp-indigo: #1e1b4b;
+      --bp-blue: #0f172a;
+      --layer-a: #18132a;
+      --layer-b: #0a0a14;
+      --layer-c: #120f22;
+      --layer-d: #080810;
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      isolation: isolate;
+    }
+    .intro-hero-glow-base {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 110% 95% at 22% 8%, rgba(55, 20, 95, 0.38) 0%, transparent 58%),
+        radial-gradient(ellipse 95% 85% at 88% 92%, rgba(15, 35, 72, 0.34) 0%, transparent 55%),
+        radial-gradient(ellipse 100% 75% at 48% 42%, rgba(30, 27, 65, 0.22) 0%, transparent 62%),
+        radial-gradient(ellipse 90% 80% at 50% 55%, #0c0c14 0%, var(--bp-deep) 48%, var(--bp-ink) 100%);
+      background-size: 320% 320%, 300% 300%, 280% 280%, 100% 100%;
+      background-position: 10% 10%, 90% 90%, 45% 40%, 50% 50%;
+      animation: intro-hero-base-drift 18s ease-in-out infinite alternate;
+    }
+    @keyframes intro-hero-base-drift {
+      0% {
+        background-position: 0% 0%, 100% 100%, 28% 28%, 50% 50%;
+      }
+      50% {
+        background-position: 58% 18%, 42% 82%, 72% 62%, 50% 50%;
+      }
+      100% {
+        background-position: 100% 8%, 0% 92%, 48% 38%, 50% 50%;
+      }
+    }
+    .intro-hero-mesh {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(56px);
+      mix-blend-mode: screen;
+      opacity: 0.42;
+      will-change: transform, opacity;
+    }
+    .intro-hero-mesh--1 {
+      width: 78%;
+      aspect-ratio: 1;
+      left: -22%;
+      top: -8%;
+      background: radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.38) 0%, rgba(49, 46, 129, 0.14) 45%, transparent 70%);
+      animation: intro-hero-mesh-1 17s ease-in-out infinite;
+    }
+    .intro-hero-mesh--2 {
+      width: 65%;
+      aspect-ratio: 1;
+      right: -18%;
+      top: 12%;
+      background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.32) 0%, rgba(59, 15, 95, 0.14) 50%, transparent 72%);
+      animation: intro-hero-mesh-2 20s ease-in-out infinite;
+      mix-blend-mode: soft-light;
+      opacity: 0.38;
+    }
+    .intro-hero-mesh--3 {
+      width: 90%;
+      aspect-ratio: 1;
+      left: 5%;
+      bottom: -35%;
+      background: radial-gradient(circle at 50% 35%, rgba(37, 99, 235, 0.14) 0%, rgba(49, 46, 129, 0.2) 40%, transparent 68%);
+      animation: intro-hero-mesh-3 24s ease-in-out infinite reverse;
+      opacity: 0.36;
+    }
+    .intro-hero-mesh--4 {
+      width: 45%;
+      aspect-ratio: 1;
+      right: 8%;
+      bottom: 18%;
+      background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.22) 0%, rgba(46, 16, 80, 0.1) 55%, transparent 70%);
+      animation: intro-hero-mesh-4 12.5s ease-in-out infinite;
+      filter: blur(40px);
+      mix-blend-mode: screen;
+      opacity: 0.34;
+    }
+    @keyframes intro-hero-mesh-1 {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.36;
+      }
+      40% {
+        transform: translate(22%, 18%) scale(1.26);
+        opacity: 0.62;
+      }
+      70% {
+        transform: translate(-14%, 24%) scale(0.84);
+        opacity: 0.44;
+      }
+    }
+    @keyframes intro-hero-mesh-2 {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1.02);
+        opacity: 0.3;
+      }
+      50% {
+        transform: translate(-28%, 22%) scale(1.32);
+        opacity: 0.58;
+      }
+    }
+    @keyframes intro-hero-mesh-3 {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.28;
+      }
+      45% {
+        transform: translate(-14%, -26%) scale(1.22);
+        opacity: 0.55;
+      }
+      80% {
+        transform: translate(18%, -10%) scale(0.82);
+        opacity: 0.38;
+      }
+    }
+    @keyframes intro-hero-mesh-4 {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.26;
+      }
+      35% {
+        transform: translate(-38%, -40%) scale(1.38);
+        opacity: 0.52;
+      }
+      65% {
+        transform: translate(22%, 16%) scale(0.78);
+        opacity: 0.4;
+      }
+    }
+    .intro-hero-conic {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 270%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(67, 56, 202, 0.1) 55deg,
+        transparent 110deg,
+        rgba(88, 28, 135, 0.09) 200deg,
+        rgba(30, 58, 138, 0.08) 260deg,
+        transparent 320deg
+      );
+      opacity: 0.52;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+      animation: intro-hero-conic-spin 40s linear infinite;
+    }
+    @keyframes intro-hero-conic-spin {
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+    .intro-hero-rotor {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: max(185%, 980px);
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+    }
+    .intro-hero-rotor--a {
+      animation: intro-hero-glow-spin 19s linear infinite;
+    }
+    .intro-hero-rotor--b {
+      animation: intro-hero-glow-spin 27s linear infinite reverse;
+    }
+    @keyframes intro-hero-glow-spin {
+      from {
+        transform: translate(-50%, -50%) rotate(0deg);
+      }
+      to {
+        transform: translate(-50%, -50%) rotate(360deg);
+      }
+    }
+    .intro-hero-gradient-sheet {
+      position: absolute;
+      inset: -5%;
+      mix-blend-mode: overlay;
+      background: radial-gradient(
+        ellipse at 65% 180%,
+        var(--layer-a),
+        var(--layer-b),
+        var(--layer-c),
+        var(--layer-b),
+        var(--layer-a),
+        var(--layer-b),
+        var(--layer-c),
+        var(--layer-b),
+        var(--layer-a),
+        var(--layer-b),
+        var(--layer-c)
+      );
+      animation: intro-hero-sheet-a 8s ease-in-out infinite;
+    }
+    @keyframes intro-hero-sheet-a {
+      0%,
+      100% {
+        opacity: 0.42;
+        filter: saturate(1.02) hue-rotate(0deg);
+      }
+      50% {
+        opacity: 0.72;
+        filter: saturate(1.45) hue-rotate(18deg);
+      }
+    }
+    .intro-hero-gradient-sheet--dodge {
+      mix-blend-mode: soft-light;
+      animation: intro-hero-sheet-b 11s ease-in-out infinite reverse;
+    }
+    @keyframes intro-hero-sheet-b {
+      0%,
+      100% {
+        opacity: 0.22;
+      }
+      50% {
+        opacity: 0.52;
+      }
+    }
+    .intro-hero-sheen {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: linear-gradient(
+        118deg,
+        transparent 14%,
+        rgba(129, 140, 248, 0.09) 38%,
+        rgba(147, 112, 219, 0.1) 50%,
+        rgba(59, 130, 246, 0.07) 62%,
+        transparent 82%
+      );
+      background-size: 340% 340%;
+      background-position: 5% 25%;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+      animation: intro-hero-sheen-drift 12s ease-in-out infinite alternate;
+    }
+    @keyframes intro-hero-sheen-drift {
+      0% {
+        background-position: 0% 12%;
+        opacity: 0.28;
+      }
+      50% {
+        background-position: 100% 88%;
+        opacity: 0.72;
+      }
+      100% {
+        background-position: 28% 0%;
+        opacity: 0.38;
+      }
+    }
+    .intro-hero-glow-light {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      width: min(98%, 620px);
+      height: clamp(120px, 36%, 280px);
+      border-radius: 50%;
+      background: radial-gradient(
+        ellipse at 48% 40%,
+        rgba(99, 102, 241, 0.28) 0%,
+        rgba(49, 46, 129, 0.14) 42%,
+        rgba(12, 10, 28, 0.1) 62%,
+        transparent 78%
+      );
+      filter: blur(28px);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: intro-hero-bloom 7.5s ease-in-out infinite;
+    }
+    @keyframes intro-hero-bloom {
+      0%,
+      100% {
+        opacity: 0.45;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      25% {
+        opacity: 0.72;
+        transform: translate(-40%, -32%) scale(1.22);
+      }
+      52% {
+        opacity: 0.28;
+        transform: translate(-62%, -62%) scale(0.78);
+      }
+      76% {
+        opacity: 0.62;
+        transform: translate(-50%, -36%) scale(1.12);
+      }
+    }
+    .intro-hero-glow-orb {
+      position: absolute;
+      right: -12%;
+      bottom: -4%;
+      z-index: 3;
+      width: min(68%, 340px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 38% 38%,
+        rgba(37, 99, 235, 0.18) 0%,
+        rgba(76, 29, 149, 0.16) 48%,
+        transparent 70%
+      );
+      filter: blur(22px);
+      mix-blend-mode: screen;
+      pointer-events: none;
+      animation: intro-hero-orb-float 9.5s ease-in-out infinite;
+    }
+    @keyframes intro-hero-orb-float {
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.28;
+      }
+      42% {
+        transform: translate(-22%, -26%) scale(1.32);
+        opacity: 0.55;
+      }
+      72% {
+        transform: translate(14%, 8%) scale(0.82);
+        opacity: 0.36;
+      }
+    }
+    /* 粒子纹理：双层点阵漂移 + 稀疏高光散点 */
+    .intro-hero-particles {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .intro-hero-particles::before,
+    .intro-hero-particles::after {
+      content: "";
+      position: absolute;
+      inset: -12%;
+      background-repeat: repeat;
+      mix-blend-mode: screen;
+    }
+    .intro-hero-particles::before {
+      opacity: 0.36;
+      background-image: radial-gradient(
+        circle,
+        rgba(199, 210, 254, 0.55) 1px,
+        transparent 1.15px
+      );
+      background-size: 18px 21px;
+      animation: intro-hero-particle-pan-a 30s linear infinite;
+    }
+    .intro-hero-particles::after {
+      opacity: 0.22;
+      background-image: radial-gradient(
+        circle,
+        rgba(167, 139, 250, 0.45) 0.85px,
+        transparent 1px
+      );
+      background-size: 34px 38px;
+      animation: intro-hero-particle-pan-b 42s linear infinite reverse;
+    }
+    @keyframes intro-hero-particle-pan-a {
+      0% {
+        background-position: 0 0;
+        opacity: 0.3;
+      }
+      40% {
+        opacity: 0.48;
+      }
+      100% {
+        background-position: 360px 260px;
+        opacity: 0.34;
+      }
+    }
+    @keyframes intro-hero-particle-pan-b {
+      0% {
+        background-position: 16px 12px;
+        opacity: 0.2;
+      }
+      50% {
+        opacity: 0.34;
+      }
+      100% {
+        background-position: -300px 220px;
+        opacity: 0.16;
+      }
+    }
+    .intro-hero-particle-sparks {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.75;
+      animation: intro-hero-sparks-twinkle 5.5s ease-in-out infinite alternate;
+    }
+    .intro-hero-particle-sparks::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      border-radius: 50%;
+      box-shadow:
+        6vw 8vh 0 0 rgba(224, 231, 255, 0.75),
+        14vw 22vh 0 0 rgba(167, 139, 250, 0.55),
+        28vw 12vh 0 0 rgba(199, 210, 254, 0.5),
+        42vw 38vh 0 0 rgba(129, 140, 248, 0.65),
+        55vw 18vh 0 0 rgba(196, 181, 253, 0.45),
+        68vw 48vh 0 0 rgba(165, 180, 252, 0.6),
+        78vw 28vh 0 0 rgba(139, 92, 246, 0.5),
+        88vw 62vh 0 0 rgba(199, 210, 254, 0.55),
+        10vw 55vh 0 0 rgba(167, 139, 250, 0.45),
+        24vw 72vh 0 0 rgba(129, 140, 248, 0.5),
+        38vw 58vh 0 0 rgba(224, 231, 255, 0.4),
+        52vw 78vh 0 0 rgba(139, 92, 246, 0.55),
+        72vw 8vh 0 0 rgba(199, 210, 254, 0.48),
+        18vw 42vh 0 0 rgba(99, 102, 241, 0.42),
+        62vw 65vh 0 0 rgba(196, 181, 253, 0.38),
+        32vw 88vh 0 0 rgba(165, 180, 252, 0.52),
+        92vw 42vh 0 0 rgba(167, 139, 250, 0.44),
+        48vw 6vh 0 0 rgba(224, 231, 255, 0.5),
+        8vw 32vh 0 0 rgba(129, 140, 248, 0.4),
+        58vw 92vh 0 0 rgba(139, 92, 246, 0.42);
+      filter: blur(0.35px);
+    }
+    @keyframes intro-hero-sparks-twinkle {
+      0% {
+        opacity: 0.45;
+        transform: translate(0, 0) scale(1);
+      }
+      100% {
+        opacity: 0.88;
+        transform: translate(-1.8%, 1.4%) scale(1.03);
+      }
+    }
+    .intro-hero-noise {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      opacity: 0.07;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+    .intro-hero-glass {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(
+        165deg,
+        rgba(255, 255, 255, 0.04) 0%,
+        rgba(8, 10, 22, 0.12) 38%,
+        rgba(2, 4, 12, 0.52) 100%
+      );
+      backdrop-filter: blur(22px) saturate(1.25);
+      -webkit-backdrop-filter: blur(22px) saturate(1.25);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    .intro-mobile-banner .intro-hero-glass {
+      backdrop-filter: blur(14px) saturate(1.2);
+      -webkit-backdrop-filter: blur(14px) saturate(1.2);
+      background: linear-gradient(
+        165deg,
+        rgba(255, 255, 255, 0.03) 0%,
+        rgba(8, 10, 20, 0.1) 45%,
+        rgba(2, 3, 10, 0.48) 100%
+      );
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .intro-hero-glow-base {
+        animation: none;
+      }
+      .intro-hero-mesh--1,
+      .intro-hero-mesh--2,
+      .intro-hero-mesh--3,
+      .intro-hero-mesh--4 {
+        animation: none;
+        transform: none;
+        opacity: 0.45;
+      }
+      .intro-hero-conic {
+        animation: none;
+      }
+      .intro-hero-rotor--a,
+      .intro-hero-rotor--b {
+        animation: none;
+      }
+      .intro-hero-gradient-sheet,
+      .intro-hero-gradient-sheet--dodge {
+        animation: none;
+        opacity: 0.48;
+      }
+      .intro-hero-sheen {
+        animation: none;
+        opacity: 0.5;
+      }
+      .intro-hero-glow-light {
+        animation: none;
+        opacity: 0.62;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .intro-hero-glow-orb {
+        animation: none;
+        opacity: 0.4;
+        transform: none;
+      }
+      .intro-hero-particles::before,
+      .intro-hero-particles::after {
+        animation: none;
+      }
+      .intro-hero-particle-sparks {
+        animation: none;
+        opacity: 0.38;
+      }
+      .intro-reveal > * {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+    .intro-hero-inner {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    @media (min-width: 1024px) {
+      .intro-hero-inner {
+        padding: 2rem 3rem;
+      }
+    }
+    .intro-hero-headings {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.42rem;
+      text-align: center;
+    }
+    .intro-hero-label {
+      margin: 0;
+      font-family: "Inter", ui-sans-serif, "PingFang SC", system-ui, sans-serif;
+      font-size: clamp(0.95rem, 2.4vw, 1.2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: #fff;
+      text-shadow:
+        0 0 28px rgba(255, 255, 255, 0.12),
+        0 2px 20px rgba(0, 0, 0, 0.55);
+    }
+    .intro-reveal > * {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: intro-in 0.55s ease forwards;
+    }
+    .intro-reveal > *:nth-child(1) {
+      animation-delay: 0.2s;
+    }
+    @keyframes intro-in {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .intro-heading {
+      margin: 0;
+      text-align: center;
+      font-family: "Inter", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(1.85rem, 5.2vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.055em;
+      line-height: 1.06;
+      color: #fff;
+      text-shadow:
+        0 0 28px rgba(255, 255, 255, 0.12),
+        0 2px 20px rgba(0, 0, 0, 0.55);
+    }
+    .intro-mobile-banner {
+      display: block;
+      position: relative;
+      height: 132px;
+      border-radius: 20px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.55);
+    }
+    @media (min-width: 1024px) {
+      .intro-mobile-banner {
+        display: none;
+      }
+    }
+
+    .intro-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1rem 2rem;
+      overflow-y: auto;
+    }
+    @media (min-width: 1024px) {
+      .intro-panel {
+        padding: 1.5rem 2rem;
+        overflow: hidden;
+      }
+    }
+    .intro-panel-inner {
+      width: 100%;
+      max-width: 36rem;
+      animation: panel-fade 0.85s ease-out both;
+    }
+    @keyframes panel-fade {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    .intro-panel h2 {
+      margin: 0 0 0.35rem;
+      font-size: clamp(1.5rem, 3.5vw, 1.875rem);
+      font-weight: 400;
+      letter-spacing: -0.04em;
+    }
+    .intro-panel .intro-sub {
+      margin: 0 0 2rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .intro-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.75rem 0 1.25rem;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .intro-divider::before,
+    .intro-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-divider);
+    }
+    /* 前置页进入按钮 — From Uiverse.io by dexter-st（尺寸对齐原 .intro-cta） */
+    .intro-cta-wrap.btn-wrapper {
+      --rad: 14px;
+      --color-wrapper-border: #fff;
+      --color-btn-bg: #f00;
+      --color-btn-text: #000;
+      --color-btn-text-shadow: #fff;
+      --color-btn-inset-shadow: #558;
+      --color-layer-a: #fff;
+      --color-layer-b: #00f;
+      --color-overlay-text: #000;
+      --color-overlay-glow: #fff;
+      --color-overlay-shadow: #0004;
+      --color-overlay-highlight: #fff5;
+
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: clip;
+      overflow-clip-margin: 4px;
+
+      width: 100%;
+      margin-top: 0.5rem;
+      height: 3.5rem;
+      border: 2px solid var(--color-wrapper-border);
+      border-radius: var(--rad);
+
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      font-weight: 700;
+
+      filter: saturate(0.65) brightness(1.8);
+    }
+
+    .intro-cta-wrap .gradient-btn {
+      position: relative;
+      z-index: -1;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0 36px;
+      box-sizing: border-box;
+      border: none;
+      border-radius: var(--rad);
+
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: 0.15rem;
+
+      color: var(--color-btn-text);
+      background-color: var(--color-btn-bg);
+      background-size: 200% 200%;
+      box-shadow: inset 0 0 10px 9px var(--color-btn-inset-shadow);
+      text-shadow: 0 1px 3px var(--color-btn-text-shadow);
+
+      cursor: pointer;
+      mix-blend-mode: color-dodge;
+      transition:
+        color 0.45s ease,
+        text-shadow 0.45s ease;
+    }
+
+    .intro-cta-wrap .gradient-btn::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+
+      border-radius: var(--rad);
+      background-size: 200% 200%;
+      mix-blend-mode: difference;
+      z-index: 1;
+    }
+
+    .intro-cta-wrap .gradient-layer {
+      position: absolute;
+      pointer-events: none;
+
+      left: -160px;
+      width: 500%;
+      aspect-ratio: 1;
+
+      background: radial-gradient(
+        ellipse at 65% 180%,
+        var(--color-layer-a),
+        var(--color-layer-b),
+        var(--color-layer-a),
+        var(--color-layer-b),
+        var(--color-layer-a),
+        var(--color-layer-b),
+        var(--color-layer-a),
+        var(--color-layer-b),
+        var(--color-layer-a),
+        var(--color-layer-b),
+        var(--color-layer-a)
+      );
+
+      mix-blend-mode: difference;
+      animation: intro-cta-rotate 18s linear infinite;
+    }
+
+    .intro-cta-wrap .gradient-layer + .gradient-layer {
+      mix-blend-mode: color-dodge;
+    }
+
+    @keyframes intro-cta-rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .intro-cta-wrap .text-overlay {
+      position: absolute;
+      pointer-events: none;
+      z-index: 2;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 36px;
+      box-sizing: border-box;
+      border-radius: var(--rad);
+
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: 0.15rem;
+
+      color: var(--color-overlay-text);
+      text-shadow: 0 0 4px var(--color-overlay-glow);
+      box-shadow:
+        inset 0 -4px 4px 0 var(--color-overlay-shadow),
+        inset 0 4px 4px 0 var(--color-overlay-highlight);
+
+      mix-blend-mode: multiply;
+      transition: transform 0.45s ease;
+      animation: intro-cta-opacity-pulse 12s ease infinite;
+    }
+
+    .intro-cta-wrap.btn-wrapper:hover .text-overlay {
+      transform: scale(1.1);
+    }
+
+    .intro-cta-wrap.btn-wrapper:hover .gradient-btn {
+      color: #0000;
+      text-shadow: 0 0 0 #0000;
+    }
+
+    .intro-cta-wrap.btn-wrapper:active .text-overlay {
+      transform: scale(0.95);
+    }
+
+    .intro-cta-wrap.btn-wrapper:active .gradient-btn {
+      color: #0000;
+      text-shadow: 0 0 0 #0000;
+    }
+
+    .intro-cta-wrap .light {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      border-radius: 50px;
+      width: 80%;
+      height: 1.9rem;
+      aspect-ratio: 1;
+      background-color: #fff5;
+      filter: blur(5px);
+      animation: intro-cta-pulse 7s ease-in-out infinite;
+    }
+
+    @keyframes intro-cta-pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.1;
+      }
+    }
+
+    @keyframes intro-cta-opacity-pulse {
+      0%,
+      100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .intro-cta-wrap .gradient-layer {
+        animation: none;
+      }
+      .intro-cta-wrap .light {
+        animation: none;
+      }
+      .intro-cta-wrap .text-overlay {
+        animation: none;
+      }
+      .intro-cta-wrap.btn-wrapper:hover .text-overlay,
+      .intro-cta-wrap.btn-wrapper:active .text-overlay {
+        transform: none;
+      }
+    }
+    .intro-skip {
+      margin-top: 1rem;
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.35);
+      text-align: center;
+    }
+    .intro-skip code {
+      font-size: 0.6875rem;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .demo-root {
+      /* 内容页：冷色强调（与左侧极光场统一），继承自局部变量 */
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.2);
+      --accent-border: rgba(56, 189, 248, 0.5);
+      --gradient-energy: linear-gradient(90deg, #6366f1 0%, #38bdf8 100%);
+      --ui-shape-primary-4: rgba(56, 189, 248, 0.28);
+      /* BottomButton：纯色紫（偏蓝靛），不透明度低于系统条 */
+      --bottom-button-fill: rgba(79, 70, 229, 0.28);
+      min-height: 100dvh;
+      min-height: 100vh;
+      width: 100%;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.45s ease;
+      background: var(--bg-background);
+    }
+    .demo-root ::selection {
+      background: var(--accent-soft);
+      color: #fff;
+    }
+    .demo-root[hidden] {
+      display: none !important;
+    }
+    @media (min-width: 1024px) {
+      .demo-root {
+        padding: 16px;
+      }
+    }
+    .demo-back {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 100;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(13, 13, 13, 0.85);
+      backdrop-filter: blur(10px);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+    .demo-back:hover {
+      background: var(--bg-panel);
+      border-color: var(--accent-border);
+      color: #fafafa;
+    }
+
+    /*
+     * Demo 主区布局（根因说明）：
+     * 1) 若主容器未形成「双列」格式化上下文（例如 grid 规则整段失效），子级会按块级流排版；
+     * 2) .demo-hero 默认 width:100%，在块流下会独占一行，.demo-panel 必然落到下一行 →「信息区在下方」。
+     * 3) demo-hero 内多写一层 </div> 会提前闭合 #demo，.demo-panel 与 </main> 会落到 body 下，flex 双栏对 main 无效。
+     * 故对 #demo > main 使用高特异性 flex + nowrap；宽屏下显式收窄 hero 宽度并给 panel flex:1。
+     */
+    #demo.demo-root > main.demo-split {
+      flex: 1;
+      min-width: 0;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 12px;
+      align-items: stretch;
+    }
+    @media (min-width: 640px) {
+      .demo-root {
+        height: 100dvh;
+        height: 100vh;
+        max-height: 100dvh;
+        max-height: 100vh;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      #demo.demo-root > main.demo-split {
+        flex-direction: row;
+        align-items: stretch;
+      }
+      #demo.demo-root > main.demo-split > .demo-hero {
+        flex: 0 0 52%;
+        width: 52%;
+        max-width: 52%;
+        min-width: 0;
+        height: 100%;
+        max-height: 100%;
+      }
+      #demo.demo-root > main.demo-split > .demo-panel {
+        flex: 1 1 0%;
+        min-width: 0;
+        width: auto;
+        min-height: 0;
+        max-height: 100%;
+      }
+    }
+    .demo-hero {
+      display: flex;
+      position: relative;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      width: 100%;
+      min-height: 0;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(88, 28, 135, 0.22);
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.82),
+        0 0 100px rgba(30, 27, 75, 0.09),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    @media (max-width: 639px) {
+      .demo-hero {
+        min-height: min(48vh, 380px);
+      }
+    }
+    @media (min-width: 640px) {
+      .demo-hero {
+        height: 100%;
+        max-height: 100%;
+      }
+    }
+    .demo-hero-inner {
+      position: relative;
+      /* 与 .intro-hero-inner 一致，必须高于 .intro-hero-glass (z-index:3)，否则磨砂层盖在手机上 */
+      z-index: 5;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 3vw, 28px);
+    }
+    .demo-root .phone-shell {
+      position: relative;
+      z-index: 1;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 28px 64px rgba(0, 0, 0, 0.65),
+        0 0 0 1px rgba(56, 189, 248, 0.22);
+    }
+    .demo-root .phone {
+      box-shadow:
+        0 16px 48px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+    .demo-root .thumb {
+      background: linear-gradient(145deg, #6366f1, #38bdf8);
+    }
+    .demo-root .thumb.alt {
+      background: linear-gradient(145deg, #22d3ee, #818cf8);
+    }
+
+    /* Demo 右栏：独立样式，不复用 .intro-panel（其在 ≥1024px 为 overflow:hidden，会裁切/锁死双栏滚动） */
+    .demo-root .demo-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      min-height: 0;
+      padding: 1.25rem 1rem 1.25rem;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (min-width: 640px) {
+      .demo-root .demo-panel {
+        max-height: 100%;
+      }
+    }
+    @media (min-width: 1024px) {
+      .demo-root .demo-panel {
+        padding: 1.5rem 2rem 1.75rem;
+      }
+    }
+    .demo-root .demo-panel-inner {
+      width: 100%;
+      max-width: none;
+      animation: none;
+    }
+
+    /* 欢迎页 / Demo 整页切换（View Transitions API，无支持或无动画偏好时由脚本直切） */
+    @supports (view-transition-name: none) {
+      #intro {
+        view-transition-name: intro-gate;
+      }
+      #demo {
+        view-transition-name: demo-lab;
+      }
+      ::view-transition-old(intro-gate),
+      ::view-transition-old(demo-lab) {
+        animation-duration: 0.48s;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      ::view-transition-new(intro-gate),
+      ::view-transition-new(demo-lab) {
+        animation-duration: 0.48s;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      @supports (view-transition-name: none) {
+        ::view-transition-old(intro-gate),
+        ::view-transition-old(demo-lab),
+        ::view-transition-new(intro-gate),
+        ::view-transition-new(demo-lab) {
+          animation-duration: 0.01ms !important;
+        }
+      }
+    }
+
+    .page {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      max-width: var(--grid-max);
+      margin-inline: auto;
+      padding: clamp(32px, 6vw, 72px) clamp(16px, 4vw, 64px) clamp(40px, 7vw, 88px);
+      display: grid;
+      grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+      column-gap: var(--grid-gutter);
+      row-gap: var(--grid-row-gap);
+      align-content: start;
+    }
+    @media (min-width: 1024px) {
+      .page {
+        padding-top: 16px;
+      }
+    }
+    .page-head {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-divider);
+      overflow-x: auto;
+      overflow-y: visible;
+      -webkit-overflow-scrolling: touch;
+    }
+    .page-head-title-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px 16px;
+      margin: 0 0 0.65rem;
+    }
+    .page-head-title-row h1 {
+      margin: 0;
+      flex: 1 1 auto;
+      min-width: min(100%, 10rem);
+    }
+    .nav-mode-switch {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .nav-mode-switch__track {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .nav-mode-switch__thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #fafafa;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .nav-mode-switch input:checked + .nav-mode-switch__track {
+      background: rgba(254, 44, 85, 0.22);
+      border-color: rgba(254, 44, 85, 0.35);
+    }
+    .nav-mode-switch input:checked + .nav-mode-switch__track .nav-mode-switch__thumb {
+      transform: translateX(20px);
+    }
+    .nav-mode-switch input:focus-visible + .nav-mode-switch__track {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .nav-mode-switch input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    .page-eyebrow {
+      margin: 0 0 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    h1 {
+      font-size: clamp(1.875rem, 4vw, 3rem);
+      font-weight: 400;
+      margin: 0 0 0.65rem;
+      letter-spacing: -0.04em;
+      line-height: 1.12;
+    }
+    .sub {
+      margin: 0;
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: none;
+      white-space: nowrap;
+    }
+    @media (max-width: 900px) {
+      .sub {
+        white-space: normal;
+      }
+    }
+
+    /* 桌面：标题定高，下方主区占满剩余视高，两列外框等高 */
+    @media (min-width: 1101px) {
+      .page {
+        grid-template-rows: auto minmax(0, 1fr);
+      }
+      .workspace {
+        grid-row: 2;
+        min-height: 0;
+        height: 100%;
+        align-items: stretch;
+      }
+    }
+
+    /* 主栅格：12 列；左侧手机 + 右侧信息栈（等高 .col-frame） */
+    .workspace {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+      column-gap: var(--grid-gutter);
+      row-gap: var(--grid-row-gap);
+      align-items: stretch;
+      min-width: 0;
+    }
+    .col-frame {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-panel);
+    }
+    .col-frame--phone {
+      grid-column: 1 / span 4;
+    }
+    /* 右侧单列：上摘要 / 中操作 / 下详细（参考仪表盘分区） */
+    .col-frame--sidebar {
+      grid-column: 5 / span 8;
+    }
+    .col-frame > .col-phone,
+    .col-frame > .sidebar-stack {
+      flex: 1;
+      min-height: 0;
+      min-width: 0;
+    }
+
+    .col-phone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+    .sidebar-stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--grid-row-gap);
+    }
+    .kpi-section {
+      flex-shrink: 0;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .kpi-cell {
+      min-height: 0;
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+    .kpi-cell .kpi-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--text-muted);
+    }
+    .kpi-cell .kpi-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.96);
+      font-variant-numeric: tabular-nums;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+    .kpi-cell--ratio .kpi-ratio-body {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      min-width: 0;
+    }
+    .kpi-cell--ratio .kpi-value--ratio {
+      flex: 1;
+      min-width: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .kpi-ratio-common {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: rgba(0, 0, 0, 0.88);
+      white-space: nowrap;
+    }
+    .kpi-cell--ratio.kpi-cell--common-model {
+      background: #fff;
+      border-color: rgba(0, 0, 0, 0.14);
+    }
+    .kpi-cell--ratio.kpi-cell--common-model .kpi-label {
+      color: rgba(0, 0, 0, 0.45);
+    }
+    .kpi-cell--ratio.kpi-cell--common-model .kpi-value--ratio {
+      color: #000;
+    }
+    .ops-panel {
+      position: relative;
+      flex-shrink: 0;
+      width: 100%;
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 16px 16px;
+      overflow: hidden;
+    }
+    .ops-panel > h3 {
+      margin: 0 0 16px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .ops-hint {
+      margin: 14px 0 0;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-divider);
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .aux-panel {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    @media (max-width: 1100px) {
+      .page {
+        grid-template-rows: auto;
+      }
+      .workspace {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+      .col-frame--phone,
+      .col-frame--sidebar {
+        grid-column: 1 / -1;
+        height: auto;
+      }
+      .col-frame--phone {
+        align-items: center;
+      }
+      .col-frame--phone .col-phone {
+        width: 100%;
+        max-width: 420px;
+      }
+    }
+
+    .phone-shell {
+      /* 外圈圆角 = 内圈圆角 + 壳与屏之间的外边距（与 padding-inline 一致） */
+      --phone-corner-inner: 20px;
+      --phone-shell-ring: 16px;
+      --phone-corner-outer: calc(var(--phone-corner-inner) + var(--phone-shell-ring));
+      padding: 18px 16px 20px;
+      border-radius: var(--phone-corner-outer);
+      background: linear-gradient(165deg, #161616 0%, #0d0d0d 55%, #0a0a0a 100%);
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.04),
+        0 24px 56px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(236, 72, 153, 0.06);
+    }
+
+    .sidebar-stack > section > .panel-title {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin: 0 0 10px;
+    }
+    .kpi-section > .panel-title {
+      margin-bottom: 10px;
+    }
+
+    /* 参数宫格：6 列子栅格（每格 = 主栅格半列，与 12 列对齐） */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      column-gap: var(--grid-gutter);
+      row-gap: var(--grid-row-gap);
+      align-items: stretch;
+    }
+    .stat-card {
+      grid-column: span 3;
+      min-height: 0;
+      background: var(--brand-gray);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 14px 16px 16px;
+    }
+    .stat-card--span2 {
+      grid-column: span 6;
+    }
+
+    @media (max-width: 1100px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .stat-card {
+        grid-column: span 1;
+      }
+      .stat-card--span2 {
+        grid-column: span 2;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .stat-card h3 {
+      margin: 0 0 10px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      padding: 6px 0;
+      border-top: 1px solid var(--border-divider);
+    }
+    .stat-row:first-of-type { border-top: 0; padding-top: 0; }
+    .stat-row .k { color: var(--text-muted); flex-shrink: 0; }
+    .stat-row .v {
+      text-align: right;
+      color: rgba(255, 255, 255, 0.95);
+      word-break: break-word;
+    }
+    .stat-note {
+      font-size: 12px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.55);
+      margin: 0;
+      white-space: pre-wrap;
+    }
+    .stat-note--formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      color: rgba(255, 255, 255, 0.72);
+      margin-top: 8px;
+    }
+    .stat-note--axis {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.38);
+      margin-top: 10px;
+    }
+
+    .control-block {
+      margin-bottom: 18px;
+    }
+    .control-block:last-child { margin-bottom: 0; }
+    .control-block label {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.78);
+    }
+    .control-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-head .val {
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 600;
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 10px;
+      background: #000;
+      border: 1px solid #fff;
+    }
+    /* 调节面板滑块：白轨道 + 黑圆形拇指（白描边），与系统 accent 解耦 */
+    .ops-panel input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 28px;
+      margin: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+    .ops-panel input[type="range"]:focus {
+      outline: none;
+    }
+    .ops-panel input[type="range"]:focus-visible::-webkit-slider-thumb {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+    }
+    .ops-panel input[type="range"]:focus-visible::-moz-range-thumb {
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+    }
+    .ops-panel input[type="range"]::-webkit-slider-runnable-track {
+      height: 4px;
+      background: #fff;
+      border-radius: 999px;
+    }
+    /**
+     * 屏高 H 轨道常用屏比锚点（H/W，W=360）：2.111→760、2.167→780、2.222→800、2.239→806；
+     * 位置 (H−600)/(828−600)×100%。仅作用于 #hRange，勿与 StatusBar 滑块混用。
+     */
+    .ops-panel #hRange::-webkit-slider-runnable-track {
+      background:
+        linear-gradient(
+          to right,
+          transparent 0,
+          transparent calc(70.17543859649122% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(70.17543859649122% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(70.17543859649122% + 0.32%),
+          transparent calc(70.17543859649122% + 0.32%),
+          transparent calc(78.94736842105263% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(78.94736842105263% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(78.94736842105263% + 0.32%),
+          transparent calc(78.94736842105263% + 0.32%),
+          transparent calc(87.71929824561403% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(87.71929824561403% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(87.71929824561403% + 0.32%),
+          transparent calc(87.71929824561403% + 0.32%),
+          transparent calc(90.35087719298245% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(90.35087719298245% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(90.35087719298245% + 0.32%),
+          transparent calc(90.35087719298245% + 0.32%),
+          transparent 100%
+        ),
+        #fff;
+      border-radius: 999px;
+    }
+    .ops-panel input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      margin-top: -7px;
+      border-radius: 50%;
+      background: #000;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+    }
+    .ops-panel input[type="range"]::-moz-range-track {
+      height: 4px;
+      background: #fff;
+      border-radius: 999px;
+    }
+    .ops-panel #hRange::-moz-range-track {
+      background:
+        linear-gradient(
+          to right,
+          transparent 0,
+          transparent calc(70.17543859649122% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(70.17543859649122% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(70.17543859649122% + 0.32%),
+          transparent calc(70.17543859649122% + 0.32%),
+          transparent calc(78.94736842105263% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(78.94736842105263% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(78.94736842105263% + 0.32%),
+          transparent calc(78.94736842105263% + 0.32%),
+          transparent calc(87.71929824561403% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(87.71929824561403% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(87.71929824561403% + 0.32%),
+          transparent calc(87.71929824561403% + 0.32%),
+          transparent calc(90.35087719298245% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(90.35087719298245% - 0.32%),
+          rgba(30, 30, 30, 0.55) calc(90.35087719298245% + 0.32%),
+          transparent calc(90.35087719298245% + 0.32%),
+          transparent 100%
+        ),
+        #fff;
+      border-radius: 999px;
+    }
+    .ops-panel input[type="range"]::-moz-range-progress {
+      height: 4px;
+      background: #fff;
+      border-radius: 999px;
+    }
+    /* #hRange 轨道刻度画在 ::-moz-range-track 上，progress 不透明会盖住锚点 */
+    .ops-panel #hRange::-moz-range-progress {
+      background: transparent;
+    }
+    .ops-panel input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #000;
+      border: 2px solid #fff;
+      box-sizing: border-box;
+      cursor: pointer;
+    }
+
+    .legend {
+      margin-top: 18px;
+      font-size: 11px;
+      line-height: 1.6;
+      color: var(--text-muted);
+      max-width: none;
+      padding: 14px 16px;
+      border-radius: 14px;
+      background: rgba(13, 13, 13, 0.6);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .phone {
+      width: var(--w);
+      height: var(--phone-h);
+      position: relative;
+      background: #000;
+      border-radius: var(--phone-corner-inner, 20px);
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      /* Status / Navigation：品牌红 #FE2C55 @ 25% + 磨砂 */
+      --sys-bar-blur: 16px;
+      --sys-bar-purple: rgba(254, 44, 85, 0.25);
+    }
+
+    .stage {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: calc(var(--phone-h) - var(--nav-h, 48px));
+      overflow: hidden;
+    }
+
+    /* H + 手势：沉浸式通高 Stage，画幅底可至屏底（占据手势条像素区），指示条叠在内容之上 */
+    .phone.is-h-gesture-immersive .stage {
+      height: var(--phone-h);
+    }
+
+    .status {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: var(--status-h, 48px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      color: #fff;
+      font-size: 14px;
+      letter-spacing: 0.25px;
+      z-index: 6;
+      pointer-events: none;
+      background: var(--sys-bar-purple);
+      border-top-left-radius: var(--phone-corner-inner, 20px);
+      border-top-right-radius: var(--phone-corner-inner, 20px);
+      backdrop-filter: blur(var(--sys-bar-blur)) saturate(1.15);
+      -webkit-backdrop-filter: blur(var(--sys-bar-blur)) saturate(1.15);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .status-icons {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+    .status-icon-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 0;
+    }
+    .status-icon-svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+    }
+    .notch {
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+      background: #000;
+      border-radius: 999px;
+    }
+
+    .main {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .shoot-frame {
+      position: absolute;
+      left: 0;
+      width: var(--w);
+      height: var(--frame-h, 640px);
+      border: 0.8px dashed rgba(255, 255, 255, 0.7);
+      border-radius: var(--phone-corner-inner, 20px);
+      overflow: hidden;
+      top: var(--frame-top, 0px);
+      z-index: 2;
+    }
+
+    .shoot-frame .preview {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--preview-crop-top, 0px);
+      bottom: var(--preview-crop-bottom, 0px);
+      border-radius: var(--phone-corner-inner, 20px);
+      overflow: hidden;
+      background: #07040c;
+    }
+    .shoot-frame .preview-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      pointer-events: none;
+    }
+
+    .top-ui {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--top-ui-offset, 16px);
+      min-height: 420px;
+      height: auto;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .camera-back-variant {
+      position: absolute;
+      left: 6px;
+      top: 0;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: auto;
+    }
+    .camera-back-icon-slot {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+    .camera-back-icon-slot[data-style="Tinted"] {
+      border-radius: 12px;
+    }
+    .camera-back-item-img {
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+
+    .right-tools {
+      position: absolute;
+      right: 0;
+      top: 4px;
+      width: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      pointer-events: auto;
+    }
+
+    .right-tool-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+    .right-tool-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .right-tool-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+    }
+
+    .right-tool-icon {
+      display: block;
+      width: 28px;
+      height: auto;
+      max-height: 30px;
+      object-fit: contain;
+    }
+    .right-tool-icon.icon-flip {
+      width: 30px;
+      max-height: 28px;
+    }
+
+    .right-tool-label {
+      margin-top: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: center;
+      width: 56px;
+      text-shadow: 0 1px 1px rgba(22, 24, 35, 0.2);
+    }
+
+    .sound-entrance {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      height: 44px;
+      min-width: 128px;
+      max-width: 190px;
+      padding: 0 10px 0 12px;
+      border-radius: 999px;
+      /* Music Entrance：#333333 @ 60% */
+      background: rgba(51, 51, 51, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #fff;
+      pointer-events: auto;
+    }
+    .sound-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+    .icontools-icon-frame {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-fill-hack {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 14px;
+      height: 18px;
+    }
+    .icon-fill-hack img {
+      display: block;
+      width: 10px;
+      height: 15px;
+    }
+    .sound-entrance .text-wrapper {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sound-entrance .split-line {
+      width: 1px;
+      height: 18px;
+      background: var(--ui-image-overlay-white-a20);
+      flex-shrink: 0;
+    }
+    .sound-entrance .close {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+    }
+    .icon-fill-hack-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+    }
+    .sound-entrance .close .img {
+      display: block;
+      width: 11px;
+      height: 11px;
+    }
+
+    /* BottomButton：#bottomButton 为 translateY 锚点；Shoot 紫条 / Edit Figma 双按钮 */
+    .bottom-button-anchor {
+      position: absolute;
+      left: 0;
+      width: var(--w);
+      height: 48px;
+      top: 0;
+      z-index: 3;
+      box-sizing: border-box;
+      pointer-events: none;
+    }
+    .bottom-button-anchor .bottom-button-layer--shoot,
+    .bottom-button-anchor .bottom-button-layer--edit {
+      pointer-events: auto;
+    }
+    .bottom-button-layer--shoot {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 0.8px dashed rgba(255, 255, 255, 0.7);
+      border-bottom: 0.8px dashed rgba(255, 255, 255, 0.7);
+      background: var(--bottom-button-fill);
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.88);
+    }
+    .bottom-button-layer--edit {
+      display: none;
+      position: absolute;
+      inset: 0;
+      box-sizing: border-box;
+      width: 100%;
+      height: 48px;
+      padding: 0 8px 4px;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .phone-page--edit .bottom-button-layer--shoot {
+      display: none;
+    }
+    .phone-page--edit .bottom-button-layer--edit {
+      display: flex;
+    }
+    .edit-bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+    }
+    .edit-bottom-btn {
+      flex: 1 1 0;
+      min-width: 0;
+      height: 44px;
+      border: none;
+      border-radius: 8px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      font-family: inherit;
+      cursor: default;
+    }
+    .edit-bottom-btn--story {
+      background: #fff;
+      color: #000;
+      font-size: 16px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+    .edit-bottom-btn--story .edit-bottom-story-ico {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+    .edit-bottom-btn--story .edit-bottom-story-ico img {
+      position: absolute;
+      display: block;
+    }
+    .edit-bottom-btn--story .edit-bottom-story-ico .edit-bottom-story-img--inner {
+      left: 3px;
+      top: 3px;
+      width: 22px;
+      height: 22px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .edit-bottom-btn--story .edit-bottom-story-ico .edit-bottom-story-img--ring {
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+    }
+    .edit-bottom-btn--next {
+      background: #fe2c55;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 17px;
+    }
+
+    .right-tools-shoot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .right-tools-edit {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .phone-page--edit .right-tools-shoot {
+      display: none;
+    }
+    .phone-page--edit .right-tools-edit {
+      display: flex;
+    }
+    .right-tools-edit__item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 4px 0 12px;
+      gap: 2px;
+      box-sizing: border-box;
+      color: #fff;
+    }
+    /* Figma：部分行有水平内边距（与 node 2:1005 / 2:1019 / 2:1040 / 2:1043 一致） */
+    .right-tools-edit__item--px14 {
+      padding-left: 14px;
+      padding-right: 14px;
+    }
+    .right-tools-edit__item--px8 {
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+    .right-tools-edit__item--px3 {
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+    .right-tools-edit__item--px10 {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    /* 外框 28×28，与 Figma size-[28px] + overflow-clip 一致 */
+    .right-tools-edit__icon {
+      position: relative;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    /* 内层 slot = Figma 中绝对定位的「画幅」；图在画幅内 contain，禁止形变 */
+    .right-tools-edit__slot {
+      position: absolute;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .right-tools-edit__slot img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      object-position: center;
+    }
+    /* Icon_Color/Gear — inset 0.59% 2.31% 0.59% 0.16% */
+    .right-tools-edit__slot--gear {
+      top: 0.59%;
+      right: 2.31%;
+      bottom: 0.59%;
+      left: 0.16%;
+    }
+    /* Icon_Color/Text_Latin */
+    .right-tools-edit__slot--text {
+      top: 13.23%;
+      right: 0.41%;
+      bottom: 15.31%;
+      left: 0.34%;
+    }
+    /* Icon_Color/Sticker_Square */
+    .right-tools-edit__slot--sticker {
+      top: 6.25%;
+      right: 4.17%;
+      bottom: 4.17%;
+      left: 6.25%;
+    }
+    /* Icon_Color/Track — Subtract (Stroke) 层 */
+    .right-tools-edit__slot--adjust-stroke {
+      top: 14.58%;
+      right: 0;
+      bottom: 14.58%;
+      left: 0;
+      z-index: 0;
+    }
+    /* Icon_Color/Track — track 层 */
+    .right-tools-edit__slot--adjust-track {
+      top: 16.67%;
+      right: 2.08%;
+      bottom: 16.67%;
+      left: 2.08%;
+      z-index: 1;
+    }
+    /* Icon_Color/Filter */
+    .right-tools-edit__slot--filter {
+      top: 3.96%;
+      right: 1.04%;
+      bottom: 4.37%;
+      left: 1.04%;
+    }
+    /* Icon_Color/Mic_Star */
+    .right-tools-edit__slot--mic {
+      top: 0;
+      right: 8.4%;
+      bottom: 0;
+      left: 8.39%;
+    }
+    /* Icon_Color/Effect — 满铺 28 框 */
+    .right-tools-edit__slot--effect {
+      inset: 0;
+    }
+    .right-tools-edit__label {
+      font-size: 10px;
+      font-weight: 500;
+      line-height: 1.3;
+      text-align: center;
+      width: 56px;
+      text-shadow: 0 1px 1px rgba(22, 24, 35, 0.2);
+    }
+    .right-tools-edit__label--nowrap {
+      white-space: nowrap;
+      width: auto;
+      max-width: 56px;
+    }
+
+    /* Shoot / Edit：左侧大容器底部；默认仅黑 pill，悬停为整颗白底 + 黑字 Edit（同区域叠化，无露白、无双列） */
+    .phone-page-hover-wrap {
+      flex-shrink: 0;
+      margin-top: auto;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      padding: 0 clamp(16px, 3vw, 28px) clamp(18px, 3.5vw, 28px);
+      box-sizing: border-box;
+      position: relative;
+      z-index: 6;
+    }
+    .phone-page-hover-btn {
+      position: relative;
+      width: 15em;
+      max-width: 100%;
+      height: 4em;
+      margin: 0 auto;
+      border: none;
+      border-radius: 40px;
+      background: transparent;
+      cursor: default;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .phone-page-hover-btn__shoot {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.45s ease;
+    }
+    .phone-page-hover-btn__shoot-text {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 3em;
+      min-width: 11.5em;
+      max-width: calc(100% - 0.5em);
+      padding: 0 0.6em;
+      box-sizing: border-box;
+      border-radius: 25px;
+      background-color: #000;
+      color: #fff;
+      line-height: 1;
+      font-size: 18px;
+      letter-spacing: 3px;
+      white-space: nowrap;
+    }
+    .phone-page-hover-btn__edit {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 40px;
+      background-color: #fff;
+      color: #000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .phone-page-hover-btn__edit-text {
+      font-size: 18px;
+      letter-spacing: 3px;
+      font-weight: 600;
+      line-height: 1;
+      color: #000;
+    }
+    .phone-page-hover-wrap:hover .phone-page-hover-btn__shoot {
+      opacity: 0;
+    }
+    .phone-page-hover-wrap:hover .phone-page-hover-btn__edit {
+      opacity: 1;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .phone-page-hover-btn__shoot,
+      .phone-page-hover-btn__edit {
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* EditPage：整块 ShootUI（模式条 + 快门行）不参与布局与命中；与 [hidden] 双保险 */
+    .phone-page--edit #shootUi {
+      display: none !important;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .shoot-ui {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: var(--shoot-ui-bottom, 24px);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .shoot-ui > * { pointer-events: auto; }
+
+    .tabs {
+      padding: 0 29px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      color: #fff;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .tabs .pill {
+      background: #f1f1f1;
+      color: #000;
+      padding: 4px 8px;
+      border-radius: 20px;
+    }
+
+    .record {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      width: 100%;
+      padding-bottom: var(--record-pad-bottom, 0px);
+    }
+
+    .side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 500;
+      text-shadow: 0 0.8px 1px rgba(0, 0, 0, 0.2), 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .thumb {
+      position: relative;
+      width: 40px;
+      height: 40px;
+      border-radius: 6px;
+      border: none;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(145deg, #ec4899, #f97316);
+    }
+    /* 叠在缩略图之上，避免与 PNG 边缘/旧变量同色导致「看不出变化」 */
+    .thumb::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-sizing: border-box;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+      pointer-events: none;
+      z-index: 2;
+    }
+    .thumb-effects {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      background: #0a0a0c;
+    }
+    .thumb-effects img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      object-position: center;
+    }
+    .thumb.alt { background: linear-gradient(145deg, #ffb86b, #ff6b9d); }
+
+    .shutter {
+      width: 86px;
+      height: 86px;
+      position: relative;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.06));
+    }
+    .shutter::before,
+    .shutter::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .shutter::before { width: 86px; height: 86px; border: 3px solid rgba(255, 255, 255, 0.95); }
+    .shutter::after { width: 74px; height: 74px; background: #fff; }
+
+    /* 底部 Navigation：对齐 Figma System/Home Indicator（node 7:139） */
+    .nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: var(--nav-h, 48px);
+      box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 64px;
+      padding: 2px 0;
+      z-index: 8;
+      pointer-events: none;
+      background: var(--sys-bar-purple);
+      border-bottom-left-radius: var(--phone-corner-inner, 20px);
+      border-bottom-right-radius: var(--phone-corner-inner, 20px);
+      backdrop-filter: blur(var(--sys-bar-blur)) saturate(1.15);
+      -webkit-backdrop-filter: blur(var(--sys-bar-blur)) saturate(1.15);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+    .nav-key {
+      position: relative;
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-key svg {
+      display: block;
+      width: 44px;
+      height: 44px;
+    }
+    .nav-key--overview::after {
+      content: "";
+      position: absolute;
+      left: 14.3px;
+      top: 14.3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+      background: #fff;
+    }
+    .nav--gesture {
+      gap: 0;
+      padding: 0 16px;
+      justify-content: center;
+    }
+    .nav--gesture .nav-key {
+      display: none;
+    }
+    .nav-gesture-indicator {
+      display: none;
+      width: 108px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+    }
+    .nav--gesture .nav-gesture-indicator {
+      display: block;
+    }
+
+    /* Crop Toast — 源自 Uiverse.io by Siyu1017 的气泡 + 三角（仅 .tooltip；宽度随文案 max-content） */
+    .clip-note-toast.tooltip-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      width: max-content;
+      max-width: calc(100% - 24px);
+      margin: 0 auto;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      font-size: 14px;
+      padding: 0;
+      --tooltip-bg: #fff;
+      --tooltip-color: #303030;
+      opacity: 0;
+      visibility: hidden;
+      max-height: 0;
+      overflow: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease, max-height 0.3s ease;
+    }
+    .demo-hero-inner--crop-hint .clip-note-toast.tooltip-container {
+      opacity: 1;
+      visibility: visible;
+      max-height: 72px;
+      margin-bottom: 10px;
+      padding-top: 0.2rem;
+      overflow: visible;
+      pointer-events: auto;
+    }
+    .clip-note-toast .tooltip {
+      position: relative;
+      display: block;
+      width: max-content;
+      max-width: 100%;
+      white-space: nowrap;
+      padding: 0.5em 0.85em;
+      margin: 0 auto;
+      transform: scale(0);
+      transform-origin: center bottom;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.07, 1.17, 0.44, 1.41);
+      background: var(--tooltip-bg);
+      color: var(--tooltip-color);
+      border-radius: 0.5rem;
+      z-index: 99999;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.35;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    }
+    .clip-note-toast .tooltip::before {
+      position: absolute;
+      content: "";
+      height: 0.6em;
+      width: 0.6em;
+      bottom: -0.2em;
+      left: 50%;
+      transform: translate(-50%) rotate(45deg);
+      background: var(--tooltip-bg);
+      border-bottom-right-radius: 0.175rem;
+    }
+    .demo-hero-inner--crop-hint .clip-note-toast .tooltip {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: scale(1);
+    }
+  </style>
+</head>
+<body>
+  <div id="intro" class="intro-gate">
+    <main class="intro-split">
+      <div class="intro-mobile-banner" aria-hidden="true">
+        <div class="intro-hero-glow">
+          <div class="intro-hero-glow-base"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--1" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--2" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--3" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--4" aria-hidden="true"></div>
+          <div class="intro-hero-conic" aria-hidden="true"></div>
+          <div class="intro-hero-rotor intro-hero-rotor--a">
+            <div class="intro-hero-gradient-sheet"></div>
+          </div>
+          <div class="intro-hero-rotor intro-hero-rotor--b">
+            <div class="intro-hero-gradient-sheet intro-hero-gradient-sheet--dodge"></div>
+          </div>
+          <div class="intro-hero-sheen" aria-hidden="true"></div>
+          <div class="intro-hero-glow-light"></div>
+          <div class="intro-hero-glow-orb" aria-hidden="true"></div>
+          <div class="intro-hero-particles" aria-hidden="true"></div>
+          <div class="intro-hero-particle-sparks" aria-hidden="true"></div>
+          <div class="intro-hero-noise" aria-hidden="true"></div>
+        </div>
+        <div class="intro-hero-glass" aria-hidden="true"></div>
+      </div>
+      <section class="intro-hero" aria-label="视觉">
+        <div class="intro-hero-glow" aria-hidden="true">
+          <div class="intro-hero-glow-base"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--1" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--2" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--3" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--4" aria-hidden="true"></div>
+          <div class="intro-hero-conic" aria-hidden="true"></div>
+          <div class="intro-hero-rotor intro-hero-rotor--a">
+            <div class="intro-hero-gradient-sheet"></div>
+          </div>
+          <div class="intro-hero-rotor intro-hero-rotor--b">
+            <div class="intro-hero-gradient-sheet intro-hero-gradient-sheet--dodge"></div>
+          </div>
+          <div class="intro-hero-sheen" aria-hidden="true"></div>
+          <div class="intro-hero-glow-light"></div>
+          <div class="intro-hero-glow-orb" aria-hidden="true"></div>
+          <div class="intro-hero-particles" aria-hidden="true"></div>
+          <div class="intro-hero-particle-sparks" aria-hidden="true"></div>
+          <div class="intro-hero-noise" aria-hidden="true"></div>
+        </div>
+        <div class="intro-hero-glass" aria-hidden="true"></div>
+        <div class="intro-hero-inner intro-reveal">
+          <div class="intro-hero-headings">
+            <p class="intro-hero-label">TikTok Lite</p>
+            <h1 class="intro-heading">Shoot 适配实验室</h1>
+          </div>
+        </div>
+      </section>
+      <section class="intro-panel" aria-label="进入实验">
+        <div class="intro-panel-inner">
+          <h2>开始实验</h2>
+          <p class="intro-sub">风格参考深色工具面板：#0D0D0D 区块、#1E1E1E 分割线、#FF5656 强调与粉橙渐变 CTA。未使用外链视频，极光由 CSS 渐变动画模拟。</p>
+          <div class="intro-divider" aria-hidden="true">Or</div>
+          <div class="intro-cta-wrap btn-wrapper">
+            <div class="gradient-layer" aria-hidden="true"></div>
+            <div class="gradient-layer" aria-hidden="true"></div>
+            <div class="light" aria-hidden="true"></div>
+            <button type="button" class="gradient-btn" id="introEnter">进入布局 Demo</button>
+            <span class="text-overlay" aria-hidden="true">进入布局 Demo</span>
+          </div>
+          <p class="intro-skip">直达实验可打开链接后缀 <code>#demo</code></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="demo" class="demo-root" hidden>
+    <button type="button" class="demo-back" id="demoBack">返回欢迎页</button>
+    <main class="demo-split">
+      <section class="demo-hero" aria-label="手机预览">
+        <div class="intro-hero-glow" aria-hidden="true">
+          <div class="intro-hero-glow-base"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--1" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--2" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--3" aria-hidden="true"></div>
+          <div class="intro-hero-mesh intro-hero-mesh--4" aria-hidden="true"></div>
+          <div class="intro-hero-conic" aria-hidden="true"></div>
+          <div class="intro-hero-rotor intro-hero-rotor--a">
+            <div class="intro-hero-gradient-sheet"></div>
+          </div>
+          <div class="intro-hero-rotor intro-hero-rotor--b">
+            <div class="intro-hero-gradient-sheet intro-hero-gradient-sheet--dodge"></div>
+          </div>
+          <div class="intro-hero-sheen" aria-hidden="true"></div>
+          <div class="intro-hero-glow-light"></div>
+          <div class="intro-hero-glow-orb" aria-hidden="true"></div>
+          <div class="intro-hero-particles" aria-hidden="true"></div>
+          <div class="intro-hero-particle-sparks" aria-hidden="true"></div>
+          <div class="intro-hero-noise" aria-hidden="true"></div>
+        </div>
+        <div class="intro-hero-glass" aria-hidden="true"></div>
+        <div class="demo-hero-inner">
+          <div
+            class="clip-note-toast tooltip-container"
+            id="clipNoteToast"
+            role="status"
+            aria-live="polite"
+          >
+            <span class="tooltip">画幅发生裁剪</span>
+          </div>
+          <div class="phone-shell">
+            <div class="phone" id="phone" style="--phone-h: 720px; --nav-h: 48px; --status-h: 40px;">
+            <div class="stage" id="stage">
+
+              <div class="status">
+                <span>8:00</span>
+                <div class="notch" aria-hidden="true"></div>
+                <span class="status-icons">
+                  <span class="status-icon-box"><img class="status-icon-svg" src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'&gt;&lt;path d='M14.6666 1.33334L1.33331 14.6667H14.6666V1.33334Z' fill='white'/&gt;&lt;/svg&gt;" alt="" /></span>
+                  <span class="status-icon-box"><img class="status-icon-svg" src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'&gt;&lt;path d='M0.666687 5.99999L8.00002 13.3333L15.3334 5.99999C11.28 1.94666 4.72002 1.94666 0.666687 5.99999Z' fill='white'/&gt;&lt;/svg&gt;" alt="" /></span>
+                  <span class="status-icon-box"><img class="status-icon-svg" src="data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16' fill='none'&gt;&lt;path d='M9.59375 0.916718H6.40625V2.33338H4.8125C4.2257 2.33338 3.75 2.80908 3.75 3.39588V14.0209C3.75 14.6077 4.2257 15.0834 4.8125 15.0834H11.1875C11.7743 15.0834 12.25 14.6077 12.25 14.0209V3.39588C12.25 2.80908 11.7743 2.33338 11.1875 2.33338H9.59375V0.916718Z' fill='white'/&gt;&lt;/svg&gt;" alt="" /></span>
+                </span>
+              </div>
+
+              <div class="main" id="main">
+                <div class="shoot-frame" id="shootFrame" style="--frame-h: 640px;">
+                  <div class="preview" id="preview" aria-hidden="true">
+                    <video
+                      class="preview-video"
+                      src="/Users/bytedance/Downloads/223551%20(1).mp4"
+                      muted
+                      loop
+                      playsinline
+                      autoplay
+                      preload="auto"
+                    ></video>
+                  </div>
+
+                  <div class="top-ui" id="topUi">
+                    <div class="camera-back-variant" data-variant="Icon" title="返回">
+                      <div class="camera-back-icon-slot" data-style="Tinted">
+                        <img class="camera-back-item-img" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%2210%2010%2024%2024%22%20fill%3D%22none%22%3E%3Cpath%20d%3D%22M19.9394%2013.6465C20.1346%2013.4513%2020.4512%2013.4512%2020.6464%2013.6465L21.3534%2014.3535C21.5486%2014.5488%2021.5486%2014.8653%2021.3534%2015.0605L15.414%2021H31.4999C31.776%2021%2031.9999%2021.2239%2031.9999%2021.5V22.5C31.9999%2022.7761%2031.776%2022.9999%2031.4999%2023H15.414L21.3534%2028.9394C21.5486%2029.1347%2021.5487%2029.4513%2021.3534%2029.6465L20.6464%2030.3535C20.4512%2030.5487%2020.1346%2030.5487%2019.9394%2030.3535L12.2929%2022.707C11.9024%2022.3165%2011.9024%2021.6835%2012.2929%2021.293L19.9394%2013.6465Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                      </div>
+                    </div>
+                    <div id="musicEntrance" class="sound-entrance" role="region" aria-label="音乐入口">
+                      <div class="sound-name">
+                        <div class="icontools-icon-frame">
+                          <div class="icon-fill-hack">
+                            <img src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2210%22%20height%3D%2215%22%20viewBox%3D%220%200%2010%2015%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M6.66699%200C6.66719%201.65669%208.01026%203%209.66699%203V5C8.5414%205%207.50265%204.62768%206.66699%204V11.333C6.66697%2013.1738%205.17475%2014.6658%203.33398%2014.666C1.49305%2014.666%202.24113e-05%2013.1739%200%2011.333C0%209.49206%201.49304%208%203.33398%208C4.3337%208.00007%204.66699%208.27734%204.66699%208.27734V0H6.66699Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                          </div>
+                        </div>
+                        <p class="text-wrapper">Fly me to the moon…</p>
+                      </div>
+                      <div class="split-line" aria-hidden="true"></div>
+                      <div class="close" title="关闭">
+                        <div class="icon-fill-hack-wrapper">
+                          <img class="img" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2211%22%20height%3D%2211%22%20viewBox%3D%220%200%2011%2011%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M8.9609%200.121975C9.12363%20-0.0406203%209.38807%20-0.0406961%209.55075%200.121975L10.1396%200.711819C10.3022%200.874505%2010.3022%201.13799%2010.1396%201.30069L6.30954%205.13076L10.1396%208.96084C10.3023%209.12356%2010.3023%209.38797%2010.1396%209.55069L9.55075%2010.1396C9.38803%2010.3023%209.12362%2010.3023%208.9609%2010.1396L5.13082%206.30948L1.30075%2010.1396C1.13806%2010.3022%200.874605%2010.3022%200.711879%2010.1396L0.122036%209.55069C-0.0406764%209.38797%20-0.0406806%209.12356%200.122036%208.96084L3.95211%205.13076L0.122036%201.30069C-0.0404027%201.13801%20-0.0404208%200.874481%200.122036%200.711819L0.711879%200.121975C0.874557%20-0.0402727%201.13814%20-0.0403936%201.30075%200.121975L5.13082%203.95303L8.9609%200.121975Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                      </div>
+                    </div>
+                    <div id="rightTools" class="right-tools" role="toolbar" aria-label="拍摄工具">
+                    <div class="right-tools-shoot">
+                      <div class="right-tool-item is-flip">
+                        <div class="right-tool-icon-wrap">
+                          <img class="right-tool-icon icon-flip" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2230%22%20height%3D%2228%22%20viewBox%3D%220%200%2030%2028%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M15.0127%204.82009C19.8331%204.82009%2023.776%208.6185%2024.0736%2013.4166L22.6793%2013.4166C21.7536%2013.4166%2021.2106%2014.4697%2021.7406%2015.237L24.8213%2019.6974C25.2751%2020.3544%2026.236%2020.3577%2026.6942%2019.7038L29.7893%2015.2864C30.3224%2014.5257%2029.7928%2013.4725%2028.8708%2013.4597L27.5054%2013.4408C27.2161%206.71729%2021.7336%201.3562%2015.0127%201.3562C13.038%201.3562%2011.647%201.60316%2010.043%202.42087C9.45971%202.71825%209.27369%203.43452%209.56868%203.9841L10.1029%204.9794C10.3969%205.52708%2011.0449%205.72005%2011.578%205.49957C12.6367%205.06172%2013.7961%204.82009%2015.0127%204.82009Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M3.37367%208.06756L0.199761%2012.7924C-0.316555%2013.561%200.227951%2014.6005%201.14687%2014.6005H2.43759C2.46815%2015.2693%202.55016%2015.925%202.6798%2016.5634C3.84904%2022.321%208.88816%2026.6512%2014.9289%2026.6512L15.0145%2026.6511C16.9294%2026.6452%2018.3532%2026.4388%2019.9478%2025.6408C20.5425%2025.3432%2020.724%2024.6144%2020.42%2024.0648L19.8377%2023.0121C19.5397%2022.4734%2018.8977%2022.2865%2018.3695%2022.5054C17.3091%2022.9448%2016.1477%2023.1873%2014.9289%2023.1873C10.5447%2023.1873%206.88525%2020.0448%206.03586%2015.8656C5.95211%2015.4535%205.89563%2015.0312%205.8685%2014.6005H7.37741C8.28732%2014.6005%208.83365%2013.5791%208.33555%2012.8091L5.27892%208.08429C4.83167%207.39294%203.83274%207.38417%203.37367%208.06756Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20d%3D%22M15.0129%204.23667C20.3457%204.23667%2024.6688%208.60779%2024.6688%2013.9998L22.6795%2013.9998C22.2203%2013.9998%2021.9509%2014.5223%2022.2139%2014.903L25.2945%2019.3633C25.5196%2019.6893%2025.9963%2019.6909%2026.2236%2019.3665L29.3188%2014.9491C29.5832%2014.5717%2029.3205%2014.0492%2028.8631%2014.0429L26.9407%2014.0163L26.9408%2013.9998C26.9408%207.33908%2021.6005%201.93945%2015.0129%201.93945C13.1012%201.93945%2011.8052%202.17585%2010.303%202.94166C10.0257%203.08302%209.92784%203.42982%2010.076%203.70577L10.6102%204.70107C10.7543%204.96947%2011.0802%205.07518%2011.3598%204.95958C12.4867%204.49355%2013.7201%204.23667%2015.0129%204.23667Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M3.85114%208.39523L0.677226%2013.1201C0.421083%2013.5014%200.69121%2014.017%201.14709%2014.017H3.00121C3.00186%2014.8491%203.08583%2015.6614%203.24515%2016.4459C4.3604%2021.9377%209.16772%2026.0678%2014.9291%2026.0678C14.9572%2026.0678%2014.9851%2026.0678%2015.013%2026.0677C16.8779%2026.0619%2018.2048%2025.8622%2019.6921%2025.1179C19.9729%2024.9774%2020.0697%2024.6259%2019.9167%2024.3494L19.3344%2023.2968C19.1884%2023.0327%2018.8654%2022.9303%2018.5885%2023.0451C17.4599%2023.5127%2016.2243%2023.7706%2014.9291%2023.7706C10.2657%2023.7706%206.37437%2020.4279%205.47097%2015.983C5.34191%2015.348%205.27383%2014.6905%205.27319%2014.017H7.37763C7.82904%2014.017%208.10007%2013.5103%207.85296%2013.1284L4.79633%208.40353C4.57445%208.06055%204.07888%208.0562%203.85114%208.39523Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                        <div class="right-tool-label">Flip</div>
+                      </div>
+                      <div class="right-tool-item">
+                        <div class="right-tool-icon-wrap">
+                          <img class="right-tool-icon icon-off" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2229%22%20viewBox%3D%220%200%2028%2029%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M17.807%2019.824L7.86054%209.87757L2.66525%2013.9708C2.00423%2014.4916%202.31583%2015.5524%203.1535%2015.633L10.8732%2016.3756L6.43912%2026.5452C6.05126%2027.4348%207.11%2028.2519%207.87228%2027.6514L17.807%2019.824Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M25.9087%2021.1553L21.5938%2016.8404L25.343%2013.8866C26.004%2013.3658%2025.6924%2012.305%2024.8547%2012.2244L17.135%2011.4818L21.5691%201.31219C21.957%200.42263%2020.8982%20-0.394552%2020.1359%200.206034L11.6474%206.89399L6.90035%202.14694C6.44473%201.69133%205.70604%201.69133%205.25043%202.14694L4.42547%202.9719C3.96986%203.42751%203.96986%204.1662%204.42547%204.62181L23.4338%2023.6302C23.8895%2024.0858%2024.6281%2024.0858%2025.0838%2023.6302L25.9087%2022.8052C26.3643%2022.3496%2026.3643%2021.6109%2025.9087%2021.1553Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20d%3D%22M3.02593%2014.429L7.81416%2010.6564L16.9299%2019.7721L7.51094%2027.1931C7.22509%2027.4183%206.82806%2027.1119%206.97351%2026.7783L11.7289%2015.8718L3.20902%2015.0523C2.89489%2015.0221%202.77805%2014.6243%203.02593%2014.429Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M20.7167%2016.7885L25.4959%2021.5677C25.7237%2021.7955%2025.7237%2022.1649%2025.4959%2022.3927L24.6709%2023.2177C24.4431%2023.4455%2024.0738%2023.4455%2023.846%2023.2177L4.83762%204.20927C4.60981%203.98147%204.60981%203.61212%204.83762%203.38432L5.66258%202.55936C5.89038%202.33155%206.25973%202.33155%206.48753%202.55936L11.601%207.67284L20.4966%200.664177C20.7825%200.438958%2021.1795%200.745399%2021.0341%201.07899L16.2787%2011.9854L24.7985%2012.805C25.1127%2012.8352%2025.2295%2013.233%2024.9816%2013.4283L20.7167%2016.7885Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                        <div class="right-tool-label">Off</div>
+                      </div>
+                      <div class="right-tool-item">
+                        <div class="right-tool-icon-wrap">
+                          <img class="right-tool-icon icon-timer" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2228%22%20viewBox%3D%220%200%2028%2028%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M8.30844%201.8469C10.037%201.03606%2011.9664%200.583252%2013.9999%200.583252C21.4097%200.583252%2027.4166%206.5901%2027.4166%2013.9999C27.4166%2021.4097%2021.4097%2027.4166%2013.9999%2027.4166C6.5901%2027.4166%200.583252%2021.4097%200.583252%2013.9999C0.583252%2012.1282%200.966868%2010.3446%201.66032%208.72454C1.93018%208.0941%202.66882%207.86701%203.24596%208.1634L4.2817%208.6953C4.85166%208.988%205.05895%209.66288%204.82971%2010.2181C4.34884%2011.3828%204.08325%2012.6596%204.08325%2013.9999C4.08325%2019.4767%208.5231%2023.9166%2013.9999%2023.9166C19.4767%2023.9166%2023.9166%2019.4767%2023.9166%2013.9999C23.9166%208.5231%2019.4767%204.08325%2013.9999%204.08325C12.5315%204.08325%2011.1391%204.40205%209.88682%204.97365C9.32984%205.22789%208.63365%205.03272%208.32907%204.45429L7.78817%203.42707C7.49059%202.86195%207.6979%202.1333%208.30844%201.8469ZM11.8289%2015.673L7.92836%209.75639C7.58355%209.23336%207.65401%208.53998%208.09699%208.097C8.53997%207.65402%209.23335%207.58356%209.75639%207.92837L15.673%2011.8289L15.7149%2011.8709C16.7764%2012.9324%2016.7764%2014.6534%2015.7149%2015.7149C14.6534%2016.7764%2012.9324%2016.7764%2011.8709%2015.7149L11.8289%2015.673Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20d%3D%22M2.19675%208.95425C2.32629%208.65162%202.6868%208.53208%202.97964%208.68247L4.01538%209.21437C4.29778%209.3594%204.41184%209.70221%204.29069%209.99564C3.78118%2011.2297%203.50008%2012.5821%203.50008%2014.0001C3.50008%2019.7991%208.20109%2024.5001%2014.0001%2024.5001C19.7991%2024.5001%2024.5001%2019.7991%2024.5001%2014.0001C24.5001%208.20109%2019.7991%203.50008%2014.0001%203.50008C12.4464%203.50008%2010.9715%203.83754%209.64476%204.44315C9.35017%204.57762%208.99626%204.4692%208.84538%204.18267L8.30448%203.15545C8.15354%202.8688%208.26305%202.51276%208.55634%202.37518C10.209%201.59995%2012.0539%201.16675%2014.0001%201.16675C21.0877%201.16675%2026.8334%206.91243%2026.8334%2014.0001C26.8334%2021.0877%2021.0877%2026.8334%2014.0001%2026.8334C6.91243%2026.8334%201.16675%2021.0877%201.16675%2014.0001C1.16675%2012.2087%201.53378%2010.5031%202.19675%208.95425Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M8.50963%208.50964C8.26248%208.75679%208.22316%209.14366%208.41555%209.43548L12.2835%2015.3026C13.1172%2016.1363%2014.4689%2016.1363%2015.3026%2015.3026C16.1363%2014.4689%2016.1363%2013.1172%2015.3026%2012.2835L9.43548%208.41555C9.14366%208.22317%208.75679%208.26248%208.50963%208.50964Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                        <div class="right-tool-label">Timer</div>
+                      </div>
+                      <div class="right-tool-item">
+                        <div class="right-tool-icon-wrap">
+                          <img class="right-tool-icon icon-speed" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2228%22%20viewBox%3D%220%200%2028%2028%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M16.9166%2013.4167V13.3574L15.3596%205.77549C15.227%205.12999%2014.6589%204.66667%2013.9999%204.66667C13.3409%204.66667%2012.7728%205.12999%2012.6402%205.77549L11.0833%2013.3574V13.4167C11.0833%2015.0275%2012.3891%2016.3333%2013.9999%2016.3333C15.6108%2016.3333%2016.9166%2015.0275%2016.9166%2013.4167Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M2.00567%2019.435C2.27568%2019.9721%202.88977%2020.1766%203.41191%2020.0066C3.7282%2019.9036%204.06669%2019.8048%204.42585%2019.7109C5.19295%2019.5104%205.5373%2018.6444%205.18857%2017.9712C4.48242%2016.608%204.08325%2015.0598%204.08325%2013.4167C4.08325%207.93984%208.5231%203.5%2013.9999%203.5C19.4767%203.5%2023.9166%207.93984%2023.9166%2013.4167C23.9166%2015.0598%2023.5174%2016.608%2022.8113%2017.9712C22.4625%2018.6444%2022.8069%2019.5104%2023.574%2019.7109C23.9331%2019.8048%2024.2716%2019.9036%2024.5879%2020.0066C25.1101%2020.1766%2025.7242%2019.9721%2025.9942%2019.435C26.9044%2017.6243%2027.4166%2015.5795%2027.4166%2013.4167C27.4166%206.00685%2021.4097%200%2013.9999%200C6.5901%200%200.583252%206.00685%200.583252%2013.4167C0.583252%2015.5795%201.09544%2017.6243%202.00567%2019.435Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M9.57295%2028H12.6296V19.4309H9.65808L7.45195%2021.3092V24.7456L9.57295%2022.8856V28Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M17.5542%2028H21.0627L18.9118%2024.4529L20.8639%2021.1739H17.3591L16.9308%2022.1347L16.5141%2021.1739H12.9644L14.9357%2024.4933L12.7913%2028H16.294L16.9446%2026.685L17.5542%2028Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20d%3D%22M3.49984%2013.4166C3.49984%207.6176%208.20085%202.91659%2013.9998%202.91659C19.7988%202.91659%2024.4998%207.6176%2024.4998%2013.4166C24.4998%2015.1553%2024.0772%2016.7952%2023.3292%2018.2394C23.1444%2018.596%2023.3329%2019.0449%2023.7214%2019.1465C24.0906%2019.243%2024.4402%2019.3449%2024.7685%2019.4518C25.0416%2019.5407%2025.3439%2019.4295%2025.4729%2019.1729C26.3432%2017.4417%2026.8332%2015.4863%2026.8332%2013.4166C26.8332%206.32893%2021.0875%200.583252%2013.9998%200.583252C6.91218%200.583252%201.1665%206.32893%201.1665%2013.4166C1.1665%2015.4863%201.65648%2017.4417%202.52677%2019.1729C2.65579%2019.4295%202.95807%2019.5407%203.23122%2019.4518C3.55952%2019.3449%203.90912%2019.243%204.27824%2019.1465C4.66676%2019.0449%204.85523%2018.596%204.67052%2018.2394C3.92244%2016.7952%203.49984%2015.1553%203.49984%2013.4166Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M13.2116%205.89275C13.2884%205.51853%2013.6178%205.24992%2013.9998%205.24992C14.3819%205.24992%2014.7112%205.51853%2014.7881%205.89275L16.3332%2013.4166C16.3332%2014.7052%2015.2885%2015.7499%2013.9998%2015.7499C12.7112%2015.7499%2011.6665%2014.7053%2011.6665%2013.4166L13.2116%205.89275Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M10.1562%2027.4166H12.0462V20.0141H9.8727L8.0352%2021.5786V23.4581L10.0827%2021.6626H10.1562V27.4166Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M17.9267%2027.4166H20.0267L18.2312%2024.4556L19.8377%2021.7571H17.7377L16.9607%2023.5001H16.8872L16.1312%2021.7571H13.9892L15.6167%2024.4976L13.8317%2027.4166H15.9317L16.9292%2025.4006H16.9922L17.9267%2027.4166Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                        <div class="right-tool-label">Speed</div>
+                      </div>
+                      <div class="right-tool-item">
+                        <div class="right-tool-icon-wrap">
+                          <img class="right-tool-icon icon-filters" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2228%22%20viewBox%3D%220%200%2028%2028%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M8.45842%2026.7751C10.6668%2026.7751%2012.6708%2025.8979%2014.1402%2024.4745C15.574%2025.8919%2017.5343%2026.7751%2019.7069%2026.7751C24.1694%2026.7751%2027.7084%2023.0747%2027.7084%2018.6084C27.7084%2014.8491%2025.2037%2011.6357%2021.7492%2010.7095C21.832%2010.2432%2021.8751%209.7638%2021.8751%209.27507C21.8751%204.76474%2018.2187%201.1084%2013.7084%201.1084C9.19809%201.1084%205.54175%204.76474%205.54175%209.27507C5.54175%209.83701%205.59859%2010.3862%205.70698%2010.917C2.55072%2012.0463%200.291748%2015.0629%200.291748%2018.6084C0.291748%2023.1187%203.94809%2026.7751%208.45842%2026.7751ZM9.04175%209.27507C9.04175%206.69774%2011.1311%204.6084%2013.7084%204.6084C16.2857%204.6084%2018.3751%206.69774%2018.3751%209.27507C18.3751%209.73274%2018.3097%2010.1732%2018.1881%2010.5887C16.1079%2010.9967%2014.3252%2012.2243%2013.1615%2013.9101C10.8421%2013.6395%209.04175%2011.6674%209.04175%209.27507ZM12.9699%2017.4088C10.5816%2017.1946%208.49034%2015.9524%207.14101%2014.1301C5.2051%2014.6985%203.79175%2016.489%203.79175%2018.6084C3.79175%2021.1857%205.88109%2023.2751%208.45842%2023.2751C11.0357%2023.2751%2013.1251%2021.1857%2013.1251%2018.6084C13.1251%2018.1923%2013.071%2017.7905%2012.9699%2017.4088ZM19.7069%2023.2751C18.2585%2023.2751%2016.954%2022.5642%2016.1233%2021.433C16.448%2020.5521%2016.6251%2019.6003%2016.6251%2018.6084C16.6251%2017.6177%2016.4479%2016.6656%2016.123%2015.7841C16.9538%2014.6527%2018.2584%2013.9417%2019.7069%2013.9417C22.1513%2013.9417%2024.2084%2015.9888%2024.2084%2018.6084C24.2084%2021.228%2022.1513%2023.2751%2019.7069%2023.2751Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M0.875%2018.6083C0.875%2015.1334%203.21225%2012.2044%206.40047%2011.3075C6.22094%2010.6607%206.125%209.97903%206.125%209.27498C6.125%205.08682%209.52017%201.69165%2013.7083%201.69165C17.8965%201.69165%2021.2917%205.08682%2021.2917%209.27498C21.2917%209.9215%2021.2105%2010.5498%2021.0578%2011.15C24.5283%2011.801%2027.125%2014.9147%2027.125%2018.6083C27.125%2022.7676%2023.8323%2026.1917%2019.7068%2026.1917C17.4841%2026.1917%2015.4991%2025.1934%2014.1446%2023.6257C12.7551%2025.1993%2010.7226%2026.1917%208.45833%2026.1917C4.27017%2026.1917%200.875%2022.7965%200.875%2018.6083ZM8.45833%209.27498C8.45833%206.37549%2010.8088%204.02498%2013.7083%204.02498C16.6078%204.02498%2018.9583%206.37549%2018.9583%209.27498C18.9583%209.91944%2018.8427%2010.5353%2018.6313%2011.1041C16.4525%2011.4274%2014.5889%2012.7179%2013.4586%2014.5191C10.6751%2014.3888%208.45833%2012.0908%208.45833%209.27498ZM13.7083%2018.6083C13.7083%2017.9914%2013.6024%2017.4007%2013.4079%2016.8525C10.8944%2016.7545%208.695%2015.4333%207.38831%2013.4674C5.00194%2013.9616%203.20833%2016.0755%203.20833%2018.6083C3.20833%2021.5078%205.55884%2023.8583%208.45833%2023.8583C11.3578%2023.8583%2013.7083%2021.5078%2013.7083%2018.6083ZM19.7068%2023.8583C17.9478%2023.8583%2016.3845%2022.9345%2015.4674%2021.5083C15.8375%2020.6149%2016.0417%2019.6355%2016.0417%2018.6083C16.0417%2017.5827%2015.8375%2016.6028%2015.4672%2015.7086C16.3843%2014.2823%2017.9476%2013.3583%2019.7068%2013.3583C22.4866%2013.3583%2024.7917%2015.68%2024.7917%2018.6083C24.7917%2021.5367%2022.4866%2023.8583%2019.7068%2023.8583Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                        <div class="right-tool-label">Filters</div>
+                      </div>
+                      <div class="right-tool-item">
+                        <div class="right-tool-icon-wrap">
+                          <img class="right-tool-icon icon-beautify" src="data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2228%22%20height%3D%2228%22%20viewBox%3D%220%200%2028%2028%22%20fill%3D%22none%22%3E%3Cpath%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20d%3D%22M22.3665%205.64569C22.5567%205.83442%2022.9254%206.00636%2023.4807%206.15077C24.6049%206.44313%2025.7965%206.45421%2026.9103%206.78526C27.1389%206.85321%2027.3839%206.94758%2027.5821%207.09453C27.7932%207.25103%2028%207.50872%2028%207.875C28%208.23956%2027.795%208.49672%2027.5846%208.65333C27.3874%208.80019%2027.1437%208.89439%2026.9166%208.96214C25.8039%209.29416%2024.6128%209.30461%2023.4899%209.59954C22.9315%209.74621%2022.5606%209.92141%2022.3693%2010.1148L22.3648%2010.1193C22.1715%2010.3106%2021.9962%2010.6815%2021.8496%2011.2399C21.5546%2012.3628%2021.5442%2013.5539%2021.2122%2014.6666C21.1444%2014.8936%2021.0502%2015.1374%2020.9034%2015.3346C20.7467%2015.545%2020.4896%2015.75%2020.125%2015.75C19.7593%2015.75%2019.5018%2015.5438%2019.3453%2015.3328C19.1985%2015.1349%2019.1044%2014.8903%2019.0368%2014.6623C18.7064%2013.5488%2018.6967%2012.3576%2018.4044%2011.2338C18.2597%2010.6774%2018.0869%2010.308%2017.8968%2010.1176C17.7019%209.92412%2017.3281%209.74963%2016.7699%209.60346C15.6446%209.3088%2014.4511%209.29671%2013.3363%208.96385C13.1084%208.89581%2012.8641%208.80135%2012.6664%208.65436C12.4559%208.49774%2012.25%208.24033%2012.25%207.875C12.25%207.50825%2012.4575%207.25051%2012.6687%207.09419C12.8671%206.94735%2013.1124%206.85304%2013.3413%206.78512C14.4576%206.45398%2015.6516%206.44286%2016.7783%206.15061C17.3329%206.00675%2017.7031%205.8354%2017.8957%205.64679C18.0852%205.45222%2018.2567%205.08055%2018.4005%204.52599C18.5406%203.98558%2018.6325%203.36604%2018.7235%202.74768L18.7284%202.71411C18.8132%202.13855%2018.9008%201.54274%2019.0351%201.0906C19.103%200.861794%2019.1974%200.616598%2019.3443%200.418271C19.5008%200.207058%2019.7585%200%2020.125%200C20.4906%200%2020.748%200.206235%2020.9045%200.41684C21.0514%200.614562%2021.1458%200.858988%2021.2138%201.08698C21.3482%201.53742%2021.4363%202.13106%2021.5214%202.70467L21.5264%202.73826C21.6185%203.35849%2021.7114%203.98021%2021.8533%204.52215C21.9996%205.08052%2022.174%205.4528%2022.3665%205.64569ZM7.85146%209.60593C7.79472%209.66205%207.71052%209.81221%207.63068%2010.1162C7.46468%2010.7482%207.4584%2011.4167%207.27143%2012.0433C7.23047%2012.1806%207.16737%2012.351%207.05843%2012.4973C6.93972%2012.6568%206.72727%2012.8333%206.41668%2012.8333C6.10512%2012.8333%205.89244%2012.6557%205.77392%2012.4959C5.66508%2012.3492%205.6021%2012.1783%205.56122%2012.0406C5.37513%2011.4134%205.36929%2010.7448%205.20474%2010.1122C5.1261%209.80987%205.04321%209.66028%204.98766%209.60427C4.92887%209.54621%204.77611%209.46232%204.47278%209.3829C3.83933%209.21703%203.16946%209.20983%202.54157%209.02236C2.40387%208.98125%202.23322%208.91802%202.08672%208.80906C1.92726%208.69047%201.75002%208.47789%201.75002%208.16667C1.75002%207.85416%201.92869%207.64134%202.08846%207.5231C2.23542%207.41434%202.40658%207.35128%202.54483%207.31027C3.17354%207.12376%203.84381%207.11709%204.47809%206.95256C4.77692%206.87505%204.92785%206.79345%204.98651%206.73757C5.04331%206.67765%205.12504%206.52551%205.2025%206.2268C5.36692%205.59278%205.37369%204.92274%205.56027%204.29435C5.6013%204.15616%205.66441%203.98502%205.77326%203.8381C5.89166%203.6783%206.10447%203.5%206.41668%203.5C6.7282%203.5%206.94078%203.67761%207.05922%203.83703C7.16808%203.98357%207.23127%204.15425%207.27236%204.292C7.45976%204.92021%207.46686%205.59032%207.63284%206.22404C7.7123%206.52742%207.79603%206.67893%207.85312%206.73648C7.90902%206.79164%208.05851%206.87417%208.36045%206.95269C8.99334%207.11728%209.66224%207.12392%2010.2896%207.31039C10.4276%207.35143%2010.5987%207.41455%2010.7455%207.52342C10.9052%207.64185%2011.0834%207.85462%2011.0834%208.16667C11.0834%208.47725%2010.9068%208.6897%2010.7473%208.80841C10.601%208.91735%2010.4306%208.98046%2010.2934%209.02142C9.66675%209.20839%208.99826%209.21466%208.36623%209.38066C8.06223%209.4605%207.91207%209.54471%207.85594%209.60144L7.85146%209.60593ZM21.9996%2021.1746C22.0799%2021.254%2022.2692%2021.3528%2022.6172%2021.4432C23.3394%2021.6311%2024.1033%2021.6385%2024.8191%2021.8513C24.9736%2021.8972%2025.1581%2021.966%2025.3143%2022.0818C25.4833%2022.2072%2025.6667%2022.4281%2025.6667%2022.75C25.6667%2023.0704%2025.485%2023.291%2025.3162%2023.4166C25.1607%2023.5324%2024.9769%2023.6012%2024.8233%2023.647C24.1084%2023.8603%2023.3449%2023.8674%2022.6236%2024.0568C22.2733%2024.1488%2022.083%2024.2496%2022.0023%2024.3311L21.9979%2024.3356C21.9163%2024.4163%2021.8155%2024.6066%2021.7235%2024.9569C21.5341%2025.6782%2021.527%2026.4417%2021.3137%2027.1567C21.2679%2027.3103%2021.1991%2027.494%2021.0833%2027.6496C20.9577%2027.8183%2020.7371%2028%2020.4167%2028C20.0953%2028%2019.8744%2027.8172%2019.749%2027.6481C19.6333%2027.492%2019.5646%2027.3078%2019.5189%2027.1536C19.3066%2026.4381%2019.3%2025.6744%2019.1123%2024.9525C19.0216%2024.6039%2018.9224%2024.4144%2018.8424%2024.334C18.7589%2024.2514%2018.566%2024.151%2018.2162%2024.0594C17.4933%2023.8701%2016.7282%2023.862%2016.0118%2023.6481C15.8577%2023.6021%2015.6737%2023.5332%2015.5179%2023.4173C15.3491%2023.2918%2015.1667%2023.0711%2015.1667%2022.75C15.1667%2022.4276%2015.3506%2022.2066%2015.5198%2022.0815C15.6761%2021.9658%2015.8607%2021.897%2016.0155%2021.8511C16.7328%2021.6383%2017.4983%2021.6309%2018.2221%2021.4431C18.568%2021.3534%2018.7585%2021.2554%2018.8412%2021.1756C18.9219%2021.0915%2019.0201%2020.8997%2019.1097%2020.5539C19.2973%2019.8304%2019.3049%2019.0652%2019.5178%2018.3482C19.5637%2018.1935%2019.6325%2018.0089%2019.7483%2017.8527C19.8736%2017.6835%2020.0946%2017.5%2020.4167%2017.5C20.738%2017.5%2020.9588%2017.6828%2021.0841%2017.8515C21.1999%2018.0074%2021.2688%2018.1915%2021.3147%2018.3456C21.5286%2019.0624%2021.5365%2019.8278%2021.726%2020.551C21.8176%2020.901%2021.9179%2021.0926%2021.9996%2021.1746ZM14.2254%2011.4874C14.6838%2011.0499%2015.4076%2011.0584%2015.8557%2011.5065L16.4936%2012.1443C16.9416%2012.5924%2016.9501%2013.3162%2016.5127%2013.7747L4.42831%2026.4391C3.97611%2026.913%203.22247%2026.9218%202.75929%2026.4586L1.54142%2025.2408C1.07824%2024.7776%201.08707%2024.0239%201.56097%2023.5717L14.2254%2011.4874Z%22%20fill%3D%22black%22%20fill-opacity%3D%220.12%22%2F%3E%3Cpath%20d%3D%22M20.9493%202.82384C20.7712%201.62411%2020.6167%200.583252%2020.1249%200.583252C19.6317%200.583252%2019.4777%201.62896%2019.3005%202.83256C19.1206%204.05514%2018.9166%205.44067%2018.3087%206.05863C17.6939%206.66673%2016.3078%206.87064%2015.0841%207.05066C13.8801%207.22779%2012.8333%207.38178%2012.8333%207.87492C12.8333%208.36679%2013.8731%208.52126%2015.0724%208.69942C16.2975%208.88142%2017.689%209.08814%2018.3087%209.70447C18.9213%2010.3171%2019.1248%2011.704%2019.3042%2012.927C19.48%2014.1256%2019.6328%2015.1666%2020.1249%2015.1666C20.6157%2015.1666%2020.769%2014.1314%2020.9458%2012.9371C21.1272%2011.7117%2021.3335%2010.3188%2021.9545%209.70447C22.5688%209.08343%2023.9617%208.8772%2025.1871%208.69578C26.3814%208.51895%2027.4166%208.36569%2027.4166%207.87492C27.4166%207.38185%2026.3718%207.22783%2025.1704%207.05074C23.9491%206.8707%2022.566%206.66682%2021.9545%206.05863C21.338%205.44214%2021.1313%204.05001%2020.9493%202.82384Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M6.4166%204.08325C6.69198%204.08325%206.7785%204.66613%206.87824%205.33798C6.98018%206.02463%207.09591%206.80423%207.44115%207.14947C7.78361%207.49005%208.55813%207.60422%209.24207%207.70504C9.91483%207.80422%2010.4999%207.89047%2010.4999%208.16659C10.4999%208.44142%209.92025%208.52724%209.25143%208.62627C8.56521%208.72786%207.78517%208.84335%207.44115%209.19113C7.09337%209.53515%206.97788%2010.3152%206.87628%2011.0014C6.77726%2011.6702%206.69144%2012.2499%206.4166%2012.2499C6.14099%2012.2499%206.05546%2011.6669%205.95698%2010.9957C5.85651%2010.3109%205.74255%209.5342%205.39948%209.19113C5.05246%208.84599%204.27322%208.73022%203.58717%208.62831C2.91557%208.52854%202.33327%208.44203%202.33327%208.16659C2.33327%207.89043%202.91947%207.80419%203.59373%207.705C4.27899%207.60419%205.05521%207.49%205.39948%207.14947C5.73993%206.80341%205.85415%206.02753%205.95494%205.34288C6.05416%204.66885%206.14037%204.08325%206.4166%204.08325Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M20.9442%2019.5172C20.8302%2018.7494%2020.7313%2018.0833%2020.4166%2018.0833C20.1009%2018.0833%2020.0024%2018.7525%2019.889%2019.5228C19.7738%2020.3053%2019.6433%2021.192%2019.2542%2021.5875C18.8607%2021.9767%2017.9737%2022.1072%2017.1905%2022.2224C16.42%2022.3357%2015.7499%2022.4343%2015.7499%2022.7499C15.7499%2023.0647%2016.4154%2023.1636%2017.183%2023.2776C17.967%2023.3941%2018.8576%2023.5264%2019.2542%2023.9208C19.6463%2024.3129%2019.7765%2025.2006%2019.8913%2025.9832C20.0039%2026.7503%2020.1016%2027.4166%2020.4166%2027.4166C20.7307%2027.4166%2020.8288%2026.7541%2020.942%2025.9897C21.0581%2025.2055%2021.1901%2024.314%2021.5875%2023.9208C21.9807%2023.5234%2022.8722%2023.3914%2023.6564%2023.2753C24.4208%2023.1621%2025.0833%2023.064%2025.0833%2022.7499C25.0833%2022.4344%2024.4146%2022.3358%2023.6457%2022.2224C22.8641%2022.1072%2021.9789%2021.9767%2021.5875%2021.5875C21.193%2021.1929%2021.0607%2020.302%2020.9442%2019.5172Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M15.4432%2011.9189C15.2191%2011.6948%2014.8572%2011.6906%2014.628%2011.9093L1.96359%2023.9937C1.72664%2024.2198%201.72222%2024.5966%201.95381%2024.8282L3.17169%2026.0461C3.40328%2026.2777%203.7801%2026.2732%204.0062%2026.0363L16.0905%2013.3719C16.3093%2013.1427%2016.305%2012.7808%2016.081%2012.5567L15.4432%2011.9189Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E" alt="" decoding="async" />
+                        </div>
+                        <div class="right-tool-label">Beautify</div>
+                      </div>
+                    </div>
+                    <div class="right-tools-edit" aria-hidden="true">
+                      <div class="right-tools-edit__item">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--gear">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/4621007f-250e-426a-8460-1a78f02555f9"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label">Privacy settings</span>
+                      </div>
+                      <div class="right-tools-edit__item right-tools-edit__item--px14">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--text">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/7c4b629f-77a2-477e-b22c-2dad43a63477"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Text</span>
+                      </div>
+                      <div class="right-tools-edit__item right-tools-edit__item--px8">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--sticker">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/105e30b0-52da-48ee-ad2a-bfeff5bdb820"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Stickers</span>
+                      </div>
+                      <div class="right-tools-edit__item">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--adjust-stroke">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/329cf435-24ad-4357-964f-ac92df4545ce"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                          <div class="right-tools-edit__slot right-tools-edit__slot--adjust-track">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/6800a6e3-dc79-4955-aca7-24341669ad45"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label">Adjust clips</span>
+                      </div>
+                      <div class="right-tools-edit__item">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--filter">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/e1da686d-81dc-4d0e-9618-8d850bdb39a1"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label">Filters</span>
+                      </div>
+                      <div class="right-tools-edit__item right-tools-edit__item--px3">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--mic">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/dc447be2-e00b-4990-875b-b993e711c864"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Voiceover</span>
+                      </div>
+                      <div class="right-tools-edit__item right-tools-edit__item--px10">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--effect">
+                            <img
+                              src="https://www.figma.com/api/mcp/asset/80fce20f-470d-41ef-a9dd-a1d5a9e66f4d"
+                              alt=""
+                              decoding="async"
+                            />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Effects</span>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+
+                  <div class="shoot-ui" id="shootUi">
+                    <div class="tabs" id="tabs">
+                      <span>3m</span><span>60s</span><span>15s</span><span class="pill">PHOTO</span>
+                    </div>
+                    <div class="record" id="record">
+                      <div class="side">
+                        <div class="thumb thumb-effects" role="img" aria-label="Effects 预览">
+                          <img src="effects-thumb.png" alt="" decoding="async" />
+                        </div>
+                        <span>Effects</span>
+                      </div>
+                      <div class="shutter" id="shutter"></div>
+                      <div class="side">
+                        <div class="thumb alt"></div>
+                        <span>Upload</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div id="bottomButton" class="bottom-button-anchor" aria-hidden="true">
+                  <div class="bottom-button-layer--shoot">BottomButton 预留 48</div>
+                  <div class="bottom-button-layer--edit">
+                    <div class="edit-bottom-row">
+                      <button type="button" class="edit-bottom-btn edit-bottom-btn--story" tabindex="-1">
+                        Your Story
+                        <span class="edit-bottom-story-ico" aria-hidden="true">
+                          <img
+                            class="edit-bottom-story-img--ring"
+                            src="https://www.figma.com/api/mcp/asset/ed2f85d2-56f0-4911-b2ba-91fc65f1243d"
+                            alt=""
+                            width="28"
+                            height="28"
+                            decoding="async"
+                          />
+                          <img
+                            class="edit-bottom-story-img--inner"
+                            src="https://www.figma.com/api/mcp/asset/2b079c94-a624-413a-b9fe-ffdced6fa7ae"
+                            alt=""
+                            width="22"
+                            height="22"
+                            decoding="async"
+                          />
+                        </span>
+                      </button>
+                      <button type="button" class="edit-bottom-btn edit-bottom-btn--next" tabindex="-1">Next</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <nav class="nav" id="phoneNav" aria-label="系统导航三键示意" title="NavigationBar 48dp">
+              <div class="nav-gesture-indicator" aria-hidden="true"></div>
+              <div class="nav-key" aria-hidden="true">
+                <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M26 12L14 22L26 32V12Z" fill="#ffffff" />
+                </svg>
+              </div>
+              <div class="nav-key" aria-hidden="true">
+                <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <circle cx="22" cy="22" r="8" fill="#ffffff" />
+                </svg>
+              </div>
+              <div class="nav-key nav-key--overview" aria-hidden="true"></div>
+            </nav>
+          </div>
+        </div>
+        </div>
+        <div class="phone-page-hover-wrap" id="phonePageHoverWrap">
+          <div
+            class="phone-page-hover-btn"
+            id="phonePageHoverBtn"
+            role="group"
+            aria-label="手机预览：移入查看 Edit，移开恢复 Shoot"
+          >
+            <div class="phone-page-hover-btn__shoot">
+              <span class="phone-page-hover-btn__shoot-text">Shoot</span>
+            </div>
+            <div class="phone-page-hover-btn__edit" aria-hidden="true">
+              <span class="phone-page-hover-btn__edit-text">Edit</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="demo-panel" aria-label="实验控制台">
+        <div class="demo-panel-inner">
+          <header class="page-head">
+            <p class="page-eyebrow">Shoot adaptation lab</p>
+            <div class="page-head-title-row">
+              <h1>ShootPage Adaptation</h1>
+              <label class="nav-mode-switch" for="gestureNavInput">
+                <span class="nav-mode-switch__label">手势导航</span>
+                <input type="checkbox" id="gestureNavInput" role="switch" aria-checked="false" />
+                <span class="nav-mode-switch__track" aria-hidden="true"><span class="nav-mode-switch__thumb"></span></span>
+              </label>
+            </div>
+            <p class="sub" id="panelSubBlurb">
+              宽 <strong>360</strong>，屏高 <strong>H ∈ [600, 828]</strong>（<strong>H/W ∈ [5/3, 2.3]</strong>，约 <strong>1.667–2.3</strong>；参考市售 Android：经典矮屏约 <strong>16:9</strong> 及以下、主流约 <strong>18:9–21:9</strong>；本 Demo 上沿取 <strong>屏比 2.3</strong>）。<strong>画幅</strong>逻辑尺寸恒 <strong>360×640（16:9）</strong>；式中 <strong>「−48」</strong> 恒为 <strong>BottomButton 预留 48</strong>；<strong>NavigationBar</strong> 高度由标题旁开关切换（三键 48dp / 手势 24dp）；<strong>StatusBar</strong> 取系统实际高度（此处滑块模拟 24–48）。<strong>占据 BottomButton 仅 D/G 档</strong>，且 <strong>BottomButton 只有「完全占据」或「不占据」</strong>（无半占据）。
+            </p>
+          </header>
+          <div class="sidebar-stack">
+          <section class="kpi-section" aria-label="关键摘要">
+            <p class="panel-title">关键摘要</p>
+            <div class="kpi-grid">
+              <article class="kpi-cell">
+                <span class="kpi-label">当前档位</span>
+                <span class="kpi-value" id="kpi-gear">—</span>
+              </article>
+              <article class="kpi-cell">
+                <span class="kpi-label">逻辑像素</span>
+                <span class="kpi-value" id="kpi-wh">—</span>
+              </article>
+              <article class="kpi-cell kpi-cell--ratio" id="kpi-ratio-cell" aria-live="polite">
+                <span class="kpi-label">屏比 H/W</span>
+                <div class="kpi-ratio-body">
+                  <span class="kpi-value kpi-value--ratio" id="kpi-ratio">—</span>
+                  <span class="kpi-ratio-common" id="kpi-ratio-common" hidden>常用机型</span>
+                </div>
+              </article>
+              <article class="kpi-cell">
+                <span class="kpi-label">16:9 画幅</span>
+                <span class="kpi-value">360×640</span>
+              </article>
+              <article class="kpi-cell">
+                <span class="kpi-label">屏比区间</span>
+                <span class="kpi-value" id="kpi-band">—</span>
+              </article>
+              <article class="kpi-cell">
+                <span class="kpi-label">画幅底→Nav 顶</span>
+                <span class="kpi-value" id="kpi-frame-nav">—</span>
+              </article>
+            </div>
+          </section>
+
+          <section class="ops-panel" aria-label="主操作·调节">
+            <h3>调节</h3>
+            <div class="control-block">
+              <label for="hRange">
+                <span class="control-head">
+                  <span>屏高 H（1dp = 1px；W=360 定宽，轨道深色刻度为常用 H/W）</span>
+                  <span class="val" id="hVal">720</span>
+                </span>
+                <input id="hRange" type="range" min="600" max="828" step="1" value="720" />
+              </label>
+            </div>
+            <div class="control-block">
+              <label for="sRange">
+                <span class="control-head">
+                  <span>StatusBar 高度（模拟）</span>
+                  <span class="val" id="sVal">40</span>
+                </span>
+                <input id="sRange" type="range" min="24" max="48" step="1" value="40" />
+              </label>
+            </div>
+            <p class="ops-hint" id="ops-hint">—</p>
+          </section>
+
+          <section class="aux-panel" aria-label="详细参数">
+            <p class="panel-title">详细参数</p>
+            <div class="stats-grid">
+              <article class="stat-card">
+                <h3>屏幕与系统栏</h3>
+                <div class="stat-row"><span class="k">屏比 H/W</span><span class="v" id="st-ratio">—</span></div>
+                <div class="stat-row"><span class="k">所属区间</span><span class="v" id="st-band">—</span></div>
+                <div class="stat-row"><span class="k">屏高 H</span><span class="v" id="st-h">—</span></div>
+                <div class="stat-row"><span class="k">屏宽 W</span><span class="v" id="st-w">—</span></div>
+                <div class="stat-row"><span class="k">StatusBar</span><span class="v" id="st-status-h">—</span></div>
+                <div class="stat-row"><span class="k">Navigation 栏高</span><span class="v" id="st-nav-h">—</span></div>
+                <div class="stat-row"><span class="k">Navigation 类型</span><span class="v" id="st-nav-type">底部固定 · 三键示意 · 48dp</span></div>
+              </article>
+              <article class="stat-card">
+                <h3>适配方案</h3>
+                <div class="stat-row"><span class="k">当前档位</span><span class="v" id="st-gear">—</span></div>
+                <p class="stat-note stat-note--formula" id="st-expr">—</p>
+                <p class="stat-note" id="st-note">—</p>
+                <p class="stat-note stat-note--axis" id="st-axis-note">坐标：Stage 顶为 0，底为 Navigation 上沿（C = H − 48）。</p>
+              </article>
+              <article class="stat-card stat-card--span2">
+                <h3>布局与间距</h3>
+                <div class="stat-row"><span class="k">画幅占据 Status 区</span><span class="v" id="st-occupy-status">—</span></div>
+                <div class="stat-row"><span class="k">顶部 UI（画幅内 top）</span><span class="v" id="st-top-ui">—</span></div>
+                <div class="stat-row"><span class="k">BottomButton 在画幅内</span><span class="v" id="st-bb-in-frame">—</span></div>
+                <div class="stat-row"><span class="k">ShootUI 距画幅底</span><span class="v" id="st-shoot-ui">—</span></div>
+                <div class="stat-row"><span class="k">预览裁剪顶/底（示意）</span><span class="v" id="st-preview-crop">—</span></div>
+              </article>
+            </div>
+          </section>
+        </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const W = 360;
+      /** 与滑块轨道锚点一致：H/W ≈ 2.111 / 2.167 / 2.222 / 2.239（W=360 时 H） */
+      const COMMON_MODEL_H = Object.freeze([760, 780, 800, 806]);
+      const FRAME_H = (W * 16) / 9;
+      const BB_H = 48;
+      /** BottomButton 底边距：相对逻辑画幅底 / Navigation（或 Gesture）上沿 */
+      const BB_EDGE_GAP = 4;
+      const NAV_H_THREE = 48;
+      const NAV_H_GESTURE = 24;
+      /** 快门外环 3px + drop-shadow(0,2,4)，盒子 bottom 对齐仍会略压进 BottomButton 区，在「紫条在画幅内」时追加抬升 */
+      const SHOOT_UI_RING_BLEED_PX = 4;
+      /** Shoot UI（快门）底距画幅底：裁剪或「>16:9 + BottomButton 在画幅内 + 吃 StatusBar」时用 */
+      const SHOOT_UI_BOTTOM_COMPACT_DP = 32;
+
+      const phone = document.getElementById("phone");
+      const demoHeroInner = phone ? phone.closest(".demo-hero-inner") : null;
+      const shootFrame = document.getElementById("shootFrame");
+      const preview = document.getElementById("preview");
+      const bottomButton = document.getElementById("bottomButton");
+      const shootUi = document.getElementById("shootUi");
+      const topUi = document.getElementById("topUi");
+      const hRange = document.getElementById("hRange");
+      const sRange = document.getElementById("sRange");
+      const hVal = document.getElementById("hVal");
+      const sVal = document.getElementById("sVal");
+      const kpiRatioCell = document.getElementById("kpi-ratio-cell");
+      const kpiRatioCommon = document.getElementById("kpi-ratio-common");
+      const kpi = {
+        gear: document.getElementById("kpi-gear"),
+        wh: document.getElementById("kpi-wh"),
+        ratio: document.getElementById("kpi-ratio"),
+        band: document.getElementById("kpi-band"),
+        frameNav: document.getElementById("kpi-frame-nav"),
+      };
+      const gestureNavInput = document.getElementById("gestureNavInput");
+      const phoneNav = document.getElementById("phoneNav");
+      const rightTools = document.getElementById("rightTools");
+      const rightToolsEdit = rightTools ? rightTools.querySelector(".right-tools-edit") : null;
+      const rightToolsShoot = rightTools ? rightTools.querySelector(".right-tools-shoot") : null;
+      const phonePageHoverWrap = document.getElementById("phonePageHoverWrap");
+      const phonePageHoverBtn = document.getElementById("phonePageHoverBtn");
+
+      let phonePageMode = "shoot";
+
+      function syncPhonePageHoverUI() {
+        if (!phonePageHoverBtn) return;
+        const isEdit = phonePageMode === "edit";
+        phonePageHoverBtn.setAttribute(
+          "aria-label",
+          isEdit ? "当前为 Edit 预览，移开指针恢复 Shoot" : "移入切换为 Edit 预览，移开恢复 Shoot"
+        );
+      }
+
+      function applyPhonePageMode() {
+        const isEdit = phonePageMode === "edit";
+        if (phone) phone.classList.toggle("phone-page--edit", isEdit);
+        if (rightTools) {
+          rightTools.setAttribute("aria-label", isEdit ? "编辑工具" : "拍摄工具");
+        }
+        if (rightToolsEdit) {
+          rightToolsEdit.setAttribute("aria-hidden", isEdit ? "false" : "true");
+        }
+        if (rightToolsShoot) {
+          rightToolsShoot.setAttribute("aria-hidden", isEdit ? "true" : "false");
+        }
+        if (shootUi) {
+          shootUi.hidden = isEdit;
+          shootUi.setAttribute("aria-hidden", isEdit ? "true" : "false");
+        }
+        syncPhonePageHoverUI();
+      }
+
+      function isGestureNav() {
+        return Boolean(gestureNavInput && gestureNavInput.checked);
+      }
+
+      function navBarHeight() {
+        return isGestureNav() ? NAV_H_GESTURE : NAV_H_THREE;
+      }
+
+      /** 中间带 KPI：手势开时 B/C/D → E/F/G */
+      function displayGearLetter(letter, gesture) {
+        if (!gesture) return letter;
+        if (letter === "B") return "E";
+        if (letter === "C") return "F";
+        if (letter === "D") return "G";
+        return letter;
+      }
+
+      function displayGear(letter, dSub, gesture) {
+        const L = displayGearLetter(letter, gesture);
+        const sub = dSub && gesture ? dSub.replace(/^D/, "G") : dSub;
+        return L + (sub ? " " + sub : "");
+      }
+
+      const opsHint = document.getElementById("ops-hint");
+      const st = {
+        band: document.getElementById("st-band"),
+        h: document.getElementById("st-h"),
+        w: document.getElementById("st-w"),
+        ratio: document.getElementById("st-ratio"),
+        statusH: document.getElementById("st-status-h"),
+        navHLine: document.getElementById("st-nav-h"),
+        gear: document.getElementById("st-gear"),
+        expr: document.getElementById("st-expr"),
+        note: document.getElementById("st-note"),
+        occupyStatus: document.getElementById("st-occupy-status"),
+        topUi: document.getElementById("st-top-ui"),
+        bbInFrame: document.getElementById("st-bb-in-frame"),
+        shootUi: document.getElementById("st-shoot-ui"),
+        previewCrop: document.getElementById("st-preview-crop"),
+        navType: document.getElementById("st-nav-type"),
+        axisNote: document.getElementById("st-axis-note"),
+      };
+
+      function aspect(H) {
+        return H / W;
+      }
+
+      /** 屏高 − 画幅高度 − BottomButton（48）中的「余量」判据；Navigation 高度为 navH 参数 */
+      function classify(H, statusH, navH) {
+        const r = aspect(H);
+        const expr = H - FRAME_H - BB_H;
+
+        if (r >= 20 / 9 - 1e-9) return { letter: "A", expr, r };
+        if (r <= 16 / 9 + 1e-9) return { letter: "H", expr, r };
+
+        if (expr >= statusH + navH + 8) return { letter: "B", expr, r };
+        if (expr > navH && expr < statusH + navH + 8) return { letter: "C", expr, r };
+        if (navH >= expr) return { letter: "D", expr, r };
+
+        return { letter: "?", expr, r };
+      }
+
+      /** BottomButton 区间是否完全落在画幅 [ft, fb] 内（高度须满 48）— D 档占据判定与 ShootUI 底边距共用 */
+      function bbFullyInsideFrame(ft, fb, bbt, bbb) {
+        const overlap = Math.min(fb, bbb) - Math.max(ft, bbt);
+        return ft <= bbt + 1e-6 && fb >= bbb - 1e-6 && overlap >= BB_H - 1e-6;
+      }
+
+      /**
+       * Stage 坐标：y=0 为内容顶，y=navTop 为 NavigationBar 上沿（画幅底不得越过）
+       */
+      function layout(H, statusH, navH, gestureNav) {
+        const navTop = H - navH;
+        const cls = classify(H, statusH, navH);
+
+        let frameTop = 0;
+        let frameBottom = 0;
+        let bbTop = 0;
+        let bbBottom = 0;
+        let dSub = "";
+        let crop = false;
+        let previewCropTop = 0;
+        let previewCropBottom = 0;
+        let note = "";
+
+        if (cls.letter === "A") {
+          const gap = 12;
+          const blockH = FRAME_H + gap + BB_H;
+          let top0 = (H - blockH) / 2;
+          frameTop = top0;
+          frameBottom = top0 + FRAME_H;
+          bbTop = frameBottom + gap;
+          bbBottom = bbTop + BB_H;
+          if (bbBottom > navTop - BB_EDGE_GAP) {
+            const overflow = bbBottom - (navTop - BB_EDGE_GAP);
+            top0 -= overflow;
+            frameTop = top0;
+            frameBottom = frameTop + FRAME_H;
+            bbTop = frameBottom + gap;
+            bbBottom = bbTop + BB_H;
+          }
+          note = "A：整块「画幅+12+BottomButton」在整屏 H（含 Status+Nav）内垂直居中";
+        } else if (cls.letter === "H") {
+          /* 三键：画幅底贴 Navigation 上沿；手势：H 为沉浸式通高，画幅底至屏底，手势条可被画幅占据 */
+          const contentBottom = gestureNav ? H : navTop;
+          frameBottom = contentBottom;
+          frameTop = frameBottom - FRAME_H;
+          /* BottomButton 底距 Navigation / GestureBar 上沿 BB_EDGE_GAP（三键与手势一致锚 navTop） */
+          bbBottom = navTop - BB_EDGE_GAP;
+          bbTop = bbBottom - BB_H;
+          previewCropTop = Math.max(0, -frameTop);
+          crop = true; /* H 档固定为「预览裁顶」语义，裁剪提示与 is-crop 同开 */
+          note = gestureNav
+            ? "H（手势）：画幅底至屏底（Stage 通高），手势条区域可被画幅占据；BottomButton 整体上移，底距 GestureBar 上沿 " +
+              BB_EDGE_GAP +
+              "dp；预览裁上；Shoot UI 仍在画幅内"
+            : "H：画幅底贴 Navigation 上沿；BottomButton 底距导航上沿 " +
+              BB_EDGE_GAP +
+              "dp；预览裁上；Shoot UI 仍在画幅内";
+        } else if (cls.letter === "B") {
+          const gap8 = 8;
+          const expr = cls.expr;
+          if (gestureNav && (expr - 8) / 2 >= statusH) {
+            const blockH = FRAME_H + gap8 + BB_H;
+            frameTop = (navTop - blockH) / 2;
+            frameBottom = frameTop + FRAME_H;
+            bbTop = frameBottom + gap8;
+            bbBottom = bbTop + BB_H;
+            note = "E（手势）：画幅+8dp+BottomButton 在 GestureBar 上沿以上区域垂直居中";
+          } else {
+            bbBottom = navTop - BB_EDGE_GAP;
+            bbTop = bbBottom - BB_H;
+            frameBottom = bbTop - gap8;
+            frameTop = frameBottom - FRAME_H;
+            note = gestureNav
+              ? "E（手势）：画幅底 +8 + BottomButton 整块；BottomButton 底距 GestureBar 上沿 " + BB_EDGE_GAP + "dp"
+              : "B：画幅底 +8 + BottomButton 整块；BottomButton 底距 Navigation 上沿 " + BB_EDGE_GAP + "dp";
+          }
+        } else if (cls.letter === "C") {
+          /* 画幅高度恒 FRAME_H；底不压 Navigation */
+          frameBottom = Math.min(FRAME_H, navTop);
+          frameTop = frameBottom - FRAME_H;
+          /*
+           * 通顶「吃 StatusBar」：预览铺满画幅顶（top=0），由半透明 Status 叠在上面。
+           * 仅当画幅整体上移、顶部被 Stage 裁切时，用与 H 相同的裁顶量对齐可见区。
+           */
+          previewCropTop = Math.max(0, -frameTop);
+
+          const bbMaxBottom = navTop - BB_EDGE_GAP;
+          const slack = bbMaxBottom - frameBottom;
+          if (slack >= BB_H) {
+            const mid = frameBottom + slack / 2;
+            bbTop = mid - BB_H / 2;
+            bbBottom = mid + BB_H / 2;
+          } else {
+            bbTop = frameBottom;
+            bbBottom = Math.min(bbMaxBottom, bbTop + BB_H);
+          }
+          if (bbTop < frameBottom - 1e-6) {
+            bbTop = frameBottom;
+            bbBottom = Math.min(bbMaxBottom, bbTop + BB_H);
+          }
+          if (bbBottom > bbMaxBottom + 1e-6) {
+            bbBottom = bbMaxBottom;
+            bbTop = bbBottom - BB_H;
+          }
+          note = gestureNav
+            ? "F（手势）：通顶吃 StatusBar（预览铺满画幅顶，StatusBar 叠在上方）；紫条在「画幅底～GestureBar 顶−" +
+              BB_EDGE_GAP +
+              "dp」间居中"
+            : "C：通顶吃 StatusBar（预览铺满画幅顶，StatusBar 叠在上方）；仅当画幅顶被 Stage 裁切时裁顶对齐；紫条在「画幅底～Navigation 顶−" +
+              BB_EDGE_GAP +
+              "dp」间居中";
+        } else if (cls.letter === "D") {
+          const anchorTop = navTop - FRAME_H;
+          const gapBeforeD = anchorTop - statusH;
+
+          if (gapBeforeD >= 0) {
+            dSub = "D-1";
+            frameTop = anchorTop;
+            frameBottom = navTop;
+            bbBottom = navTop - BB_EDGE_GAP;
+            bbTop = bbBottom - BB_H;
+            previewCropTop = 0;
+            note = gestureNav
+              ? "G-1（手势）：占据 BottomButton；画幅顶 ≥ StatusBar 底；紫条外置，底距 GestureBar 上沿 " + BB_EDGE_GAP + "dp"
+              : "D-1：占据 BottomButton；画幅顶 ≥ StatusBar 底；紫条外置，底距 Navigation 上沿 " + BB_EDGE_GAP + "dp";
+          } else {
+            dSub = "D-2";
+            if (navTop >= FRAME_H - 1e-6) {
+              frameTop = 0;
+              frameBottom = FRAME_H;
+              bbBottom = frameBottom - BB_EDGE_GAP;
+              bbTop = bbBottom - BB_H;
+              if (bbTop < frameTop - 1e-6) {
+                bbTop = frameTop;
+                bbBottom = Math.min(frameBottom - BB_EDGE_GAP, bbTop + BB_H);
+              }
+              previewCropTop = 0;
+              previewCropBottom = 0;
+              crop = false;
+              note = gestureNav
+                ? "G-2（手势）：通顶吃 StatusBar（预览铺满画幅顶）；紫条放进画幅底部内侧[" +
+                  bbTop.toFixed(0) +
+                  "," +
+                  bbBottom.toFixed(0) +
+                  "]；画幅底→GestureBar 顶空窗=" +
+                  (navTop - frameBottom).toFixed(0)
+                : "D-2：通顶吃 StatusBar（预览铺满画幅顶）；紫条放进画幅底部内侧[" +
+                  bbTop.toFixed(0) +
+                  "," +
+                  bbBottom.toFixed(0) +
+                  "]；画幅底→Navigation 顶空窗=" +
+                  (navTop - frameBottom).toFixed(0);
+            } else {
+              /*
+               * Stage 可视高度 < 画幅高：整段上抬（与 D-1 同锚点），画幅底 + 虚线底 + BottomButton 底
+               * 对齐 Navigation 上沿，不被底栏裁切；仅上方超出 Stage 顶，预览裁顶。
+               */
+              frameTop = anchorTop;
+              frameBottom = navTop;
+              bbBottom = navTop - BB_EDGE_GAP;
+              bbTop = bbBottom - BB_H;
+              previewCropTop = Math.max(0, -frameTop);
+              previewCropBottom = 0;
+              crop = true;
+              const clipT = previewCropTop;
+              note = gestureNav
+                ? "G-2（手势）：Stage 高 < 画幅高；画幅与 BottomButton 整体上抬；BottomButton 底距 GestureBar 上沿 " +
+                  BB_EDGE_GAP +
+                  "dp（不裁底栏）；预览仅裁顶 " +
+                  clipT.toFixed(0) +
+                  "px；紫条在画幅底部内侧"
+                : "D-2：Stage 高 < 画幅高；画幅与 BottomButton 整体上抬；BottomButton 底距 Navigation 上沿 " +
+                  BB_EDGE_GAP +
+                  "dp（不裁导航）；预览仅裁顶 " +
+                  clipT.toFixed(0) +
+                  "px；紫条在画幅底部内侧";
+            }
+          }
+        } else {
+          note = "未分类（判据间隙），按 H 兜底";
+          frameBottom = navTop;
+          frameTop = frameBottom - FRAME_H;
+          bbBottom = navTop - BB_EDGE_GAP;
+          bbTop = bbBottom - BB_H;
+        }
+
+        /* 顶部 UI：未占据 StatusBar → 距画幅顶 16；占据 → 距 Status 底 16（换算到画幅内） */
+        const topUiOffset =
+          frameTop < statusH
+            ? statusH + 16 - frameTop
+            : 16;
+
+        const bbInsideFrame = bbFullyInsideFrame(frameTop, frameBottom, bbTop, bbBottom);
+        const bbContainOk = cls.letter === "D" ? bbInsideFrame : false;
+        const bbOverlapH =
+          cls.letter === "D"
+            ? Math.max(0, Math.min(frameBottom, bbBottom) - Math.max(frameTop, bbTop))
+            : 0;
+        const fullyOccupyBottomButton = cls.letter === "D" && bbInsideFrame;
+        const bottomButtonOccupyText =
+          cls.letter === "D" ? (fullyOccupyBottomButton ? "完全占据" : "不占据（几何异常）") : "不占据";
+
+        const dSlackNav = cls.letter === "D" ? navTop - frameBottom : null;
+        const dGapBefore = cls.letter === "D" ? navTop - FRAME_H - statusH : null;
+
+        const occupyStatusBar = frameTop < statusH;
+        const tallerThan169 = cls.r > 16 / 9 + 1e-9;
+        const visuallyCropped = crop || previewCropTop > 1e-6;
+
+        let shootUiBottom;
+        let shootUiBottomRule;
+        if (visuallyCropped) {
+          shootUiBottom = SHOOT_UI_BOTTOM_COMPACT_DP;
+          shootUiBottomRule = "裁剪／裁顶：" + SHOOT_UI_BOTTOM_COMPACT_DP + "dp";
+        } else if (tallerThan169 && bbInsideFrame && occupyStatusBar) {
+          shootUiBottom = SHOOT_UI_BOTTOM_COMPACT_DP;
+          shootUiBottomRule =
+            ">16:9 · BottomButton 在画幅内 · 占据 StatusBar：" + SHOOT_UI_BOTTOM_COMPACT_DP + "dp";
+        } else if (bbInsideFrame) {
+          shootUiBottom = 48 + SHOOT_UI_RING_BLEED_PX;
+          shootUiBottomRule = "BottomButton 在画幅内：48+" + SHOOT_UI_RING_BLEED_PX + "dp（外环／阴影）";
+        } else {
+          shootUiBottom = 24;
+          shootUiBottomRule = "默认距画幅底 24dp";
+        }
+
+        const exprLine =
+          "屏高 − 画幅高度 − " +
+          BB_H +
+          " = " +
+          cls.expr.toFixed(0) +
+          "  （StatusBar+NavigationBar+8=" +
+          (statusH + navH + 8).toFixed(0) +
+          ", NavigationBar=" +
+          navH +
+          "）";
+
+        return {
+          cls,
+          C: navTop,
+          frameTop,
+          frameBottom,
+          bbTop,
+          bbBottom,
+          dSub,
+          crop,
+          previewCropTop,
+          previewCropBottom,
+          topUiOffset,
+          shootUiBottom,
+          shootUiBottomRule,
+          note,
+          bottomButtonOccupyText,
+          bbOverlapH,
+          bbContainOk,
+          dSlackNav,
+          dGapBefore,
+          exprLine,
+          occupyStatusBar,
+          bbInsideFrame,
+        };
+      }
+
+      function tick() {
+        const H = Number(hRange.value);
+        const statusH = Number(sRange.value);
+        const navH = navBarHeight();
+        const gesture = isGestureNav();
+
+        phone.style.setProperty("--phone-h", H + "px");
+        phone.style.setProperty("--status-h", statusH + "px");
+        phone.style.setProperty("--nav-h", navH + "px");
+
+        if (phoneNav) {
+          phoneNav.classList.toggle("nav--gesture", gesture);
+          phoneNav.setAttribute(
+            "aria-label",
+            gesture ? "系统手势导航示意" : "系统导航三键示意"
+          );
+          phoneNav.setAttribute(
+            "title",
+            gesture ? "GestureBar 24dp" : "NavigationBar 48dp"
+          );
+        }
+        if (gestureNavInput) {
+          gestureNavInput.setAttribute("aria-checked", gesture ? "true" : "false");
+        }
+
+        const L = layout(H, statusH, navH, gesture);
+
+        shootFrame.style.setProperty("--frame-top", L.frameTop + "px");
+        if (bottomButton) {
+          bottomButton.style.transform = "translateY(" + L.bbTop + "px)";
+        }
+
+        preview.style.setProperty("--preview-crop-top", L.previewCropTop + "px");
+        preview.style.setProperty("--preview-crop-bottom", L.previewCropBottom + "px");
+
+        if (shootUi && !shootUi.hidden) {
+          shootUi.style.setProperty("--shoot-ui-bottom", Math.max(24, L.shootUiBottom) + "px");
+        }
+        topUi.style.setProperty("--top-ui-offset", L.topUiOffset + "px");
+
+        phone.classList.toggle("is-crop", L.crop);
+        phone.classList.toggle("is-h-gesture-immersive", gesture && L.cls.letter === "H");
+        if (demoHeroInner) demoHeroInner.classList.toggle("demo-hero-inner--crop-hint", L.crop);
+
+        const r = L.cls.r.toFixed(4);
+        const band =
+          L.cls.letter === "A"
+            ? "屏比 ≥ 20/9"
+            : L.cls.letter === "H"
+              ? "屏比 ≤ 16/9"
+              : "16/9 < 屏比 < 20/9";
+
+        hVal.textContent = String(H);
+        sVal.textContent = String(statusH);
+
+        const gearDisplay = displayGear(L.cls.letter, L.dSub, gesture);
+        st.gear.textContent = gearDisplay;
+        st.band.textContent = band;
+        st.h.textContent = String(H) + " px";
+        st.w.textContent = String(W) + " px";
+        st.ratio.textContent = r;
+        st.statusH.textContent = statusH + " px（模拟）";
+        st.navHLine.textContent =
+          navH + " px（" + (gesture ? "手势条 24" : "三键示意 48") + "）";
+        if (st.navType) {
+          st.navType.textContent = gesture
+            ? "底部固定 · 手势条 · 24dp"
+            : "底部固定 · 三键示意 · 48dp";
+        }
+        if (st.axisNote) {
+          if (gesture && L.cls.letter === "H") {
+            st.axisNote.textContent =
+              "H（手势）：Stage 与屏同高（0…H）；画幅可至屏底并叠在手势条之下；BottomButton 底距 GestureBar 上沿 " +
+              BB_EDGE_GAP +
+              "dp（" +
+              navH +
+              "px 手势区上沿为锚）。顶部仍可由 StatusBar 叠画幅。";
+          } else {
+            st.axisNote.textContent =
+              "坐标：Stage 顶为 0，底为 " +
+              (gesture ? "GestureBar" : "Navigation") +
+              " 上沿（C = H − " +
+              navH +
+              "）。";
+          }
+        }
+        st.expr.textContent = L.exprLine;
+
+        st.occupyStatus.textContent = L.occupyStatusBar
+          ? "是（画幅顶 < Status 底）"
+          : "否";
+        st.topUi.textContent = L.topUiOffset.toFixed(0) + " px";
+        st.bbInFrame.textContent = L.bbInsideFrame ? "是" : "否";
+        st.shootUi.textContent =
+          phonePageMode === "edit"
+            ? "—（EditPage 预览，ShootUI 已隐藏）"
+            : L.shootUiBottom.toFixed(0) + " px（" + L.shootUiBottomRule + "）";
+        st.previewCrop.textContent =
+          "顶 " +
+          L.previewCropTop.toFixed(1) +
+          " px · 底 " +
+          L.previewCropBottom.toFixed(1) +
+          " px";
+
+        st.note.textContent = L.note;
+
+        const slackNav = L.C - L.frameBottom;
+        let slackTxt;
+        if (gesture && L.cls.letter === "H") {
+          slackTxt =
+            "画幅底贴屏底；BottomButton 底距 Gesture 上沿 " + BB_EDGE_GAP + "dp（↑" + navH + "px 手势区）";
+        } else if (slackNav > 0.5) {
+          slackTxt = slackNav.toFixed(0) + " px 余量";
+        } else if (slackNav < -0.5) {
+          slackTxt = slackNav.toFixed(0) + " px（压线）";
+        } else {
+          slackTxt = "0 px（贴合）";
+        }
+        kpi.gear.textContent = gearDisplay;
+        kpi.wh.textContent = W + "×" + H + " px";
+        kpi.ratio.textContent = r;
+        const commonModel = COMMON_MODEL_H.includes(H);
+        if (kpiRatioCell) kpiRatioCell.classList.toggle("kpi-cell--common-model", commonModel);
+        if (kpiRatioCommon) {
+          kpiRatioCommon.hidden = !commonModel;
+        }
+        kpi.band.textContent =
+          L.cls.letter === "A"
+            ? "≥20:9"
+            : L.cls.letter === "H"
+              ? "≤16:9"
+              : "16:9—20:9";
+        kpi.frameNav.textContent = slackTxt;
+        opsHint.textContent =
+          "判据：H−" +
+          FRAME_H +
+          "−48=" +
+          L.cls.expr.toFixed(0) +
+          " · 阈 Status+Nav+8=" +
+          (statusH + navH + 8).toFixed(0) +
+          " · Navigation " +
+          navH +
+          "px " +
+          (gesture ? "手势底栏（示意）" : "三键底栏（示意）") +
+          " · BottomButton 与画幅底或导航顶外边距 " +
+          BB_EDGE_GAP +
+          "dp";
+      }
+
+      hRange.addEventListener("input", tick);
+      sRange.addEventListener("input", tick);
+      hRange.addEventListener("change", tick);
+      sRange.addEventListener("change", tick);
+      if (gestureNavInput) {
+        gestureNavInput.addEventListener("input", tick);
+        gestureNavInput.addEventListener("change", tick);
+      }
+
+      if (phonePageHoverWrap) {
+        phonePageHoverWrap.addEventListener("pointerenter", function () {
+          phonePageMode = "edit";
+          applyPhonePageMode();
+          tick();
+        });
+        phonePageHoverWrap.addEventListener("pointerleave", function () {
+          phonePageMode = "shoot";
+          applyPhonePageMode();
+          tick();
+        });
+      }
+
+      const introEl = document.getElementById("intro");
+      const demoEl = document.getElementById("demo");
+      const pathNoHash = window.location.pathname + window.location.search;
+
+      function syncPreviewVideoPlayback() {
+        const v = document.querySelector(".preview-video");
+        if (!v) return;
+        if (demoEl.hidden) {
+          v.pause();
+        } else {
+          v.play().catch(function () {});
+        }
+      }
+
+      /** 直达 #demo 的首屏不做入场过渡；离开 Demo 后恢复可动画 */
+      let skipDemoEnterTransition = location.hash === "#demo";
+
+      function prefersReducedMotion() {
+        return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      }
+
+      function enterDemo() {
+        const useVt =
+          !skipDemoEnterTransition &&
+          typeof document.startViewTransition === "function" &&
+          !prefersReducedMotion();
+        const update = function () {
+          introEl.hidden = true;
+          demoEl.hidden = false;
+          if (location.hash !== "#demo") {
+            history.pushState({ shootAdaptDemo: 1 }, "", pathNoHash + "#demo");
+          }
+          tick();
+          syncPreviewVideoPlayback();
+        };
+        if (useVt) {
+          document.startViewTransition(update);
+        } else {
+          update();
+        }
+        skipDemoEnterTransition = false;
+      }
+
+      function leaveDemo() {
+        const useVt = typeof document.startViewTransition === "function" && !prefersReducedMotion();
+        const update = function () {
+          const v = document.querySelector(".preview-video");
+          if (v) v.pause();
+          demoEl.hidden = true;
+          introEl.hidden = false;
+          if (location.hash === "#demo") {
+            history.replaceState(null, "", pathNoHash);
+          }
+          skipDemoEnterTransition = false;
+        };
+        if (useVt) {
+          document.startViewTransition(update);
+        } else {
+          update();
+        }
+      }
+
+      document.getElementById("introEnter").addEventListener("click", enterDemo);
+      document.getElementById("demoBack").addEventListener("click", leaveDemo);
+
+      window.addEventListener("popstate", function () {
+        if (location.hash === "#demo") {
+          introEl.hidden = true;
+          demoEl.hidden = false;
+          skipDemoEnterTransition = true;
+          tick();
+          syncPreviewVideoPlayback();
+        } else {
+          introEl.hidden = false;
+          demoEl.hidden = true;
+          skipDemoEnterTransition = false;
+          syncPreviewVideoPlayback();
+        }
+      });
+
+      if (location.hash === "#demo") {
+        introEl.hidden = true;
+        demoEl.hidden = false;
+      }
+      applyPhonePageMode();
+      tick();
+      syncPreviewVideoPlayback();
+    })();
+  </script>
+</body>
+</html>
