@@ -3341,6 +3341,51 @@
         let previewCropTop = 0;
         let previewCropBottom = 0;
         let note = "";
+        /** 对外展示档位：B 底部对齐若与 Status 重叠则降为 C（手势下展示 F） */
+        let displayClsLetter = cls.letter;
+
+        /** C／F 档几何共用（画幅钉底、紫条区算法） */
+        function applyGeometryC() {
+          frameBottom = Math.min(FRAME_H, navTop);
+          frameTop = frameBottom - FRAME_H;
+          previewCropTop = Math.max(0, -frameTop);
+
+          const bbMaxBottom = navTop - BB_EDGE_GAP;
+          const slack = bbMaxBottom - frameBottom;
+          if (slack >= BB_H) {
+            const mid = frameBottom + slack / 2;
+            bbTop = mid - BB_H / 2;
+            bbBottom = mid + BB_H / 2;
+          } else {
+            bbTop = frameBottom;
+            bbBottom = Math.min(bbMaxBottom, bbTop + BB_H);
+          }
+          if (bbTop < frameBottom - 1e-6) {
+            bbTop = frameBottom;
+            bbBottom = Math.min(bbMaxBottom, bbTop + BB_H);
+          }
+          if (bbBottom > bbMaxBottom + 1e-6) {
+            bbBottom = bbMaxBottom;
+            bbTop = bbBottom - BB_H;
+          }
+        }
+
+        function setNoteC(fromBOverlap) {
+          const tail =
+            fromBOverlap
+              ? gestureNav
+                ? "（原判据为 B／E，底部对齐与 StatusBar 重叠，按规则改用 C／F 几何）"
+                : "（原判据为 B，底部对齐与 StatusBar 重叠，按规则改用 C 几何）"
+              : "";
+          note =
+            (gestureNav
+              ? "F（手势）：通顶吃 StatusBar（预览铺满画幅顶，StatusBar 叠在上方）；紫条在「画幅底～GestureBar 顶−" +
+                BB_EDGE_GAP +
+                "dp」间居中"
+              : "C：通顶吃 StatusBar（预览铺满画幅顶，StatusBar 叠在上方）；仅当画幅顶被 Stage 裁切时裁顶对齐；紫条在「画幅底～Navigation 顶−" +
+                BB_EDGE_GAP +
+                "dp」间居中") + tail;
+        }
 
         if (cls.letter === "A") {
           const gap = 12;
@@ -3396,40 +3441,8 @@
               : "B：画幅底 +8 + BottomButton 整块；BottomButton 底距 Navigation 上沿 " + BB_EDGE_GAP + "dp";
           }
         } else if (cls.letter === "C") {
-          /* 画幅高度恒 FRAME_H；底不压 Navigation */
-          frameBottom = Math.min(FRAME_H, navTop);
-          frameTop = frameBottom - FRAME_H;
-          /*
-           * 通顶「吃 StatusBar」：预览铺满画幅顶（top=0），由半透明 Status 叠在上面。
-           * 仅当画幅整体上移、顶部被 Stage 裁切时，用与 H 相同的裁顶量对齐可见区。
-           */
-          previewCropTop = Math.max(0, -frameTop);
-
-          const bbMaxBottom = navTop - BB_EDGE_GAP;
-          const slack = bbMaxBottom - frameBottom;
-          if (slack >= BB_H) {
-            const mid = frameBottom + slack / 2;
-            bbTop = mid - BB_H / 2;
-            bbBottom = mid + BB_H / 2;
-          } else {
-            bbTop = frameBottom;
-            bbBottom = Math.min(bbMaxBottom, bbTop + BB_H);
-          }
-          if (bbTop < frameBottom - 1e-6) {
-            bbTop = frameBottom;
-            bbBottom = Math.min(bbMaxBottom, bbTop + BB_H);
-          }
-          if (bbBottom > bbMaxBottom + 1e-6) {
-            bbBottom = bbMaxBottom;
-            bbTop = bbBottom - BB_H;
-          }
-          note = gestureNav
-            ? "F（手势）：通顶吃 StatusBar（预览铺满画幅顶，StatusBar 叠在上方）；紫条在「画幅底～GestureBar 顶−" +
-              BB_EDGE_GAP +
-              "dp」间居中"
-            : "C：通顶吃 StatusBar（预览铺满画幅顶，StatusBar 叠在上方）；仅当画幅顶被 Stage 裁切时裁顶对齐；紫条在「画幅底～Navigation 顶−" +
-              BB_EDGE_GAP +
-              "dp」间居中";
+          applyGeometryC();
+          setNoteC(false);
         } else if (cls.letter === "D") {
           const anchorTop = navTop - FRAME_H;
           const gapBeforeD = anchorTop - statusH;
@@ -3505,25 +3518,11 @@
           bbTop = bbBottom - BB_H;
         }
 
-        /*
-         * 沉浸式「吃 StatusBar」语义：一旦出现画幅顶在 Status 带内但仍离开 Stage 顶的缝隙（透明条会透出手机黑底），
-         * 将整块画幅 + BottomButton 上移顶齐 y=0。D-1 例外：锚点布局画幅顶可能故意低于 Status，底必须贴 nav。
-         */
-        let bleedSnapNote = "";
-        if (
-          !(cls.letter === "D" && dSub === "D-1") &&
-          frameTop < statusH - 1e-6 &&
-          frameTop > 1e-6
-        ) {
-          const bleedSnap = frameTop;
-          frameTop = 0;
-          frameBottom -= bleedSnap;
-          bbTop -= bleedSnap;
-          bbBottom -= bleedSnap;
-          bleedSnapNote = "；" + "沉浸式：顶齐 Stage 顶（上移 " + bleedSnap.toFixed(0) + "px，消除透明 Status 下的黑隙）";
+        if (cls.letter === "B" && frameTop < statusH - 1e-6) {
+          applyGeometryC();
+          setNoteC(true);
+          displayClsLetter = "C";
         }
-        previewCropTop = Math.max(previewCropTop, Math.max(0, -frameTop));
-        if (bleedSnapNote) note += bleedSnapNote;
 
         /* 顶部 UI：未占据 StatusBar → 距画幅顶 16；占据 → 距 Status 底 16（换算到画幅内） */
         const topUiOffset =
@@ -3578,6 +3577,7 @@
 
         return {
           cls,
+          displayCls: { letter: displayClsLetter, expr: cls.expr, r: cls.r },
           C: navTop,
           frameTop,
           frameBottom,
@@ -3628,6 +3628,7 @@
         }
 
         const L = layout(H, statusH, navH, gesture);
+        const dc = L.displayCls;
 
         shootFrame.style.setProperty("--frame-top", L.frameTop + "px");
         if (bottomButton) {
@@ -3647,18 +3648,18 @@
         phone.classList.toggle("phone--status-immersive", Boolean(L.occupyStatusBar));
         if (demoHeroInner) demoHeroInner.classList.toggle("demo-hero-inner--crop-hint", L.crop);
 
-        const r = L.cls.r.toFixed(4);
+        const r = dc.r.toFixed(4);
         const band =
-          L.cls.letter === "A"
+          dc.letter === "A"
             ? "屏比 ≥ 20/9"
-            : L.cls.letter === "H"
+            : dc.letter === "H"
               ? "屏比 ≤ 16/9"
               : "16/9 < 屏比 < 20/9";
 
         hVal.textContent = String(H);
         sVal.textContent = String(statusH);
 
-        const gearDisplay = displayGear(L.cls.letter, L.dSub, gesture);
+        const gearDisplay = displayGear(dc.letter, L.dSub, gesture);
         st.gear.textContent = gearDisplay;
         st.band.textContent = band;
         st.h.textContent = String(H) + " px";
@@ -3730,9 +3731,9 @@
           kpiRatioCommon.hidden = !commonModel;
         }
         kpi.band.textContent =
-          L.cls.letter === "A"
+          dc.letter === "A"
             ? "≥20:9"
-            : L.cls.letter === "H"
+            : dc.letter === "H"
               ? "≤16:9"
               : "16:9—20:9";
         kpi.frameNav.textContent = slackTxt;
