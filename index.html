@@ -1891,13 +1891,17 @@
       width: 16px;
       height: 16px;
     }
+    /* 居中于 StatusBar；高度变矮时上限 24、随栏高缩小（留白约 8px） */
     .notch {
       position: absolute;
       left: 50%;
-      top: 8px;
-      transform: translateX(-50%);
-      width: 24px;
-      height: 24px;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      box-sizing: border-box;
+      width: min(24px, calc(var(--status-h, 48px) - 8px));
+      height: min(24px, calc(var(--status-h, 48px) - 8px));
+      min-width: 10px;
+      min-height: 10px;
       background: #000;
       border-radius: 999px;
     }
