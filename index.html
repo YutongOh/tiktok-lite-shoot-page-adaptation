@@ -2437,19 +2437,22 @@
       max-width: 56px;
     }
 
-    /* Shoot/Edit Hover：与手机列之间留白 = --demo-y-gutter（由脚本与顶/底一致） */
+    /* Shoot/Edit Hover：与手机列间距由 --demo-y-gutter 脚本控制。
+       vertical padding/margin：扩大 Hover 触发带，不致「难触发」且不挤占留白（负 margin 拉回） */
     .phone-page-hover-wrap {
       flex-shrink: 0;
       width: 100%;
       display: flex;
       justify-content: center;
-      padding: 0 clamp(16px, 3vw, 28px);
+      padding: 18px clamp(16px, 3vw, 28px);
+      margin: -18px 0;
       box-sizing: border-box;
       position: relative;
       z-index: 6;
     }
-    /* Hover：非 hover 整颗黑底白字；hover 外轨为白。
-       退场：外轨保持白至 Shoot 恢复满宽后，白底瞬时切回黑（不做颜色插值），避免圆角处灰线/白描边感 */
+    /* Hover：非 hover 全黑胶囊；hover 外轨变白 + Shoot 收窄露白。
+       进场较短 / 退场略长 Material 常用缓动；只过渡 width/min-width（不占位 padding）。
+       JS：pointer enter/leave 后双 rAF 再 tick，避免与大段 DOM 度量同帧抢主线程卡顿。*/
     .phone-page-hover-btn {
       position: relative;
       width: 15em;
@@ -2463,12 +2466,16 @@
       font-family: inherit;
       box-sizing: border-box;
       overflow: hidden;
-      --phone-hover-pill-dur: 0.5s;
-      transition: background-color 0s linear var(--phone-hover-pill-dur);
+      contain: paint;
+      --phone-hover-pill-in: 0.3s;
+      --phone-hover-pill-out: 0.42s;
+      --phone-hover-pill-ease-in: cubic-bezier(0.4, 0, 0.2, 1);
+      --phone-hover-pill-ease-out: cubic-bezier(0, 0, 0.2, 1);
+      transition: background-color 0s linear var(--phone-hover-pill-out);
     }
     .phone-page-hover-wrap:hover .phone-page-hover-btn {
       background-color: #fff;
-      transition: background-color 0.25s ease 0s;
+      transition: background-color 0.18s var(--phone-hover-pill-ease-out) 0s;
     }
     .phone-page-hover-btn__shoot {
       position: absolute;
@@ -2499,9 +2506,8 @@
       letter-spacing: 3px;
       white-space: nowrap;
       transition:
-        width var(--phone-hover-pill-dur) ease,
-        min-width var(--phone-hover-pill-dur) ease,
-        padding var(--phone-hover-pill-dur) ease;
+        width var(--phone-hover-pill-out) var(--phone-hover-pill-ease-out),
+        min-width var(--phone-hover-pill-out) var(--phone-hover-pill-ease-out);
     }
     .phone-page-hover-btn__edit {
       position: absolute;
@@ -2525,11 +2531,11 @@
       color: #000;
       white-space: nowrap;
       opacity: 0;
-      transition: opacity 0.2s ease;
+      transition: opacity 0.16s var(--phone-hover-pill-ease-in) 0s;
     }
     .phone-page-hover-wrap:hover .phone-page-hover-btn__edit-text {
       opacity: 1;
-      transition: opacity 0.35s ease 0.18s;
+      transition: opacity 0.26s var(--phone-hover-pill-ease-out) 0.06s;
     }
     .phone-page-hover-wrap:hover .phone-page-hover-btn__shoot-text {
       width: 0;
@@ -2537,6 +2543,9 @@
       padding-left: 0;
       padding-right: 0;
       overflow: hidden;
+      transition:
+        width var(--phone-hover-pill-in) var(--phone-hover-pill-ease-in),
+        min-width var(--phone-hover-pill-in) var(--phone-hover-pill-ease-in);
     }
     @media (prefers-reduced-motion: reduce) {
       .phone-page-hover-btn__shoot-text,
@@ -3761,7 +3770,10 @@
 
         const Hi = demoHeroInner.clientHeight;
         const sw = demoHeroPhoneSlot.clientWidth;
-        const Zh = phonePageHoverWrap.offsetHeight;
+        const Zh =
+          phonePageHoverBtn && phonePageHoverBtn.offsetHeight > 0
+            ? phonePageHoverBtn.offsetHeight
+            : phonePageHoverWrap.offsetHeight;
         if (Hi < 40 || sw < 8 || Zh < 4) {
           return;
         }
@@ -3944,15 +3956,20 @@
       }
 
       if (phonePageHoverWrap) {
+        function deferHoverLayoutTick() {
+          requestAnimationFrame(function () {
+            requestAnimationFrame(tick);
+          });
+        }
         phonePageHoverWrap.addEventListener("pointerenter", function () {
           phonePageMode = "edit";
           applyPhonePageMode();
-          tick();
+          deferHoverLayoutTick();
         });
         phonePageHoverWrap.addEventListener("pointerleave", function () {
           phonePageMode = "shoot";
           applyPhonePageMode();
-          tick();
+          deferHoverLayoutTick();
         });
       }
 
