@@ -3505,6 +3505,26 @@
           bbTop = bbBottom - BB_H;
         }
 
+        /*
+         * 沉浸式「吃 StatusBar」语义：一旦出现画幅顶在 Status 带内但仍离开 Stage 顶的缝隙（透明条会透出手机黑底），
+         * 将整块画幅 + BottomButton 上移顶齐 y=0。D-1 例外：锚点布局画幅顶可能故意低于 Status，底必须贴 nav。
+         */
+        let bleedSnapNote = "";
+        if (
+          !(cls.letter === "D" && dSub === "D-1") &&
+          frameTop < statusH - 1e-6 &&
+          frameTop > 1e-6
+        ) {
+          const bleedSnap = frameTop;
+          frameTop = 0;
+          frameBottom -= bleedSnap;
+          bbTop -= bleedSnap;
+          bbBottom -= bleedSnap;
+          bleedSnapNote = "；" + "沉浸式：顶齐 Stage 顶（上移 " + bleedSnap.toFixed(0) + "px，消除透明 Status 下的黑隙）";
+        }
+        previewCropTop = Math.max(previewCropTop, Math.max(0, -frameTop));
+        if (bleedSnapNote) note += bleedSnapNote;
+
         /* 顶部 UI：未占据 StatusBar → 距画幅顶 16；占据 → 距 Status 底 16（换算到画幅内） */
         const topUiOffset =
           frameTop < statusH
