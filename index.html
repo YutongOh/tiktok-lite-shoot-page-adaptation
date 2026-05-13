@@ -1866,6 +1866,14 @@
       -webkit-backdrop-filter: blur(var(--sys-bar-blur)) saturate(1.15);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
     }
+
+    /* 画幅占据 Status 区：状态栏底全透明（无底/磨砂），内容由画幅顶铺满后透出 */
+    .phone.phone--status-immersive .status {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
     .status-icons {
       display: flex;
       align-items: center;
@@ -3612,6 +3620,7 @@
 
         phone.classList.toggle("is-crop", L.crop);
         phone.classList.toggle("is-h-gesture-immersive", gesture && L.cls.letter === "H");
+        phone.classList.toggle("phone--status-immersive", Boolean(L.occupyStatusBar));
         if (demoHeroInner) demoHeroInner.classList.toggle("demo-hero-inner--crop-hint", L.crop);
 
         const r = L.cls.r.toFixed(4);
