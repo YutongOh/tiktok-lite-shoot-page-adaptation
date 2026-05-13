@@ -3518,10 +3518,26 @@
           bbTop = bbBottom - BB_H;
         }
 
+        /* B：若「手势居中 E」导致画幅顶吃进 Status，优先改用底对齐 B／E；仍重叠再降为 C／F */
         if (cls.letter === "B" && frameTop < statusH - 1e-6) {
-          applyGeometryC();
-          setNoteC(true);
-          displayClsLetter = "C";
+          const gap8 = 8;
+          const usedGestureCenter =
+            gestureNav && (cls.expr - gap8) / 2 >= statusH;
+          if (usedGestureCenter) {
+            bbBottom = navTop - BB_EDGE_GAP;
+            bbTop = bbBottom - BB_H;
+            frameBottom = bbTop - gap8;
+            frameTop = frameBottom - FRAME_H;
+            note =
+              "E（手势）：居中摆放会与 Status 重叠，改用底对齐（画幅底+8+BottomButton；BottomButton 底距 GestureBar 上沿 " +
+              BB_EDGE_GAP +
+              "dp）";
+          }
+          if (frameTop < statusH - 1e-6) {
+            applyGeometryC();
+            setNoteC(true);
+            displayClsLetter = "C";
+          }
         }
 
         /* 顶部 UI：未占据 StatusBar → 距画幅顶 16；占据 → 距 Status 底 16（换算到画幅内） */
