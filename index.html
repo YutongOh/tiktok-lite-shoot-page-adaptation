@@ -109,7 +109,7 @@
     @media (min-width: 1024px) {
       .intro-hero {
         display: flex;
-        width: 52%;
+        width: 50%;
         flex-shrink: 0;
         min-height: 0;
       }
@@ -1086,7 +1086,7 @@
      * 1) 若主容器未形成「双列」格式化上下文（例如 grid 规则整段失效），子级会按块级流排版；
      * 2) .demo-hero 默认 width:100%，在块流下会独占一行，.demo-panel 必然落到下一行 →「信息区在下方」。
      * 3) demo-hero 内多写一层 </div> 会提前闭合 #demo，.demo-panel 与 </main> 会落到 body 下，flex 双栏对 main 无效。
-     * 故对 #demo > main 使用高特异性 flex + nowrap；宽屏下显式收窄 hero 宽度并给 panel flex:1。
+     * 故对 #demo > main 使用高特异性 flex + nowrap；宽屏下左侧与前置页一致为页宽 50%，右侧占余下空间并可纵向滚动。
      */
     #demo.demo-root > main.demo-split {
       flex: 1;
@@ -1112,14 +1112,14 @@
         flex-direction: row;
         align-items: stretch;
       }
+      /* 与前置页 .intro-hero 一致：左侧主区宽度 50%，右侧 flex:1 吃掉余量（含 gap） */
       #demo.demo-root > main.demo-split > .demo-hero {
-        flex: 1 1 0%;
-        width: 52%;
-        max-width: 52%;
-        min-width: 0;
-        min-height: 0;
+        width: 50%;
+        flex-shrink: 0;
         height: 100%;
         max-height: 100%;
+        min-height: 0;
+        min-width: 0;
       }
       #demo.demo-root > main.demo-split > .demo-panel {
         flex: 1 1 0%;
@@ -1127,8 +1127,6 @@
         width: auto;
         min-height: 0;
         max-height: 100%;
-        overflow-y: auto;
-        overscroll-behavior: contain;
       }
     }
     .demo-hero {
@@ -1146,6 +1144,10 @@
         0 25px 50px -12px rgba(0, 0, 0, 0.82),
         0 0 100px rgba(30, 27, 75, 0.09),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    /* 裁剪 Toast 画在外壳顶外，左侧大卡不能 overflow:hidden（会裁气泡） */
+    #demo.demo-root .demo-hero {
+      overflow: visible;
     }
     @media (max-width: 639px) {
       .demo-hero {
@@ -1168,36 +1170,44 @@
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      padding: clamp(16px, 3vw, 28px);
+      /* 竖向 S 由脚本写 --demo-y-gutter：顶 = 最长机与高区顶距 = 机与 Hover 间距 = Hover 到底距 */
+      padding: var(--demo-y-gutter, clamp(16px, 3vw, 28px)) clamp(16px, 3vw, 28px);
+      gap: var(--demo-y-gutter, clamp(16px, 3vw, 28px));
     }
 
-    /* 左栏：可分配高度给手机区；内部整体 scale 以适配笔记本视口高度 */
-    .demo-hero-scale-viewport {
-      flex: 1 1 0%;
-      min-height: 0;
+    /* 高度随机模占位（flex:1 会吞掉三等分留白）；横纵仍居中 */
+    .demo-hero-phone-slot {
+      flex: 0 0 auto;
       min-width: 0;
+      min-height: 0;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow: visible;
     }
-    #demo.demo-root {
-      --demo-hero-scale: 1;
+    .demo-phone-scale-outer {
+      --demo-phone-scale: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-sizing: border-box;
     }
-    #demo.demo-root .demo-hero-scale-inner {
+    .demo-phone-scale-surface {
+      position: relative;
+      transform: scale(var(--demo-phone-scale, 1));
+      transform-origin: center center;
+      flex-shrink: 0;
+      will-change: transform;
+    }
+    /* Toast 在手机外壳顶外（外壳 .phone-shell 顶边之上），不等于左侧容器顶、也不在屏肉里 */
+    .demo-hero-phone-anchor {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
-      gap: clamp(10px, 2vmin, 18px);
-      transform: scale(var(--demo-hero-scale, 1));
-      transform-origin: center bottom;
-      will-change: transform;
-    }
-    #demo.demo-root .demo-hero-scale-inner .phone-page-hover-wrap {
-      margin-top: 0;
-      padding-bottom: clamp(8px, 1.5vmin, 20px);
+      flex: 0 0 auto;
     }
     .demo-root .phone-shell {
       position: relative;
@@ -1211,6 +1221,22 @@
       box-shadow:
         0 16px 48px rgba(0, 0, 0, 0.75),
         0 0 0 1px rgba(255, 255, 255, 0.12);
+    }
+    /* Crop Toast：相对未缩放外壳层（surface 包住 shell），贴外壳顶外侧，随整块机模缩放/位移 */
+    #demo.demo-root .demo-phone-scale-surface > .clip-note-toast.tooltip-container {
+      position: absolute;
+      left: 50%;
+      bottom: 100%;
+      transform: translateX(-50%);
+      margin: 0 0 10px;
+      width: max-content;
+      max-width: min(284px, calc(100% - 16px));
+      box-sizing: border-box;
+      z-index: 40;
+      pointer-events: none;
+    }
+    .demo-hero-inner--crop-hint .demo-phone-scale-surface > .clip-note-toast.tooltip-container {
+      pointer-events: auto;
     }
     .demo-root .thumb {
       background: linear-gradient(145deg, #6366f1, #38bdf8);
@@ -1237,6 +1263,7 @@
     @media (min-width: 640px) {
       .demo-root .demo-panel {
         max-height: 100%;
+        overflow-y: hidden;
       }
     }
     @media (min-width: 1024px) {
@@ -1248,6 +1275,29 @@
       width: 100%;
       max-width: none;
       animation: none;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      min-width: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    @media (min-width: 640px) {
+      .demo-root .demo-panel-inner {
+        scrollbar-gutter: stable;
+      }
+    }
+    @media (min-width: 640px) {
+      .demo-root .demo-panel .sidebar-stack {
+        flex: 1 1 auto;
+        min-height: 0;
+      }
+      .demo-root .aux-panel {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: visible;
+      }
     }
 
     /* 欢迎页 / Demo 整页切换（View Transitions API，无支持或无动画偏好时由脚本直切） */
@@ -2390,14 +2440,13 @@
       max-width: 56px;
     }
 
-    /* Shoot / Edit：左侧大容器底部；默认仅黑 pill，悬停为整颗白底 + 黑字 Edit（同区域叠化，无露白、无双列） */
+    /* Shoot/Edit Hover：与手机列之间留白 = --demo-y-gutter（由脚本与顶/底一致） */
     .phone-page-hover-wrap {
       flex-shrink: 0;
-      margin-top: auto;
       width: 100%;
       display: flex;
       justify-content: center;
-      padding: 0 clamp(16px, 3vw, 28px) clamp(18px, 3.5vw, 28px);
+      padding: 0 clamp(16px, 3vw, 28px);
       box-sizing: border-box;
       position: relative;
       z-index: 6;
@@ -2681,7 +2730,6 @@
       opacity: 1;
       visibility: visible;
       max-height: 72px;
-      margin-bottom: 10px;
       padding-top: 0.2rem;
       overflow: visible;
       pointer-events: auto;
@@ -2828,18 +2876,20 @@
         </div>
         <div class="intro-hero-glass" aria-hidden="true"></div>
         <div class="demo-hero-inner">
-          <div
-            class="clip-note-toast tooltip-container"
-            id="clipNoteToast"
-            role="status"
-            aria-live="polite"
-          >
-            <span class="tooltip">画幅发生裁剪</span>
-          </div>
-          <div class="demo-hero-scale-viewport" id="demoHeroScaleViewport">
-            <div class="demo-hero-scale-inner" id="demoHeroScaleInner">
-          <div class="phone-shell">
-            <div class="phone" id="phone" style="--phone-h: 720px; --nav-h: 48px; --status-h: 40px;">
+          <div class="demo-hero-phone-slot" id="demoHeroPhoneSlot">
+            <div class="demo-hero-phone-anchor">
+              <div class="demo-phone-scale-outer" id="demoPhoneScaleOuter">
+                <div class="demo-phone-scale-surface">
+                  <div
+                    class="clip-note-toast tooltip-container"
+                    id="clipNoteToast"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <span class="tooltip">画幅发生裁剪</span>
+                  </div>
+                  <div class="phone-shell">
+                    <div class="phone" id="phone" style="--phone-h: 720px; --nav-h: 48px; --status-h: 40px;">
             <div class="stage" id="stage">
 
               <div class="status">
@@ -3091,6 +3141,10 @@
             </nav>
           </div>
         </div>
+              </div>
+            </div>
+          </div>
+            </div>
         <div class="phone-page-hover-wrap" id="phonePageHoverWrap">
           <div
             class="phone-page-hover-btn"
@@ -3106,8 +3160,6 @@
             </div>
           </div>
         </div>
-            </div>
-          </div>
         </div>
       </section>
       <section class="demo-panel" aria-label="实验控制台">
@@ -3262,39 +3314,16 @@
       const rightToolsShoot = rightTools ? rightTools.querySelector(".right-tools-shoot") : null;
       const phonePageHoverWrap = document.getElementById("phonePageHoverWrap");
       const phonePageHoverBtn = document.getElementById("phonePageHoverBtn");
-      const demoHeroScaleViewport = document.getElementById("demoHeroScaleViewport");
-      const demoHeroScaleInner = document.getElementById("demoHeroScaleInner");
+      const demoHeroPhoneSlot = document.getElementById("demoHeroPhoneSlot");
+      const demoPhoneScaleOuter = document.getElementById("demoPhoneScaleOuter");
+      /** Demo 左侧 phone-shell：与 .phone-shell padding 一致（16+16 / 18+20） */
+      const DEMO_SHELL_PAD_X = 32;
+      const DEMO_SHELL_PAD_V = 38;
+
+      /** 竖向三等分留白 S 的下限（略大以免顶/缝/底过紧） */
+      const DEMO_STACK_S_MIN = 18;
 
       let phonePageMode = "shoot";
-      let demoHeroScaleRaf = 0;
-
-      function syncDemoHeroScale() {
-        const root = document.getElementById("demo");
-        if (!root || !demoHeroScaleViewport || !demoHeroScaleInner || root.hidden) return;
-        if (window.matchMedia("(max-width: 639px)").matches) {
-          root.style.setProperty("--demo-hero-scale", "1");
-          return;
-        }
-        root.style.setProperty("--demo-hero-scale", "1");
-        void demoHeroScaleViewport.offsetHeight;
-        const pad = 8;
-        const availH = Math.max(0, demoHeroScaleViewport.clientHeight - pad);
-        const availW = Math.max(0, demoHeroScaleViewport.clientWidth - pad);
-        const nh = demoHeroScaleInner.offsetHeight;
-        const nw = demoHeroScaleInner.offsetWidth;
-        if (nh < 1 || nw < 1) return;
-        const s = Math.min(1, availH / nh, availW / nw);
-        root.style.setProperty("--demo-hero-scale", String(s));
-      }
-
-      function scheduleSyncDemoHeroScale() {
-        if (!demoHeroScaleViewport || !demoHeroScaleInner) return;
-        if (demoHeroScaleRaf) cancelAnimationFrame(demoHeroScaleRaf);
-        demoHeroScaleRaf = requestAnimationFrame(function () {
-          demoHeroScaleRaf = 0;
-          syncDemoHeroScale();
-        });
-      }
 
       function syncPhonePageHoverUI() {
         if (!phonePageHoverBtn) return;
@@ -3685,6 +3714,52 @@
         };
       }
 
+      /**
+       * demo-hero-inner 总高 Hi，最长机外框高 Po，Hover 块高 Zh。
+       * 令顶距 = 机–Hover 间距 = 底距 = S，则 Hi = Po + Zh + 3S。
+       * scale 取 min(宽, 可用高)/逻辑外壳，与 S 联合满足上式；短迭代收敛。
+       */
+      function syncDemoHeroPhoneLayout() {
+        const demoRoot = document.getElementById("demo");
+        if (
+          !demoRoot ||
+          demoRoot.hidden ||
+          !demoHeroInner ||
+          !demoHeroPhoneSlot ||
+          !demoPhoneScaleOuter ||
+          !phonePageHoverWrap ||
+          !hRange
+        ) {
+          return;
+        }
+
+        const maxH = Number(hRange.getAttribute("max")) || 828;
+        const shellW = W + DEMO_SHELL_PAD_X;
+        const shellHMax = maxH + DEMO_SHELL_PAD_V;
+
+        const Hi = demoHeroInner.clientHeight;
+        const sw = demoHeroPhoneSlot.clientWidth;
+        const Zh = phonePageHoverWrap.offsetHeight;
+        if (Hi < 40 || sw < 8 || Zh < 4) {
+          return;
+        }
+
+        const maxScaleForMinS = (Hi - Zh - 3 * DEMO_STACK_S_MIN) / shellHMax;
+        const scaleW = sw / shellW;
+        const scale = Math.min(
+          Math.max(Math.min(scaleW, Math.max(maxScaleForMinS, 0.02)), 0.08),
+          3
+        );
+
+        const Po = shellHMax * scale;
+        const S = Math.max((Hi - Po - Zh) / 3, DEMO_STACK_S_MIN);
+
+        demoPhoneScaleOuter.style.width = shellW * scale + "px";
+        demoPhoneScaleOuter.style.height = shellHMax * scale + "px";
+        demoPhoneScaleOuter.style.setProperty("--demo-phone-scale", String(scale));
+        demoHeroInner.style.setProperty("--demo-y-gutter", S + "px");
+      }
+
       function tick() {
         const H = Number(hRange.value);
         const statusH = Number(sRange.value);
@@ -3834,7 +3909,7 @@
           " · BottomButton 与画幅底或导航顶外边距 " +
           BB_EDGE_GAP +
           "dp";
-        scheduleSyncDemoHeroScale();
+        syncDemoHeroPhoneLayout();
       }
 
       hRange.addEventListener("input", tick);
@@ -3844,11 +3919,6 @@
       if (gestureNavInput) {
         gestureNavInput.addEventListener("input", tick);
         gestureNavInput.addEventListener("change", tick);
-      }
-
-      window.addEventListener("resize", scheduleSyncDemoHeroScale);
-      if (window.ResizeObserver && demoHeroScaleViewport) {
-        new ResizeObserver(scheduleSyncDemoHeroScale).observe(demoHeroScaleViewport);
       }
 
       if (phonePageHoverWrap) {
@@ -3863,6 +3933,16 @@
           tick();
         });
       }
+
+      if (demoHeroPhoneSlot && typeof ResizeObserver !== "undefined") {
+        var roDemoLayout = new ResizeObserver(function () {
+          syncDemoHeroPhoneLayout();
+        });
+        roDemoLayout.observe(demoHeroPhoneSlot);
+        if (demoHeroInner) roDemoLayout.observe(demoHeroInner);
+        if (phonePageHoverWrap) roDemoLayout.observe(phonePageHoverWrap);
+      }
+      window.addEventListener("resize", syncDemoHeroPhoneLayout);
 
       const introEl = document.getElementById("intro");
       const demoEl = document.getElementById("demo");
