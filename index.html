@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Shoot 适配实验室 — A / B / C / D / H</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -1040,19 +1040,11 @@
       min-height: 100dvh;
       min-height: 100vh;
       width: 100%;
-      padding-top: calc(8px + env(safe-area-inset-top, 0px));
-      padding-right: calc(8px + env(safe-area-inset-right, 0px));
-      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-      padding-left: calc(8px + env(safe-area-inset-left, 0px));
+      padding: 8px;
       display: flex;
       flex-direction: column;
       transition: opacity 0.45s ease;
       background: var(--bg-background);
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior-y: contain;
-      scroll-padding-top: 52px;
     }
     .demo-root ::selection {
       background: var(--accent-soft);
@@ -1063,16 +1055,13 @@
     }
     @media (min-width: 1024px) {
       .demo-root {
-        padding-top: calc(16px + env(safe-area-inset-top, 0px));
-        padding-right: calc(16px + env(safe-area-inset-right, 0px));
-        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
-        padding-left: calc(16px + env(safe-area-inset-left, 0px));
+        padding: 16px;
       }
     }
     .demo-back {
       position: fixed;
-      top: max(12px, calc(8px + env(safe-area-inset-top, 0px)));
-      right: max(12px, calc(8px + env(safe-area-inset-right, 0px)));
+      top: 12px;
+      right: 12px;
       z-index: 100;
       padding: 8px 14px;
       border-radius: 999px;
@@ -1112,31 +1101,34 @@
     }
     @media (min-width: 640px) {
       .demo-root {
-        /* 至少一屏高，但允许超出后整页滚动，避免裁切手机或右栏 */
-        min-height: 100dvh;
-        min-height: 100vh;
-        max-height: none;
+        height: 100dvh;
+        height: 100vh;
+        max-height: 100dvh;
+        max-height: 100vh;
+        box-sizing: border-box;
+        overflow: hidden;
       }
       #demo.demo-root > main.demo-split {
         flex-direction: row;
-        align-items: flex-start;
+        align-items: stretch;
       }
       #demo.demo-root > main.demo-split > .demo-hero {
-        flex: 0 1 52%;
+        flex: 1 1 0%;
         width: 52%;
         max-width: 52%;
         min-width: 0;
-        height: auto;
-        max-height: none;
+        min-height: 0;
+        height: 100%;
+        max-height: 100%;
       }
       #demo.demo-root > main.demo-split > .demo-panel {
         flex: 1 1 0%;
         min-width: 0;
         width: auto;
         min-height: 0;
-        max-height: none;
-        height: auto;
-        overflow-y: visible;
+        max-height: 100%;
+        overflow-y: auto;
+        overscroll-behavior: contain;
       }
     }
     .demo-hero {
@@ -1162,11 +1154,11 @@
     }
     @media (min-width: 640px) {
       .demo-hero {
-        height: auto;
-        max-height: none;
+        height: 100%;
+        max-height: 100%;
       }
     }
-    .demo-root .demo-hero-inner {
+    .demo-hero-inner {
       position: relative;
       /* 与 .intro-hero-inner 一致，必须高于 .intro-hero-glass (z-index:3)，否则磨砂层盖在手机上 */
       z-index: 5;
@@ -1174,18 +1166,38 @@
       min-height: 0;
       display: flex;
       flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      padding: clamp(16px, 3vw, 28px);
+    }
+
+    /* 左栏：可分配高度给手机区；内部整体 scale 以适配笔记本视口高度 */
+    .demo-hero-scale-viewport {
+      flex: 1 1 0%;
+      min-height: 0;
+      min-width: 0;
+      width: 100%;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: clamp(16px, 3vw, 28px);
-      /* 逻辑宽仍 360，栏窄时收窄，避免手机横向溢出裁切 */
-      container-type: inline-size;
-      container-name: demoHero;
-      --w: min(360px, 100%);
+      overflow: hidden;
     }
-    @supports (width: 1cqw) {
-      .demo-root .demo-hero-inner {
-        --w: min(360px, 100cqw);
-      }
+    #demo.demo-root {
+      --demo-hero-scale: 1;
+    }
+    #demo.demo-root .demo-hero-scale-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: clamp(10px, 2vmin, 18px);
+      transform: scale(var(--demo-hero-scale, 1));
+      transform-origin: center bottom;
+      will-change: transform;
+    }
+    #demo.demo-root .demo-hero-scale-inner .phone-page-hover-wrap {
+      margin-top: 0;
+      padding-bottom: clamp(8px, 1.5vmin, 20px);
     }
     .demo-root .phone-shell {
       position: relative;
@@ -1219,8 +1231,13 @@
       min-height: 0;
       padding: 1.25rem 1rem 1.25rem;
       overflow-x: hidden;
-      overflow-y: visible;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+    }
+    @media (min-width: 640px) {
+      .demo-root .demo-panel {
+        max-height: 100%;
+      }
     }
     @media (min-width: 1024px) {
       .demo-root .demo-panel {
@@ -1544,9 +1561,6 @@
       gap: 10px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
-    }
-    .demo-root .aux-panel {
-      overflow-y: visible;
     }
 
     @media (max-width: 1100px) {
@@ -2822,6 +2836,8 @@
           >
             <span class="tooltip">画幅发生裁剪</span>
           </div>
+          <div class="demo-hero-scale-viewport" id="demoHeroScaleViewport">
+            <div class="demo-hero-scale-inner" id="demoHeroScaleInner">
           <div class="phone-shell">
             <div class="phone" id="phone" style="--phone-h: 720px; --nav-h: 48px; --status-h: 40px;">
             <div class="stage" id="stage">
@@ -3075,7 +3091,6 @@
             </nav>
           </div>
         </div>
-        </div>
         <div class="phone-page-hover-wrap" id="phonePageHoverWrap">
           <div
             class="phone-page-hover-btn"
@@ -3088,6 +3103,9 @@
             </div>
             <div class="phone-page-hover-btn__edit" aria-hidden="true">
               <span class="phone-page-hover-btn__edit-text">Edit</span>
+            </div>
+          </div>
+        </div>
             </div>
           </div>
         </div>
@@ -3244,8 +3262,39 @@
       const rightToolsShoot = rightTools ? rightTools.querySelector(".right-tools-shoot") : null;
       const phonePageHoverWrap = document.getElementById("phonePageHoverWrap");
       const phonePageHoverBtn = document.getElementById("phonePageHoverBtn");
+      const demoHeroScaleViewport = document.getElementById("demoHeroScaleViewport");
+      const demoHeroScaleInner = document.getElementById("demoHeroScaleInner");
 
       let phonePageMode = "shoot";
+      let demoHeroScaleRaf = 0;
+
+      function syncDemoHeroScale() {
+        const root = document.getElementById("demo");
+        if (!root || !demoHeroScaleViewport || !demoHeroScaleInner || root.hidden) return;
+        if (window.matchMedia("(max-width: 639px)").matches) {
+          root.style.setProperty("--demo-hero-scale", "1");
+          return;
+        }
+        root.style.setProperty("--demo-hero-scale", "1");
+        void demoHeroScaleViewport.offsetHeight;
+        const pad = 8;
+        const availH = Math.max(0, demoHeroScaleViewport.clientHeight - pad);
+        const availW = Math.max(0, demoHeroScaleViewport.clientWidth - pad);
+        const nh = demoHeroScaleInner.offsetHeight;
+        const nw = demoHeroScaleInner.offsetWidth;
+        if (nh < 1 || nw < 1) return;
+        const s = Math.min(1, availH / nh, availW / nw);
+        root.style.setProperty("--demo-hero-scale", String(s));
+      }
+
+      function scheduleSyncDemoHeroScale() {
+        if (!demoHeroScaleViewport || !demoHeroScaleInner) return;
+        if (demoHeroScaleRaf) cancelAnimationFrame(demoHeroScaleRaf);
+        demoHeroScaleRaf = requestAnimationFrame(function () {
+          demoHeroScaleRaf = 0;
+          syncDemoHeroScale();
+        });
+      }
 
       function syncPhonePageHoverUI() {
         if (!phonePageHoverBtn) return;
@@ -3785,6 +3834,7 @@
           " · BottomButton 与画幅底或导航顶外边距 " +
           BB_EDGE_GAP +
           "dp";
+        scheduleSyncDemoHeroScale();
       }
 
       hRange.addEventListener("input", tick);
@@ -3794,6 +3844,11 @@
       if (gestureNavInput) {
         gestureNavInput.addEventListener("input", tick);
         gestureNavInput.addEventListener("change", tick);
+      }
+
+      window.addEventListener("resize", scheduleSyncDemoHeroScale);
+      if (window.ResizeObserver && demoHeroScaleViewport) {
+        new ResizeObserver(scheduleSyncDemoHeroScale).observe(demoHeroScaleViewport);
       }
 
       if (phonePageHoverWrap) {
