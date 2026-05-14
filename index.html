@@ -3063,7 +3063,7 @@
             <nav
               class="demo-phone-left-nav"
               id="demoPhoneLeftNav"
-              aria-label="Creation 演示页导航"
+              aria-label="Shoot 演示页导航"
             >
               <div class="demo-phone-left-nav__rail">
                 <button
@@ -3080,7 +3080,7 @@
                   data-demo-nav-base="shoot"
                   aria-current="page"
                 >
-                  Creation
+                  Shoot
                 </button>
                 <button
                   type="button"
@@ -3372,13 +3372,13 @@
             class="phone-page-hover-btn"
             id="phonePageHoverBtn"
             role="group"
-            aria-label="手机预览：移入查看 Edit，移开恢复 Creation"
+            aria-label="手机预览：移入查看 Edit，移开恢复 Shoot"
           >
             <div class="phone-page-hover-btn__edit" aria-hidden="true">
               <span class="phone-page-hover-btn__edit-text">Edit</span>
             </div>
             <div class="phone-page-hover-btn__shoot">
-              <span class="phone-page-hover-btn__shoot-text">Creation</span>
+              <span class="phone-page-hover-btn__shoot-text">Shoot</span>
             </div>
           </div>
         </div>
@@ -3387,9 +3387,9 @@
       <section class="demo-panel" aria-label="实验控制台">
         <div class="demo-panel-inner">
           <header class="page-head">
-            <p class="page-eyebrow" id="demoHeadEyebrow">Creation adaptation lab</p>
+            <p class="page-eyebrow" id="demoHeadEyebrow">Shoot adaptation lab</p>
             <div class="page-head-title-row">
-              <h1 id="demoHeadTitle">CreationPage Adaptation</h1>
+              <h1 id="demoHeadTitle">ShootPage Adaptation</h1>
               <label class="nav-mode-switch" for="gestureNavInput">
                 <span class="nav-mode-switch__label">手势导航</span>
                 <input type="checkbox" id="gestureNavInput" role="switch" aria-checked="false" />
@@ -3479,7 +3479,7 @@
                 <div class="stat-row"><span class="k">画幅占据 Status 区</span><span class="v" id="st-occupy-status">—</span></div>
                 <div class="stat-row"><span class="k">顶部 UI（画幅内 top）</span><span class="v" id="st-top-ui">—</span></div>
                 <div class="stat-row"><span class="k">BottomButton 在画幅内</span><span class="v" id="st-bb-in-frame">—</span></div>
-                <div class="stat-row"><span class="k">Creation UI 距画幅底</span><span class="v" id="st-shoot-ui">—</span></div>
+                <div class="stat-row"><span class="k">ShootUI 距画幅底</span><span class="v" id="st-shoot-ui">—</span></div>
                 <div class="stat-row"><span class="k">预览裁剪顶/底（示意）</span><span class="v" id="st-preview-crop">—</span></div>
               </article>
             </div>
@@ -3576,19 +3576,19 @@
       function syncDemoNavChrome() {
         if (demoHeadEyebrow) {
           demoHeadEyebrow.textContent =
-            navDemoBase === "edit" ? "Edit adaptation lab" : "Creation adaptation lab";
+            navDemoBase === "edit" ? "Edit adaptation lab" : "Shoot adaptation lab";
         }
         if (demoHeadTitle) {
           demoHeadTitle.textContent =
-            navDemoBase === "edit" ? "EditPage Adaptation" : "CreationPage Adaptation";
+            navDemoBase === "edit" ? "EditPage Adaptation" : "ShootPage Adaptation";
         }
         if (capsuleHoverShootText && capsuleHoverEditText) {
           if (navDemoBase === "shoot") {
-            capsuleHoverShootText.textContent = "Creation";
+            capsuleHoverShootText.textContent = "Shoot";
             capsuleHoverEditText.textContent = "Edit";
           } else {
             capsuleHoverShootText.textContent = "Edit";
-            capsuleHoverEditText.textContent = "Creation";
+            capsuleHoverEditText.textContent = "Shoot";
           }
         }
         if (demoNavBaseButtons) {
@@ -3610,11 +3610,11 @@
           "aria-label",
           navDemoBase === "shoot"
             ? capsulePreviewActive
-              ? "临时预览 Edit，移开恢复 Creation 基准"
-              : "基准 Creation；移入可临时预览 Edit"
+              ? "临时预览 Edit，移开恢复 Shoot 基准"
+              : "基准 Shoot；移入可临时预览 Edit"
             : capsulePreviewActive
-              ? "临时预览 Creation，移开恢复 Edit 基准"
-              : "基准 Edit；移入可临时预览 Creation",
+              ? "临时预览 Shoot，移开恢复 Edit 基准"
+              : "基准 Edit；移入可临时预览 Shoot",
         );
       }
 
@@ -3798,10 +3798,10 @@
           note = gestureNav
             ? "H（手势）：画幅底至屏底（Stage 通高），手势条区域可被画幅占据；BottomButton 整体上移，底距 GestureBar 上沿 " +
               BB_EDGE_GAP +
-              "dp；预览裁上；Creation UI 仍在画幅内"
+              "dp；预览裁上；Shoot UI 仍在画幅内"
             : "H：画幅底贴 Navigation 上沿；BottomButton 底距导航上沿 " +
               BB_EDGE_GAP +
-              "dp；预览裁上；Creation UI 仍在画幅内";
+              "dp；预览裁上；Shoot UI 仍在画幅内";
         } else if (cls.letter === "B") {
           const gap8 = 8;
           const expr = cls.expr;
@@ -4188,7 +4188,7 @@
         st.bbInFrame.textContent = L.bbInsideFrame ? "是" : "否";
         st.shootUi.textContent =
           phonePageMode === "edit"
-            ? "—（EditPage 预览，Creation UI 已隐藏）"
+            ? "—（EditPage 预览，ShootUI 已隐藏）"
             : L.shootUiBottom.toFixed(0) + " px（" + L.shootUiBottomRule + "）";
         st.previewCrop.textContent =
           "顶 " +
