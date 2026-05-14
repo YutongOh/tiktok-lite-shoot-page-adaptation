@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Shoot 适配实验室 — A / B / C / D / H</title>
+  <title>Creation 适配实验室 — A / B / C / D / H</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -608,58 +608,6 @@
         rgba(2, 3, 10, 0.48) 100%
       );
     }
-    @media (prefers-reduced-motion: reduce) {
-      .intro-hero-glow-base {
-        animation: none;
-      }
-      .intro-hero-mesh--1,
-      .intro-hero-mesh--2,
-      .intro-hero-mesh--3,
-      .intro-hero-mesh--4 {
-        animation: none;
-        transform: none;
-        opacity: 0.45;
-      }
-      .intro-hero-conic {
-        animation: none;
-      }
-      .intro-hero-rotor--a,
-      .intro-hero-rotor--b {
-        animation: none;
-      }
-      .intro-hero-gradient-sheet,
-      .intro-hero-gradient-sheet--dodge {
-        animation: none;
-        opacity: 0.48;
-      }
-      .intro-hero-sheen {
-        animation: none;
-        opacity: 0.5;
-      }
-      .intro-hero-glow-light {
-        animation: none;
-        opacity: 0.62;
-        transform: translate(-50%, -50%) scale(1);
-      }
-      .intro-hero-glow-orb {
-        animation: none;
-        opacity: 0.4;
-        transform: none;
-      }
-      .intro-hero-particles::before,
-      .intro-hero-particles::after {
-        animation: none;
-      }
-      .intro-hero-particle-sparks {
-        animation: none;
-        opacity: 0.38;
-      }
-      .intro-reveal > * {
-        animation: none !important;
-        opacity: 1 !important;
-        transform: none !important;
-      }
-    }
     .intro-hero-inner {
       position: relative;
       z-index: 5;
@@ -1001,21 +949,6 @@
       }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .intro-cta-wrap .gradient-layer {
-        animation: none;
-      }
-      .intro-cta-wrap .light {
-        animation: none;
-      }
-      .intro-cta-wrap .text-overlay {
-        animation: none;
-      }
-      .intro-cta-wrap.btn-wrapper:hover .text-overlay,
-      .intro-cta-wrap.btn-wrapper:active .text-overlay {
-        transform: none;
-      }
-    }
     .intro-skip {
       margin-top: 1rem;
       font-size: 0.75rem;
@@ -1461,16 +1394,6 @@
       ::view-transition-new(demo-lab) {
         animation-duration: 0.48s;
         animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      @supports (view-transition-name: none) {
-        ::view-transition-old(intro-gate),
-        ::view-transition-old(demo-lab),
-        ::view-transition-new(intro-gate),
-        ::view-transition-new(demo-lab) {
-          animation-duration: 0.01ms !important;
-        }
       }
     }
 
@@ -2693,17 +2616,6 @@
         width var(--phone-hover-pill-in) var(--phone-hover-pill-ease-in),
         min-width var(--phone-hover-pill-in) var(--phone-hover-pill-ease-in);
     }
-    @media (prefers-reduced-motion: reduce) {
-      .phone-page-hover-btn__shoot-text,
-      .phone-page-hover-btn__edit-text,
-      .phone-page-hover-btn,
-      .demo-phone-left-nav,
-      .demo-phone-left-nav__rail,
-      .demo-phone-left-nav__btn {
-        transition-duration: 0.01ms !important;
-        transition-delay: 0s !important;
-      }
-    }
 
     /* EditPage：整块 ShootUI（模式条 + 快门行）不参与布局与命中；与 [hidden] 双保险 */
     .phone-page--edit #shootUi {
@@ -2958,6 +2870,90 @@
       pointer-events: auto;
       transform: scale(1);
     }
+
+    /* 无障碍：单次媒体块聚合（intro / view-transition / 底部胶囊 / 左侧导航） */
+    @media (prefers-reduced-motion: reduce) {
+      .intro-hero-glow-base {
+        animation: none;
+      }
+      .intro-hero-mesh--1,
+      .intro-hero-mesh--2,
+      .intro-hero-mesh--3,
+      .intro-hero-mesh--4 {
+        animation: none;
+        transform: none;
+        opacity: 0.45;
+      }
+      .intro-hero-conic {
+        animation: none;
+      }
+      .intro-hero-rotor--a,
+      .intro-hero-rotor--b {
+        animation: none;
+      }
+      .intro-hero-gradient-sheet,
+      .intro-hero-gradient-sheet--dodge {
+        animation: none;
+        opacity: 0.48;
+      }
+      .intro-hero-sheen {
+        animation: none;
+        opacity: 0.5;
+      }
+      .intro-hero-glow-light {
+        animation: none;
+        opacity: 0.62;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      .intro-hero-glow-orb {
+        animation: none;
+        opacity: 0.4;
+        transform: none;
+      }
+      .intro-hero-particles::before,
+      .intro-hero-particles::after {
+        animation: none;
+      }
+      .intro-hero-particle-sparks {
+        animation: none;
+        opacity: 0.38;
+      }
+      .intro-reveal > * {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+      .intro-cta-wrap .gradient-layer {
+        animation: none;
+      }
+      .intro-cta-wrap .light {
+        animation: none;
+      }
+      .intro-cta-wrap .text-overlay {
+        animation: none;
+      }
+      .intro-cta-wrap.btn-wrapper:hover .text-overlay,
+      .intro-cta-wrap.btn-wrapper:active .text-overlay {
+        transform: none;
+      }
+      @supports (view-transition-name: none) {
+        ::view-transition-old(intro-gate),
+        ::view-transition-old(demo-lab),
+        ::view-transition-new(intro-gate),
+        ::view-transition-new(demo-lab) {
+          animation-duration: 0.01ms !important;
+        }
+      }
+      .phone-page-hover-btn__shoot-text,
+      .phone-page-hover-btn__edit-text,
+      .phone-page-hover-btn,
+      .demo-phone-left-nav,
+      .demo-phone-left-nav__rail,
+      .demo-phone-left-nav__btn {
+        transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -3011,7 +3007,7 @@
         <div class="intro-hero-inner intro-reveal">
           <div class="intro-hero-headings">
             <p class="intro-hero-label">TikTok Lite</p>
-            <h1 class="intro-heading">Shoot 适配实验室</h1>
+            <h1 class="intro-heading">Creation 适配实验室</h1>
           </div>
         </div>
       </section>
@@ -3063,7 +3059,7 @@
             <nav
               class="demo-phone-left-nav"
               id="demoPhoneLeftNav"
-              aria-label="Shoot 演示页导航"
+              aria-label="Creation 演示页导航"
             >
               <div class="demo-phone-left-nav__rail">
                 <button
@@ -3080,7 +3076,7 @@
                   data-demo-nav-base="shoot"
                   aria-current="page"
                 >
-                  Shoot
+                  Creation
                 </button>
                 <button
                   type="button"
@@ -3372,13 +3368,13 @@
             class="phone-page-hover-btn"
             id="phonePageHoverBtn"
             role="group"
-            aria-label="手机预览：移入查看 Edit，移开恢复 Shoot"
+            aria-label="手机预览：移入查看 Edit，移开恢复 Creation"
           >
             <div class="phone-page-hover-btn__edit" aria-hidden="true">
               <span class="phone-page-hover-btn__edit-text">Edit</span>
             </div>
             <div class="phone-page-hover-btn__shoot">
-              <span class="phone-page-hover-btn__shoot-text">Shoot</span>
+              <span class="phone-page-hover-btn__shoot-text">Creation</span>
             </div>
           </div>
         </div>
@@ -3387,9 +3383,9 @@
       <section class="demo-panel" aria-label="实验控制台">
         <div class="demo-panel-inner">
           <header class="page-head">
-            <p class="page-eyebrow" id="demoHeadEyebrow">Shoot adaptation lab</p>
+            <p class="page-eyebrow" id="demoHeadEyebrow">Creation adaptation lab</p>
             <div class="page-head-title-row">
-              <h1 id="demoHeadTitle">ShootPage Adaptation</h1>
+              <h1 id="demoHeadTitle">CreationPage Adaptation</h1>
               <label class="nav-mode-switch" for="gestureNavInput">
                 <span class="nav-mode-switch__label">手势导航</span>
                 <input type="checkbox" id="gestureNavInput" role="switch" aria-checked="false" />
@@ -3479,7 +3475,7 @@
                 <div class="stat-row"><span class="k">画幅占据 Status 区</span><span class="v" id="st-occupy-status">—</span></div>
                 <div class="stat-row"><span class="k">顶部 UI（画幅内 top）</span><span class="v" id="st-top-ui">—</span></div>
                 <div class="stat-row"><span class="k">BottomButton 在画幅内</span><span class="v" id="st-bb-in-frame">—</span></div>
-                <div class="stat-row"><span class="k">ShootUI 距画幅底</span><span class="v" id="st-shoot-ui">—</span></div>
+                <div class="stat-row"><span class="k">Creation UI 距画幅底</span><span class="v" id="st-shoot-ui">—</span></div>
                 <div class="stat-row"><span class="k">预览裁剪顶/底（示意）</span><span class="v" id="st-preview-crop">—</span></div>
               </article>
             </div>
@@ -3506,10 +3502,15 @@
       /** Shoot UI（快门）底距画幅底：裁剪或「>16:9 + BottomButton 在画幅内 + 吃 StatusBar」时用 */
       const SHOOT_UI_BOTTOM_COMPACT_DP = 32;
 
+      const demoRoot = document.getElementById("demo");
+      const introEl = document.getElementById("intro");
       const phone = document.getElementById("phone");
       const demoHeroInner = phone ? phone.closest(".demo-hero-inner") : null;
       const shootFrame = document.getElementById("shootFrame");
       const preview = document.getElementById("preview");
+      const previewVideo = preview
+        ? preview.querySelector(".preview-video")
+        : null;
       const bottomButton = document.getElementById("bottomButton");
       const shootUi = document.getElementById("shootUi");
       const topUi = document.getElementById("topUi");
@@ -3533,7 +3534,18 @@
       const rightToolsShoot = rightTools ? rightTools.querySelector(".right-tools-shoot") : null;
       const phonePageHoverWrap = document.getElementById("phonePageHoverWrap");
       const phonePageHoverBtn = document.getElementById("phonePageHoverBtn");
+      const capsuleHoverShootText = phonePageHoverBtn
+        ? phonePageHoverBtn.querySelector(".phone-page-hover-btn__shoot-text")
+        : null;
+      const capsuleHoverEditText = phonePageHoverBtn
+        ? phonePageHoverBtn.querySelector(".phone-page-hover-btn__edit-text")
+        : null;
       const demoPhoneLeftNav = document.getElementById("demoPhoneLeftNav");
+      const demoNavBaseButtons = demoPhoneLeftNav
+        ? demoPhoneLeftNav.querySelectorAll(
+            ".demo-phone-left-nav__btn[data-demo-nav-base]",
+          )
+        : null;
       const demoHeadEyebrow = document.getElementById("demoHeadEyebrow");
       const demoHeadTitle = document.getElementById("demoHeadTitle");
       const demoHeroPhoneSlot = document.getElementById("demoHeroPhoneSlot");
@@ -3560,28 +3572,23 @@
       function syncDemoNavChrome() {
         if (demoHeadEyebrow) {
           demoHeadEyebrow.textContent =
-            navDemoBase === "edit" ? "Edit adaptation lab" : "Shoot adaptation lab";
+            navDemoBase === "edit" ? "Edit adaptation lab" : "Creation adaptation lab";
         }
         if (demoHeadTitle) {
           demoHeadTitle.textContent =
-            navDemoBase === "edit" ? "EditPage Adaptation" : "ShootPage Adaptation";
+            navDemoBase === "edit" ? "EditPage Adaptation" : "CreationPage Adaptation";
         }
-        if (phonePageHoverBtn) {
-          const tShoot = phonePageHoverBtn.querySelector(".phone-page-hover-btn__shoot-text");
-          const tEdit = phonePageHoverBtn.querySelector(".phone-page-hover-btn__edit-text");
-          if (tShoot && tEdit) {
-            if (navDemoBase === "shoot") {
-              tShoot.textContent = "Shoot";
-              tEdit.textContent = "Edit";
-            } else {
-              tShoot.textContent = "Edit";
-              tEdit.textContent = "Shoot";
-            }
+        if (capsuleHoverShootText && capsuleHoverEditText) {
+          if (navDemoBase === "shoot") {
+            capsuleHoverShootText.textContent = "Creation";
+            capsuleHoverEditText.textContent = "Edit";
+          } else {
+            capsuleHoverShootText.textContent = "Edit";
+            capsuleHoverEditText.textContent = "Creation";
           }
         }
-        document
-          .querySelectorAll(".demo-phone-left-nav__btn[data-demo-nav-base]")
-          .forEach(function (btn) {
+        if (demoNavBaseButtons) {
+          demoNavBaseButtons.forEach(function (btn) {
             var on = btn.getAttribute("data-demo-nav-base") === navDemoBase;
             btn.classList.toggle("demo-phone-left-nav__btn--active", on);
             if (on) {
@@ -3590,6 +3597,7 @@
               btn.removeAttribute("aria-current");
             }
           });
+        }
       }
 
       function syncPhonePageHoverUI() {
@@ -3598,11 +3606,11 @@
           "aria-label",
           navDemoBase === "shoot"
             ? capsulePreviewActive
-              ? "临时预览 Edit，移开恢复 Shoot 基准"
-              : "基准 Shoot；移入可临时预览 Edit"
+              ? "临时预览 Edit，移开恢复 Creation 基准"
+              : "基准 Creation；移入可临时预览 Edit"
             : capsulePreviewActive
-              ? "临时预览 Shoot，移开恢复 Edit 基准"
-              : "基准 Edit；移入可临时预览 Shoot",
+              ? "临时预览 Creation，移开恢复 Edit 基准"
+              : "基准 Edit；移入可临时预览 Creation",
         );
       }
 
@@ -3786,10 +3794,10 @@
           note = gestureNav
             ? "H（手势）：画幅底至屏底（Stage 通高），手势条区域可被画幅占据；BottomButton 整体上移，底距 GestureBar 上沿 " +
               BB_EDGE_GAP +
-              "dp；预览裁上；Shoot UI 仍在画幅内"
+              "dp；预览裁上；Creation UI 仍在画幅内"
             : "H：画幅底贴 Navigation 上沿；BottomButton 底距导航上沿 " +
               BB_EDGE_GAP +
-              "dp；预览裁上；Shoot UI 仍在画幅内";
+              "dp；预览裁上；Creation UI 仍在画幅内";
         } else if (cls.letter === "B") {
           const gap8 = 8;
           const expr = cls.expr;
@@ -3993,7 +4001,6 @@
        * scale 取 min(宽, 可用高)/逻辑外壳，与 S 联合满足上式；短迭代收敛。
        */
       function syncDemoHeroPhoneLayout() {
-        const demoRoot = document.getElementById("demo");
         if (
           !demoRoot ||
           demoRoot.hidden ||
@@ -4056,6 +4063,28 @@
             hitW >= 8,
           );
         }
+      }
+
+      let demoHeroLayoutRafId = 0;
+
+      /** 与同帧多次 tick / resize / RO 合并，减少重复 getBoundingClientRect */
+      function scheduleDemoHeroPhoneLayout() {
+        if (demoHeroLayoutRafId !== 0) {
+          return;
+        }
+        demoHeroLayoutRafId = requestAnimationFrame(function () {
+          demoHeroLayoutRafId = 0;
+          syncDemoHeroPhoneLayout();
+        });
+      }
+
+      /** 取消未执行的 rAF 并立即布局（首帧 / 进入 demo 避免闪一帧） */
+      function runDemoHeroPhoneLayoutNow() {
+        if (demoHeroLayoutRafId !== 0) {
+          cancelAnimationFrame(demoHeroLayoutRafId);
+          demoHeroLayoutRafId = 0;
+        }
+        syncDemoHeroPhoneLayout();
       }
 
       function tick() {
@@ -4155,7 +4184,7 @@
         st.bbInFrame.textContent = L.bbInsideFrame ? "是" : "否";
         st.shootUi.textContent =
           phonePageMode === "edit"
-            ? "—（EditPage 预览，ShootUI 已隐藏）"
+            ? "—（EditPage 预览，Creation UI 已隐藏）"
             : L.shootUiBottom.toFixed(0) + " px（" + L.shootUiBottomRule + "）";
         st.previewCrop.textContent =
           "顶 " +
@@ -4207,16 +4236,13 @@
           " · BottomButton 与画幅底或导航顶外边距 " +
           BB_EDGE_GAP +
           "dp";
-        syncDemoHeroPhoneLayout();
+        scheduleDemoHeroPhoneLayout();
       }
 
       hRange.addEventListener("input", tick);
       sRange.addEventListener("input", tick);
-      hRange.addEventListener("change", tick);
-      sRange.addEventListener("change", tick);
       if (gestureNavInput) {
         gestureNavInput.addEventListener("input", tick);
-        gestureNavInput.addEventListener("change", tick);
       }
 
       if (phonePageHoverWrap) {
@@ -4265,25 +4291,22 @@
 
       if (demoHeroPhoneSlot && typeof ResizeObserver !== "undefined") {
         var roDemoLayout = new ResizeObserver(function () {
-          syncDemoHeroPhoneLayout();
+          scheduleDemoHeroPhoneLayout();
         });
         roDemoLayout.observe(demoHeroPhoneSlot);
         if (demoHeroInner) roDemoLayout.observe(demoHeroInner);
         if (phonePageHoverWrap) roDemoLayout.observe(phonePageHoverWrap);
       }
-      window.addEventListener("resize", syncDemoHeroPhoneLayout);
+      window.addEventListener("resize", scheduleDemoHeroPhoneLayout);
 
-      const introEl = document.getElementById("intro");
-      const demoEl = document.getElementById("demo");
       const pathNoHash = window.location.pathname + window.location.search;
 
       function syncPreviewVideoPlayback() {
-        const v = document.querySelector(".preview-video");
-        if (!v) return;
-        if (demoEl.hidden) {
-          v.pause();
+        if (!previewVideo) return;
+        if (demoRoot.hidden) {
+          previewVideo.pause();
         } else {
-          v.play().catch(function () {});
+          previewVideo.play().catch(function () {});
         }
       }
 
@@ -4301,11 +4324,12 @@
           !prefersReducedMotion();
         const update = function () {
           introEl.hidden = true;
-          demoEl.hidden = false;
+          demoRoot.hidden = false;
           if (location.hash !== "#demo") {
             history.pushState({ shootAdaptDemo: 1 }, "", pathNoHash + "#demo");
           }
           tick();
+          runDemoHeroPhoneLayoutNow();
           syncPreviewVideoPlayback();
         };
         if (useVt) {
@@ -4319,9 +4343,8 @@
       function leaveDemo() {
         const useVt = typeof document.startViewTransition === "function" && !prefersReducedMotion();
         const update = function () {
-          const v = document.querySelector(".preview-video");
-          if (v) v.pause();
-          demoEl.hidden = true;
+          if (previewVideo) previewVideo.pause();
+          demoRoot.hidden = true;
           introEl.hidden = false;
           if (location.hash === "#demo") {
             history.replaceState(null, "", pathNoHash);
@@ -4341,13 +4364,14 @@
       window.addEventListener("popstate", function () {
         if (location.hash === "#demo") {
           introEl.hidden = true;
-          demoEl.hidden = false;
+          demoRoot.hidden = false;
           skipDemoEnterTransition = true;
           tick();
+          runDemoHeroPhoneLayoutNow();
           syncPreviewVideoPlayback();
         } else {
           introEl.hidden = false;
-          demoEl.hidden = true;
+          demoRoot.hidden = true;
           skipDemoEnterTransition = false;
           syncPreviewVideoPlayback();
         }
@@ -4355,11 +4379,12 @@
 
       if (location.hash === "#demo") {
         introEl.hidden = true;
-        demoEl.hidden = false;
+        demoRoot.hidden = false;
       }
       syncDemoNavChrome();
       applyPhonePageMode();
       tick();
+      runDemoHeroPhoneLayoutNow();
       syncPreviewVideoPlayback();
     })();
   </script>
