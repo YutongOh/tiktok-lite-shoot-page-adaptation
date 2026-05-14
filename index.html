@@ -50,7 +50,9 @@
       background: var(--bg-background);
       color: #fafafa;
       font-family: var(--font-sans);
-      font-size: 13px;
+      /* 与底部胶囊外框乘数一致；勿用子元素上的 em 定宽（导航字 18px 会撑大 15em） */
+      --phone-hover-pill-outer-fs: 13px;
+      font-size: var(--phone-hover-pill-outer-fs);
       line-height: 1.45;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -1185,6 +1187,7 @@
       align-items: center;
       justify-content: center;
       overflow: visible;
+      position: relative;
     }
     .demo-phone-scale-outer {
       --demo-phone-scale: 1;
@@ -1234,6 +1237,150 @@
       box-sizing: border-box;
       z-index: 40;
       pointer-events: none;
+    }
+    /* 左侧 Hover 拉出导航；热区为 nav 本身（--demo-nav-hit-w），无额外 mount 容器 */
+    .demo-phone-left-nav {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--demo-nav-hit-w, 0px);
+      z-index: 20;
+      overflow: visible;
+      box-sizing: border-box;
+      pointer-events: none;
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+    }
+    .demo-phone-left-nav--active {
+      pointer-events: auto;
+    }
+    /* 仅用 :hover + 键盘 :focus-visible 展开：避免鼠标点击持焦后离开热区仍被 :focus-within 撑开 */
+    .demo-phone-left-nav--active:hover .demo-phone-left-nav__rail,
+    .demo-phone-left-nav--active:has(.demo-phone-left-nav__btn:focus-visible)
+      .demo-phone-left-nav__rail {
+      transform: translateX(0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition:
+        transform var(--demo-nav-rail-in-dur) var(--demo-nav-rail-ease-in),
+        opacity var(--demo-nav-rail-in-op-dur) var(--demo-nav-rail-ease-op-in)
+          var(--demo-nav-rail-in-op-delay),
+        visibility 0s linear 0s;
+    }
+    @supports not selector(:has(*)) {
+      .demo-phone-left-nav--active:hover .demo-phone-left-nav__rail,
+      .demo-phone-left-nav--active:focus-within .demo-phone-left-nav__rail {
+        transform: translateX(0);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        transition:
+          transform var(--demo-nav-rail-in-dur) var(--demo-nav-rail-ease-in),
+          opacity var(--demo-nav-rail-in-op-dur) var(--demo-nav-rail-ease-op-in)
+            var(--demo-nav-rail-in-op-delay),
+          visibility 0s linear 0s;
+      }
+    }
+    /* 无整块面板：仅按钮列滑入。
+       退场略短、ease-inaccelerate；进场略舒展 ease-out settle；透明度与位移错开少一点粘滞 */
+    .demo-phone-left-nav__rail {
+      --demo-nav-rail-in-dur: 0.42s;
+      --demo-nav-rail-in-op-dur: 0.36s;
+      --demo-nav-rail-in-op-delay: 0.02s;
+      --demo-nav-rail-out-dur: 0.34s;
+      --demo-nav-rail-out-op-dur: 0.28s;
+      /* 舒展进场（略带回弹感）*/
+      --demo-nav-rail-ease-in: cubic-bezier(0.16, 1, 0.32, 1);
+      --demo-nav-rail-ease-op-in: cubic-bezier(0.2, 0.97, 0.22, 1);
+      /* 轻收退场：先柔化再收起，避免戛然而止 */
+      --demo-nav-rail-ease-out: cubic-bezier(0.45, 0, 0.55, 1);
+      --demo-nav-rail-ease-op-out: cubic-bezier(0.45, 0, 0.55, 1);
+      position: absolute;
+      left: 0;
+      top: max(10px, 3.5%);
+      bottom: max(10px, 3.5%);
+      width: max-content;
+      max-width: min(220px, 94vw);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: stretch;
+      justify-content: center;
+      transform: translateX(-100%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        transform var(--demo-nav-rail-out-dur) var(--demo-nav-rail-ease-out),
+        opacity var(--demo-nav-rail-out-op-dur) var(--demo-nav-rail-ease-op-out),
+        visibility 0s linear var(--demo-nav-rail-out-dur);
+    }
+    /* 与 .phone-page-hover-btn 同尺寸与字标；无 Shoot/Edit 文字对调，仅黑/白态 + hover 过渡 */
+    .demo-phone-left-nav__btn {
+      appearance: none;
+      position: relative;
+      width: calc(15 * var(--phone-hover-pill-outer-fs));
+      max-width: 100%;
+      height: calc(4 * var(--phone-hover-pill-outer-fs));
+      margin: 0;
+      padding: 0 0.6em;
+      box-sizing: border-box;
+      border: none;
+      border-radius: 40px;
+      background-color: #000;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      --phone-hover-pill-ease-out: cubic-bezier(0, 0, 0.2, 1);
+      --phone-hover-pill-ease-in: cubic-bezier(0.4, 0, 0.2, 1);
+      /* 默认态 transition 不设：被取消 active（或 hover 结束）的瞬间回黑底白字 */
+      transition: none;
+    }
+    .demo-phone-left-nav__btn--active {
+      background-color: #fff;
+      color: #000;
+      transition:
+        background-color 0.11s var(--phone-hover-pill-ease-out) 0s,
+        color 0.11s var(--phone-hover-pill-ease-out) 0s;
+    }
+    .demo-phone-left-nav__btn:not(.demo-phone-left-nav__btn--active):not([disabled]):hover {
+      background-color: #fff;
+      color: #000;
+      transition:
+        background-color 0.05s var(--phone-hover-pill-ease-in) 0s,
+        color 0.05s var(--phone-hover-pill-ease-in) 0s;
+    }
+    /* 切换 Shoot/Edit 后一帧内：光标若仍在同一枚上过，避免 :hover 白底卡住「上一个选中」的退场观感 */
+    .demo-phone-left-nav.demo-phone-left-nav--flush-hover
+      .demo-phone-left-nav__btn:not(.demo-phone-left-nav__btn--active):not([disabled]):hover {
+      background-color: #000;
+      color: #fff;
+      transition: none;
+    }
+    .demo-phone-left-nav__btn[disabled] {
+      opacity: 0.38;
+      cursor: not-allowed;
+      transition: none;
+    }
+    .demo-phone-left-nav__btn[disabled]:hover {
+      background-color: #000;
+      color: #fff;
+      transition: none;
     }
     .demo-hero-inner--crop-hint .demo-phone-scale-surface > .clip-note-toast.tooltip-container {
       pointer-events: auto;
@@ -2455,9 +2602,9 @@
        JS：pointer enter/leave 后单帧 rAF 再 tick，压低与 CSS 同帧互抢。*/
     .phone-page-hover-btn {
       position: relative;
-      width: 15em;
+      width: calc(15 * var(--phone-hover-pill-outer-fs));
       max-width: 100%;
-      height: 4em;
+      height: calc(4 * var(--phone-hover-pill-outer-fs));
       margin: 0 auto;
       border: none;
       border-radius: 40px;
@@ -2466,7 +2613,6 @@
       font-family: inherit;
       box-sizing: border-box;
       overflow: hidden;
-      contain: paint;
       --phone-hover-pill-in: 0.2s;
       --phone-hover-pill-out: 0.28s;
       --phone-hover-pill-ease-in: cubic-bezier(0.4, 0, 0.2, 1);
@@ -2550,7 +2696,10 @@
     @media (prefers-reduced-motion: reduce) {
       .phone-page-hover-btn__shoot-text,
       .phone-page-hover-btn__edit-text,
-      .phone-page-hover-btn {
+      .phone-page-hover-btn,
+      .demo-phone-left-nav,
+      .demo-phone-left-nav__rail,
+      .demo-phone-left-nav__btn {
         transition-duration: 0.01ms !important;
         transition-delay: 0s !important;
       }
@@ -2911,6 +3060,45 @@
         <div class="intro-hero-glass" aria-hidden="true"></div>
         <div class="demo-hero-inner">
           <div class="demo-hero-phone-slot" id="demoHeroPhoneSlot">
+            <nav
+              class="demo-phone-left-nav"
+              id="demoPhoneLeftNav"
+              aria-label="Shoot 演示页导航"
+            >
+              <div class="demo-phone-left-nav__rail">
+                <button
+                  type="button"
+                  class="demo-phone-left-nav__btn"
+                  disabled
+                  aria-disabled="true"
+                >
+                  Album
+                </button>
+                <button
+                  type="button"
+                  class="demo-phone-left-nav__btn demo-phone-left-nav__btn--active"
+                  data-demo-nav-base="shoot"
+                  aria-current="page"
+                >
+                  Shoot
+                </button>
+                <button
+                  type="button"
+                  class="demo-phone-left-nav__btn"
+                  data-demo-nav-base="edit"
+                >
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  class="demo-phone-left-nav__btn"
+                  disabled
+                  aria-disabled="true"
+                >
+                  Post
+                </button>
+              </div>
+            </nav>
             <div class="demo-hero-phone-anchor">
               <div class="demo-phone-scale-outer" id="demoPhoneScaleOuter">
                 <div class="demo-phone-scale-surface">
@@ -3199,9 +3387,9 @@
       <section class="demo-panel" aria-label="实验控制台">
         <div class="demo-panel-inner">
           <header class="page-head">
-            <p class="page-eyebrow">Shoot adaptation lab</p>
+            <p class="page-eyebrow" id="demoHeadEyebrow">Shoot adaptation lab</p>
             <div class="page-head-title-row">
-              <h1>ShootPage Adaptation</h1>
+              <h1 id="demoHeadTitle">ShootPage Adaptation</h1>
               <label class="nav-mode-switch" for="gestureNavInput">
                 <span class="nav-mode-switch__label">手势导航</span>
                 <input type="checkbox" id="gestureNavInput" role="switch" aria-checked="false" />
@@ -3345,6 +3533,9 @@
       const rightToolsShoot = rightTools ? rightTools.querySelector(".right-tools-shoot") : null;
       const phonePageHoverWrap = document.getElementById("phonePageHoverWrap");
       const phonePageHoverBtn = document.getElementById("phonePageHoverBtn");
+      const demoPhoneLeftNav = document.getElementById("demoPhoneLeftNav");
+      const demoHeadEyebrow = document.getElementById("demoHeadEyebrow");
+      const demoHeadTitle = document.getElementById("demoHeadTitle");
       const demoHeroPhoneSlot = document.getElementById("demoHeroPhoneSlot");
       const demoPhoneScaleOuter = document.getElementById("demoPhoneScaleOuter");
       /** Demo 左侧 phone-shell：与 .phone-shell padding 一致（16+16 / 18+20） */
@@ -3354,18 +3545,69 @@
       /** 竖向三等分留白 S 的下限（略大以免顶/缝/底过紧） */
       const DEMO_STACK_S_MIN = 32;
 
+      let navDemoBase = "shoot";
+      let capsulePreviewActive = false;
       let phonePageMode = "shoot";
+
+      function computeEffectivePhonePageMode() {
+        return capsulePreviewActive
+          ? navDemoBase === "shoot"
+            ? "edit"
+            : "shoot"
+          : navDemoBase;
+      }
+
+      function syncDemoNavChrome() {
+        if (demoHeadEyebrow) {
+          demoHeadEyebrow.textContent =
+            navDemoBase === "edit" ? "Edit adaptation lab" : "Shoot adaptation lab";
+        }
+        if (demoHeadTitle) {
+          demoHeadTitle.textContent =
+            navDemoBase === "edit" ? "EditPage Adaptation" : "ShootPage Adaptation";
+        }
+        if (phonePageHoverBtn) {
+          const tShoot = phonePageHoverBtn.querySelector(".phone-page-hover-btn__shoot-text");
+          const tEdit = phonePageHoverBtn.querySelector(".phone-page-hover-btn__edit-text");
+          if (tShoot && tEdit) {
+            if (navDemoBase === "shoot") {
+              tShoot.textContent = "Shoot";
+              tEdit.textContent = "Edit";
+            } else {
+              tShoot.textContent = "Edit";
+              tEdit.textContent = "Shoot";
+            }
+          }
+        }
+        document
+          .querySelectorAll(".demo-phone-left-nav__btn[data-demo-nav-base]")
+          .forEach(function (btn) {
+            var on = btn.getAttribute("data-demo-nav-base") === navDemoBase;
+            btn.classList.toggle("demo-phone-left-nav__btn--active", on);
+            if (on) {
+              btn.setAttribute("aria-current", "page");
+            } else {
+              btn.removeAttribute("aria-current");
+            }
+          });
+      }
 
       function syncPhonePageHoverUI() {
         if (!phonePageHoverBtn) return;
-        const isEdit = phonePageMode === "edit";
         phonePageHoverBtn.setAttribute(
           "aria-label",
-          isEdit ? "当前为 Edit 预览，移开指针恢复 Shoot" : "移入切换为 Edit 预览，移开恢复 Shoot"
+          navDemoBase === "shoot"
+            ? capsulePreviewActive
+              ? "临时预览 Edit，移开恢复 Shoot 基准"
+              : "基准 Shoot；移入可临时预览 Edit"
+            : capsulePreviewActive
+              ? "临时预览 Shoot，移开恢复 Edit 基准"
+              : "基准 Edit；移入可临时预览 Shoot",
         );
       }
 
       function applyPhonePageMode() {
+        phonePageMode = computeEffectivePhonePageMode();
         const isEdit = phonePageMode === "edit";
         if (phone) phone.classList.toggle("phone-page--edit", isEdit);
         if (rightTools) {
@@ -3761,6 +4003,12 @@
           !phonePageHoverWrap ||
           !hRange
         ) {
+          if (demoHeroPhoneSlot) {
+            demoHeroPhoneSlot.style.setProperty("--demo-nav-hit-w", "0px");
+          }
+          if (demoPhoneLeftNav) {
+            demoPhoneLeftNav.classList.remove("demo-phone-left-nav--active");
+          }
           return;
         }
 
@@ -3775,6 +4023,10 @@
             ? phonePageHoverBtn.offsetHeight
             : phonePageHoverWrap.offsetHeight;
         if (Hi < 40 || sw < 8 || Zh < 4) {
+          demoHeroPhoneSlot.style.setProperty("--demo-nav-hit-w", "0px");
+          if (demoPhoneLeftNav) {
+            demoPhoneLeftNav.classList.remove("demo-phone-left-nav--active");
+          }
           return;
         }
 
@@ -3792,6 +4044,18 @@
         demoPhoneScaleOuter.style.height = shellHMax * scale + "px";
         demoPhoneScaleOuter.style.setProperty("--demo-phone-scale", String(scale));
         demoHeroInner.style.setProperty("--demo-y-gutter", S + "px");
+
+        const slotR = demoHeroPhoneSlot.getBoundingClientRect();
+        const outerR = demoPhoneScaleOuter.getBoundingClientRect();
+        const slackL = Math.max(0, Math.round(outerR.left - slotR.left));
+        const hitW = slackL > 0 ? Math.max(12, Math.floor(slackL * 0.5)) : 0;
+        demoHeroPhoneSlot.style.setProperty("--demo-nav-hit-w", hitW + "px");
+        if (demoPhoneLeftNav) {
+          demoPhoneLeftNav.classList.toggle(
+            "demo-phone-left-nav--active",
+            hitW >= 8,
+          );
+        }
       }
 
       function tick() {
@@ -3960,14 +4224,42 @@
           requestAnimationFrame(tick);
         }
         phonePageHoverWrap.addEventListener("pointerenter", function () {
-          phonePageMode = "edit";
+          capsulePreviewActive = true;
           applyPhonePageMode();
           deferHoverLayoutTick();
         });
         phonePageHoverWrap.addEventListener("pointerleave", function () {
-          phonePageMode = "shoot";
+          capsulePreviewActive = false;
           applyPhonePageMode();
           deferHoverLayoutTick();
+        });
+      }
+
+      if (demoPhoneLeftNav) {
+        demoPhoneLeftNav.addEventListener("click", function (e) {
+          var btn = e.target.closest(".demo-phone-left-nav__btn[data-demo-nav-base]");
+          if (!btn || btn.disabled) {
+            return;
+          }
+          var next = btn.getAttribute("data-demo-nav-base");
+          if (next !== "shoot" && next !== "edit") {
+            return;
+          }
+          demoPhoneLeftNav.classList.add("demo-phone-left-nav--flush-hover");
+          navDemoBase = next;
+          syncDemoNavChrome();
+          applyPhonePageMode();
+          requestAnimationFrame(tick);
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              demoPhoneLeftNav.classList.remove("demo-phone-left-nav--flush-hover");
+            });
+          });
+          if (typeof e.pointerType === "string" && e.pointerType === "mouse") {
+            requestAnimationFrame(function () {
+              btn.blur();
+            });
+          }
         });
       }
 
@@ -4065,6 +4357,7 @@
         introEl.hidden = true;
         demoEl.hidden = false;
       }
+      syncDemoNavChrome();
       applyPhonePageMode();
       tick();
       syncPreviewVideoPlayback();
