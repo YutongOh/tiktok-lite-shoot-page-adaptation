@@ -37,6 +37,15 @@
       --bottom-button-fill: rgba(255, 86, 86, 0.18);
       --preview-grad-a: rgba(236, 72, 153, 0.28);
       --preview-grad-b: rgba(249, 115, 22, 0.14);
+      /* 前置页与 Demo 内容页共用：外边距 / 中线距 / 左卡圆角 */
+      --intro-demo-outer-pad: 8px;
+      --intro-demo-split-gap: clamp(8px, 2vw, 16px);
+      --intro-demo-hero-radius: clamp(16px, 3vw, 24px);
+    }
+    @media (min-width: 1024px) {
+      :root {
+        --intro-demo-outer-pad: 16px;
+      }
     }
 
     * { box-sizing: border-box; }
@@ -61,58 +70,55 @@
     /* —— Aurora 风格欢迎页（无外链视频，用渐变模拟极光） —— */
     .intro-gate {
       min-height: 100vh;
+      min-height: 100dvh;
       width: 100%;
       display: flex;
       flex-direction: column;
-      padding: 8px;
+      padding: var(--intro-demo-outer-pad);
+      box-sizing: border-box;
       transition: opacity 0.45s ease, transform 0.45s ease;
     }
     .intro-gate[hidden] {
       display: none !important;
     }
-    @media (min-width: 1024px) {
-      .intro-gate {
-        height: 100vh;
-        overflow: hidden;
-        padding: 16px;
-      }
-    }
+    /* 前置页始终左右并排；列宽固定各占 1/2（gap 均摊），窄屏靠字号缩小适配 */
     .intro-split {
-      display: flex;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       flex: 1;
-      flex-direction: column;
-      gap: 10px;
+      align-items: stretch;
+      gap: var(--intro-demo-split-gap);
       min-height: 0;
     }
-    @media (min-width: 1024px) {
+    @media (max-width: 639px) {
       .intro-split {
-        flex-direction: row;
-        align-items: stretch;
-        gap: 16px;
+        min-height: calc(100dvh - 2 * var(--intro-demo-outer-pad));
+      }
+    }
+    @media (min-width: 640px) {
+      .intro-split {
         height: 100%;
       }
     }
     .intro-hero {
-      display: none;
+      display: flex;
       position: relative;
       flex-direction: column;
       justify-content: center;
       align-items: stretch;
-      width: 100%;
-      border-radius: 24px;
+      min-width: 0;
+      container-type: inline-size;
+      border-radius: var(--intro-demo-hero-radius);
       overflow: hidden;
       border: 1px solid rgba(88, 28, 135, 0.22);
       box-shadow:
         0 25px 50px -12px rgba(0, 0, 0, 0.82),
         0 0 100px rgba(30, 27, 75, 0.09),
         inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      min-height: 220px;
+      min-height: min(240px, 42vh);
     }
     @media (min-width: 1024px) {
       .intro-hero {
-        display: flex;
-        width: 50%;
-        flex-shrink: 0;
         min-height: 0;
       }
     }
@@ -598,16 +604,6 @@
       border: 1px solid rgba(255, 255, 255, 0.07);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
-    .intro-mobile-banner .intro-hero-glass {
-      backdrop-filter: blur(14px) saturate(1.2);
-      -webkit-backdrop-filter: blur(14px) saturate(1.2);
-      background: linear-gradient(
-        165deg,
-        rgba(255, 255, 255, 0.03) 0%,
-        rgba(8, 10, 20, 0.1) 45%,
-        rgba(2, 3, 10, 0.48) 100%
-      );
-    }
     .intro-hero-inner {
       position: relative;
       z-index: 5;
@@ -615,16 +611,17 @@
       flex: 1;
       min-height: 0;
       margin: 0 auto;
-      padding: 2rem 1.5rem;
+      padding: 1rem clamp(0.7rem, 3.5vw, 3rem);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
+      box-sizing: border-box;
     }
-    @media (min-width: 1024px) {
+    @supports (container-type: inline-size) {
       .intro-hero-inner {
-        padding: 2rem 3rem;
+        padding: clamp(0.85rem, 7cqi, 2rem) clamp(0.65rem, 6cqi, 3rem);
       }
     }
     .intro-hero-headings {
@@ -633,11 +630,13 @@
       align-items: center;
       gap: 0.42rem;
       text-align: center;
+      max-width: 100%;
+      overflow-wrap: anywhere;
     }
     .intro-hero-label {
       margin: 0;
       font-family: "Inter", ui-sans-serif, "PingFang SC", system-ui, sans-serif;
-      font-size: clamp(0.95rem, 2.4vw, 1.2rem);
+      font-size: clamp(0.72rem, 2.8vw + 0.35rem, 1.2rem);
       font-weight: 800;
       letter-spacing: -0.04em;
       line-height: 1;
@@ -645,6 +644,11 @@
       text-shadow:
         0 0 28px rgba(255, 255, 255, 0.12),
         0 2px 20px rgba(0, 0, 0, 0.55);
+    }
+    @supports (container-type: inline-size) {
+      .intro-hero-label {
+        font-size: clamp(0.62rem, 5.5cqi + 0.35rem, 1.2rem);
+      }
     }
     .intro-reveal > * {
       opacity: 0;
@@ -664,7 +668,7 @@
       margin: 0;
       text-align: center;
       font-family: "Inter", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
-      font-size: clamp(1.85rem, 5.2vw, 2.75rem);
+      font-size: clamp(1.05rem, 4.2vw + 0.55rem, 2.75rem);
       font-weight: 800;
       letter-spacing: -0.055em;
       line-height: 1.06;
@@ -673,23 +677,13 @@
         0 0 28px rgba(255, 255, 255, 0.12),
         0 2px 20px rgba(0, 0, 0, 0.55);
     }
-    .intro-mobile-banner {
-      display: block;
-      position: relative;
-      height: 132px;
-      border-radius: 20px;
-      overflow: hidden;
-      flex-shrink: 0;
-      box-shadow: 0 20px 40px -16px rgba(0, 0, 0, 0.55);
-    }
-    @media (min-width: 1024px) {
-      .intro-mobile-banner {
-        display: none;
+    @supports (container-type: inline-size) {
+      .intro-heading {
+        font-size: clamp(0.78rem, 10cqi + 0.42rem, 2.75rem);
       }
     }
-
     .intro-panel {
-      flex: 1;
+      min-width: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -705,8 +699,9 @@
     }
     .intro-panel-inner {
       width: 100%;
-      max-width: 36rem;
+      max-width: min(36rem, 100%);
       animation: panel-fade 0.85s ease-out both;
+      box-sizing: border-box;
     }
     @keyframes panel-fade {
       from {
@@ -718,13 +713,13 @@
     }
     .intro-panel h2 {
       margin: 0 0 0.35rem;
-      font-size: clamp(1.5rem, 3.5vw, 1.875rem);
+      font-size: clamp(1.15rem, 2.8vw + 0.6rem, 1.875rem);
       font-weight: 400;
       letter-spacing: -0.04em;
     }
     .intro-panel .intro-sub {
       margin: 0 0 2rem;
-      font-size: 0.8125rem;
+      font-size: clamp(0.6875rem, 1.8vw + 0.55rem, 0.875rem);
       color: var(--text-muted);
       line-height: 1.55;
     }
@@ -979,7 +974,8 @@
       min-height: 100dvh;
       min-height: 100vh;
       width: 100%;
-      padding: 8px;
+      padding: var(--intro-demo-outer-pad);
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
       transition: opacity 0.45s ease;
@@ -992,9 +988,14 @@
     .demo-root[hidden] {
       display: none !important;
     }
-    @media (min-width: 1024px) {
+    @media (min-width: 640px) {
+      .intro-gate,
       .demo-root {
-        padding: 16px;
+        height: 100dvh;
+        height: 100vh;
+        max-height: 100dvh;
+        max-height: 100vh;
+        overflow: hidden;
       }
     }
     .demo-back {
@@ -1021,51 +1022,26 @@
     }
 
     /*
-     * Demo 主区布局（根因说明）：
-     * 1) 若主容器未形成「双列」格式化上下文（例如 grid 规则整段失效），子级会按块级流排版；
-     * 2) .demo-hero 默认 width:100%，在块流下会独占一行，.demo-panel 必然落到下一行 →「信息区在下方」。
-     * 3) demo-hero 内多写一层 </div> 会提前闭合 #demo，.demo-panel 与 </main> 会落到 body 下，flex 双栏对 main 无效。
-     * 故对 #demo > main 使用高特异性 flex + nowrap；宽屏下左侧与前置页一致为页宽 50%，右侧占余下空间并可纵向滚动。
+     * Demo 主区与前置页 .intro-split 对齐：同源 gap / 等量两列网格；前置↔Demo 切换时外层边距与中缝一致。
      */
     #demo.demo-root > main.demo-split {
       flex: 1;
       min-width: 0;
       min-height: 0;
       width: 100%;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--intro-demo-split-gap);
       align-items: stretch;
     }
-    @media (min-width: 640px) {
-      .demo-root {
-        height: 100dvh;
-        height: 100vh;
-        max-height: 100dvh;
-        max-height: 100vh;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
+    @media (max-width: 639px) {
       #demo.demo-root > main.demo-split {
-        flex-direction: row;
-        align-items: stretch;
+        min-height: calc(100dvh - 2 * var(--intro-demo-outer-pad));
       }
-      /* 与前置页 .intro-hero 一致：左侧主区宽度 50%，右侧 flex:1 吃掉余量（含 gap） */
-      #demo.demo-root > main.demo-split > .demo-hero {
-        width: 50%;
-        flex-shrink: 0;
+    }
+    @media (min-width: 640px) {
+      #demo.demo-root > main.demo-split {
         height: 100%;
-        max-height: 100%;
-        min-height: 0;
-        min-width: 0;
-      }
-      #demo.demo-root > main.demo-split > .demo-panel {
-        flex: 1 1 0%;
-        min-width: 0;
-        width: auto;
-        min-height: 0;
-        max-height: 100%;
       }
     }
     .demo-hero {
@@ -1074,9 +1050,9 @@
       flex-direction: column;
       justify-content: flex-start;
       align-items: stretch;
-      width: 100%;
+      min-width: 0;
       min-height: 0;
-      border-radius: 24px;
+      border-radius: var(--intro-demo-hero-radius);
       overflow: hidden;
       border: 1px solid rgba(88, 28, 135, 0.22);
       box-shadow:
@@ -1090,7 +1066,7 @@
     }
     @media (max-width: 639px) {
       .demo-hero {
-        min-height: min(48vh, 380px);
+        min-height: min(240px, 42vh);
       }
     }
     @media (min-width: 640px) {
@@ -1330,6 +1306,7 @@
     }
 
     /* Demo 右栏：仅整块 .demo-panel 纵向滚动；内层不参与滚动避免套娃 */
+    /* Demo 右栏内边距与前置页 .intro-panel 对齐 */
     .demo-root .demo-panel {
       display: flex;
       flex-direction: column;
@@ -1339,7 +1316,7 @@
       width: 100%;
       min-width: 0;
       min-height: 0;
-      padding: 1.25rem 1rem 1.25rem;
+      padding: 2.5rem 1rem 2rem;
       overflow-x: hidden;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
@@ -1353,7 +1330,7 @@
     }
     @media (min-width: 1024px) {
       .demo-root .demo-panel {
-        padding: 1.5rem 2rem 1.75rem;
+        padding: 1.5rem 2rem;
       }
     }
     .demo-root .demo-panel-inner {
@@ -2963,29 +2940,6 @@
 <body>
   <div id="intro" class="intro-gate">
     <main class="intro-split">
-      <div class="intro-mobile-banner" aria-hidden="true">
-        <div class="intro-hero-glow">
-          <div class="intro-hero-glow-base"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--1" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--2" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--3" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--4" aria-hidden="true"></div>
-          <div class="intro-hero-conic" aria-hidden="true"></div>
-          <div class="intro-hero-rotor intro-hero-rotor--a">
-            <div class="intro-hero-gradient-sheet"></div>
-          </div>
-          <div class="intro-hero-rotor intro-hero-rotor--b">
-            <div class="intro-hero-gradient-sheet intro-hero-gradient-sheet--dodge"></div>
-          </div>
-          <div class="intro-hero-sheen" aria-hidden="true"></div>
-          <div class="intro-hero-glow-light"></div>
-          <div class="intro-hero-glow-orb" aria-hidden="true"></div>
-          <div class="intro-hero-particles" aria-hidden="true"></div>
-          <div class="intro-hero-particle-sparks" aria-hidden="true"></div>
-          <div class="intro-hero-noise" aria-hidden="true"></div>
-        </div>
-        <div class="intro-hero-glass" aria-hidden="true"></div>
-      </div>
       <section class="intro-hero" aria-label="视觉">
         <div class="intro-hero-glow" aria-hidden="true">
           <div class="intro-hero-glow-base"></div>
