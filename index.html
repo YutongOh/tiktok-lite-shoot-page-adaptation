@@ -998,13 +998,11 @@
         overflow: hidden;
       }
     }
-    /* 右缘与右侧信息区正文对齐；样式来自 Uiverse btn-12 (doniaskima)，作用域收口为 .demo-back */
+    /* 条纹裁切仅在内层，外层不 overflow:hidden，避免圆角与外描边同窗裁剪导致大屏锯齿（描边单独一层 ::before） */
     .demo-back,
     .demo-back *,
     .demo-back *::after,
-    .demo-back *::before,
-    .demo-back::after,
-    .demo-back::before {
+    .demo-back *::before {
       border: 0 solid;
       box-sizing: border-box;
     }
@@ -1019,7 +1017,7 @@
       appearance: button;
       background-color: #000;
       background-image: none;
-      color: rgba(255, 255, 255, 0.62);
+      color: var(--text-muted);
       cursor: pointer;
       font-family:
         ui-sans-serif,
@@ -1038,17 +1036,44 @@
         "Noto Color Emoji";
       font-size: clamp(11px, 0.835rem, 12px);
       font-weight: 900;
-      line-height: 1.35;
+      line-height: 1.6;
       margin: 0;
-      -webkit-mask-image: -webkit-radial-gradient(#000, #fff);
-      mask-image: radial-gradient(#000, #fff);
       text-transform: uppercase;
       border-radius: 99rem;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      overflow: hidden;
+      border: none;
       padding: 0.48rem clamp(0.68rem, 3.4vw, 1.65rem);
       isolation: isolate;
-      transition: color 0.2s ease, border-color 0.2s ease;
+      transition: color 0.2s ease;
+    }
+
+    /* 与外缘叠合的环形描边，不参与内层 overflow 裁剪（亚像素更清晰） */
+    .demo-back::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 1px solid var(--text-muted);
+      background: transparent;
+      pointer-events: none;
+      z-index: 2;
+      transition: border-color 0.2s ease;
+    }
+
+    .demo-back:hover::before {
+      border-color: #fff;
+    }
+
+    .demo-back:hover {
+      color: #fff;
+    }
+
+    .demo-back__clip {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
     }
 
     .demo-back:disabled {
@@ -1080,12 +1105,16 @@
 
     .demo-back__label {
       position: relative;
-      z-index: 1;
+      z-index: 3;
+      mix-blend-mode: normal;
+    }
+
+    .demo-back:hover .demo-back__label {
       mix-blend-mode: difference;
     }
 
-    .demo-back::after,
-    .demo-back::before {
+    .demo-back__clip::before,
+    .demo-back__clip::after {
       background: linear-gradient(
         90deg,
         #fff 25%,
@@ -1102,7 +1131,7 @@
       transition: transform 0.2s ease;
     }
 
-    .demo-back::after {
+    .demo-back__clip::after {
       --progress: -100%;
       background: linear-gradient(
         90deg,
@@ -1117,16 +1146,8 @@
       z-index: -1;
     }
 
-    .demo-back:hover:not(:disabled),
-    .demo-back:focus-visible:not(:disabled) {
-      color: #fff;
-      border-color: rgba(255, 255, 255, 1);
-    }
-
-    .demo-back:hover:not(:disabled)::after,
-    .demo-back:hover:not(:disabled)::before,
-    .demo-back:focus-visible:not(:disabled)::after,
-    .demo-back:focus-visible:not(:disabled)::before {
+    .demo-back:hover .demo-back__clip::before,
+    .demo-back:hover .demo-back__clip::after {
       --progress: 0;
     }
 
@@ -3127,8 +3148,8 @@
         transition-duration: 0.01ms !important;
         transition-delay: 0s !important;
       }
-      .demo-back::before,
-      .demo-back::after {
+      .demo-back__clip::before,
+      .demo-back__clip::after {
         transition-duration: 0.01ms !important;
         transition-delay: 0s !important;
       }
@@ -3187,6 +3208,7 @@
 
   <div id="demo" class="demo-root" hidden>
     <button type="button" class="demo-back" id="demoBack">
+      <span class="demo-back__clip" aria-hidden="true"></span>
       <span class="demo-back__label">返回欢迎页</span>
     </button>
     <main class="demo-split">
