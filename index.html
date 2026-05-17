@@ -2465,7 +2465,8 @@
       pointer-events: none;
     }
     .bottom-button-anchor .bottom-button-layer--shoot,
-    .bottom-button-anchor .bottom-button-layer--edit {
+    .bottom-button-anchor .bottom-button-layer--edit,
+    .bottom-button-anchor .bottom-button-layer--post {
       pointer-events: auto;
     }
     .bottom-button-layer--shoot {
@@ -2497,6 +2498,79 @@
     }
     .phone-page--edit .bottom-button-layer--edit {
       display: flex;
+    }
+    .bottom-button-layer--post {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 12px;
+      box-sizing: border-box;
+      width: 100%;
+      height: 48px;
+      padding: 0 16px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+    .phone-page--post .bottom-button-layer--shoot,
+    .phone-page--post .bottom-button-layer--edit {
+      display: none;
+    }
+    .phone-page--post .bottom-button-layer--post {
+      display: flex;
+    }
+    .phone-page--post .bottom-button-anchor {
+      height: 64px;
+      background: #fff;
+    }
+    .phone-page--post .bottom-button-anchor::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -4px;
+      height: 5px;
+      background: #fff;
+      pointer-events: none;
+    }
+    .post-bottom-btn {
+      width: 160px;
+      height: 48px;
+      border: 0;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.3;
+      cursor: default;
+      box-shadow: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 20px;
+      white-space: nowrap;
+    }
+    .post-bottom-btn--drafts {
+      background: rgba(0, 0, 0, 0.05);
+      color: #000;
+    }
+    .post-bottom-btn--post {
+      background: #fe2c55;
+      color: #fff;
+    }
+    .post-bottom-btn__icon {
+      width: 20px;
+      height: 20px;
+      display: block;
+      flex: 0 0 auto;
+    }
+    .post-bottom-btn__icon img,
+    .post-bottom-btn__icon svg {
+      display: block;
+      width: 100%;
+      height: 100%;
     }
     .edit-bottom-row {
       display: flex;
@@ -2797,6 +2871,16 @@
       opacity: 1;
       transition: opacity 0.18s var(--phone-hover-pill-ease-out) 0.03s;
     }
+    .phone-page-hover-wrap--locked:hover .phone-page-hover-btn {
+      display: none;
+    }
+    .phone-page-hover-wrap--locked .phone-page-hover-btn {
+      display: none;
+    }
+    .phone-page-hover-wrap--locked:hover .phone-page-hover-btn__edit-text {
+      opacity: 0;
+      transition: none;
+    }
     .phone-page-hover-wrap:hover .phone-page-hover-btn__shoot-text {
       width: 0;
       min-width: 0;
@@ -2807,6 +2891,104 @@
         width var(--phone-hover-pill-in) var(--phone-hover-pill-ease-in),
         min-width var(--phone-hover-pill-in) var(--phone-hover-pill-ease-in);
     }
+    .phone-page-hover-wrap--locked:hover .phone-page-hover-btn__shoot-text {
+      width: max(0px, calc(100% - 2 * var(--phone-hover-inset)));
+      min-width: max(0px, calc(100% - 2 * var(--phone-hover-inset)));
+      padding-left: 0.6em;
+      padding-right: 0.6em;
+      overflow: visible;
+      transition: none;
+    }
+
+    .post-secondary-nav {
+      display: none;
+      position: relative;
+      width: 100%;
+      height: calc(4 * var(--phone-hover-pill-outer-fs));
+      justify-content: center;
+      align-items: center;
+      pointer-events: auto;
+      overflow: visible;
+    }
+    .phone-page-hover-wrap--locked .post-secondary-nav {
+      display: flex;
+    }
+    .post-secondary-nav__rail {
+      --demo-nav-rail-in-dur: 0.42s;
+      --demo-nav-rail-in-op-dur: 0.36s;
+      --demo-nav-rail-in-op-delay: 0.02s;
+      --demo-nav-rail-out-dur: 0.34s;
+      --demo-nav-rail-out-op-dur: 0.28s;
+      --demo-nav-rail-ease-in: cubic-bezier(0.16, 1, 0.32, 1);
+      --demo-nav-rail-ease-op-in: cubic-bezier(0.2, 0.97, 0.22, 1);
+      --demo-nav-rail-ease-out: cubic-bezier(0.45, 0, 0.55, 1);
+      --demo-nav-rail-ease-op-out: cubic-bezier(0.45, 0, 0.55, 1);
+      position: absolute;
+      left: 50%;
+      top: 0;
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      width: max-content;
+      max-width: calc(100vw - 32px);
+      transform: translate(-50%, 100%);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition:
+        transform var(--demo-nav-rail-out-dur) var(--demo-nav-rail-ease-out),
+        opacity var(--demo-nav-rail-out-op-dur) var(--demo-nav-rail-ease-op-out),
+        visibility 0s linear var(--demo-nav-rail-out-dur);
+    }
+    .phone-page-hover-wrap--locked:hover .post-secondary-nav__rail,
+    .phone-page-hover-wrap--locked:focus-within .post-secondary-nav__rail {
+      transform: translate(-50%, 0);
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transition:
+        transform var(--demo-nav-rail-in-dur) var(--demo-nav-rail-ease-in),
+        opacity var(--demo-nav-rail-in-op-dur) var(--demo-nav-rail-ease-op-in)
+          var(--demo-nav-rail-in-op-delay),
+        visibility 0s linear 0s;
+    }
+    .post-secondary-nav__btn {
+      appearance: none;
+      width: 112px;
+      height: calc(4 * var(--phone-hover-pill-outer-fs));
+      border: none;
+      border-radius: 40px;
+      background-color: #000;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      white-space: nowrap;
+      transition: none;
+    }
+    .post-secondary-nav__btn--active {
+      background-color: #fff;
+      color: #000;
+      transition:
+        background-color 0.11s cubic-bezier(0, 0, 0.2, 1) 0s,
+        color 0.11s cubic-bezier(0, 0, 0.2, 1) 0s;
+    }
+    .post-secondary-nav__btn:not(.post-secondary-nav__btn--active):not([disabled]):hover {
+      background-color: #fff;
+      color: #000;
+      transition:
+        background-color 0.05s cubic-bezier(0.4, 0, 0.2, 1) 0s,
+        color 0.05s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    }
+    .post-secondary-nav__btn[disabled] {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
 
     /* EditPage：整块 ShootUI（模式条 + 快门行）不参与布局与命中；与 [hidden] 双保险 */
     .phone-page--edit #shootUi {
@@ -2815,6 +2997,602 @@
       pointer-events: none;
     }
 
+    /* PostPage：独立白底页面层，只在 Post 导航态启用，避免影响 Shoot/Edit 几何。 */
+    .post-page {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: none;
+      background: #fff;
+      color: #161823;
+      overflow: hidden;
+      font-family: var(--font-sans);
+      --post-preview-w: 168px;
+      --post-preview-h: 224px;
+      --post-preview-top: 0px;
+      --post-desc-h: 176px;
+      --post-list-h: 156px;
+    }
+    .phone-page--post .post-page {
+      display: block;
+    }
+    .phone-page--post .shoot-frame {
+      display: none;
+    }
+    .phone-page--post .stage {
+      overflow: visible;
+    }
+    .phone-page--post .status,
+    .phone-page--post .nav {
+      color: #161823;
+      background: #fff;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      box-shadow: none;
+    }
+    .phone-page--post .nav::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -4px;
+      height: 5px;
+      background: #fff;
+      pointer-events: none;
+    }
+    .phone-page--post .status-icon-svg,
+    .phone-page--post .nav-key svg {
+      filter: invert(1);
+    }
+    .phone-page--post .nav-key--overview::after,
+    .phone-page--post .nav-gesture-indicator {
+      background: #161823;
+    }
+    .post-topbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: var(--status-h, 40px);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      padding: 4px 6px;
+      background: #fff;
+    }
+    .post-topbar__leading {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      padding: 10px;
+      background: transparent;
+      color: inherit;
+      cursor: default;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+    }
+    .post-topbar__leading img {
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+    .post-content {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(var(--status-h, 40px) + 52px);
+      bottom: 0;
+      box-sizing: border-box;
+      padding-top: var(--post-preview-top);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .post-preview-card {
+      position: relative;
+      width: var(--post-preview-w);
+      height: var(--post-preview-h);
+      flex: 0 0 auto;
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 18%, rgba(255, 255, 255, 0.24), transparent 34%),
+        linear-gradient(160deg, #17121f 0%, #411d3f 46%, #ec6a4b 100%);
+      box-shadow: 0 10px 30px rgba(22, 24, 35, 0.14);
+    }
+    .post-preview-card video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      opacity: 0.8;
+    }
+    .post-preview-play {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 44px;
+      height: 44px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    .post-preview-play::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: 13px;
+      width: 0;
+      height: 0;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+      border-left: 14px solid #fff;
+    }
+    .post-preview-cover {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    }
+    .post-photo-preview {
+      display: none;
+      position: relative;
+      width: var(--post-preview-w);
+      height: var(--post-preview-h);
+      flex: 0 0 auto;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .post-photo-preview__img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      object-fit: cover;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+    .post-photo-preview__label {
+      position: absolute;
+      display: block;
+      left: 8px;
+      top: 8px;
+      padding: 0;
+      box-sizing: border-box;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+      text-align: left;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+      z-index: 1;
+    }
+    .post-subpage--photo .post-preview-card {
+      display: none;
+    }
+    .post-subpage--photo .post-photo-preview {
+      display: block;
+    }
+    .post-subpage--photo .post-photo-preview__img--max {
+      display: block;
+    }
+    .post-subpage--photo.post-photo-min .post-photo-preview__img--max,
+    .post-subpage--photo.post-photo-compact .post-photo-preview__img--max {
+      display: none;
+    }
+    .post-subpage--photo.post-photo-min .post-photo-preview__img--min {
+      display: block;
+    }
+    .post-subpage--photo.post-photo-compact .post-photo-preview__img--mini {
+      display: block;
+    }
+    .post-multi-preview {
+      display: none;
+      width: 100%;
+      height: var(--post-preview-h);
+      min-height: var(--post-preview-h);
+      flex: 0 0 var(--post-preview-h);
+      position: relative;
+      overflow: hidden;
+      background: #fff;
+    }
+    .post-multi-preview__track {
+      position: absolute;
+      left: 16px;
+      top: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 160px;
+      width: max-content;
+    }
+    .post-multi-preview__photo {
+      position: relative;
+      width: 120px;
+      height: 160px;
+      flex: 0 0 auto;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .post-multi-preview__photo img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .post-multi-preview__label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 33px;
+      padding: 8px 0 0 9px;
+      box-sizing: border-box;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+      text-align: left;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+      white-space: nowrap;
+      z-index: 1;
+    }
+    .post-multi-preview__select {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(51, 51, 51, 0.6);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+    .post-multi-preview__mini {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 422px;
+      height: 96px;
+    }
+    .post-multi-preview__mini .post-multi-preview__photo {
+      position: absolute;
+      top: 0;
+      width: 96px;
+      height: 96px;
+    }
+    .post-multi-preview__mini .post-multi-preview__photo:nth-child(1) {
+      left: 16px;
+    }
+    .post-multi-preview__mini .post-multi-preview__photo:nth-child(2) {
+      left: 118px;
+    }
+    .post-multi-preview__mini .post-multi-preview__photo:nth-child(3) {
+      left: 220px;
+    }
+    .post-multi-preview__mini .post-multi-preview__photo:nth-child(4) {
+      left: 322px;
+    }
+    .post-multi-preview__mini .post-multi-preview__select {
+      height: 28px;
+    }
+    .post-subpage--multi-photo .post-preview-card {
+      display: none;
+    }
+    .post-subpage--multi-photo .post-multi-preview {
+      display: block;
+    }
+    .post-subpage--multi-photo.post-multi-compact .post-multi-preview {
+      height: 96px;
+      min-height: 96px;
+      flex-basis: 96px;
+    }
+    .post-subpage--multi-photo.post-multi-compact .post-multi-preview__track {
+      display: none;
+    }
+    .post-subpage--multi-photo.post-multi-compact .post-multi-preview__mini {
+      display: block;
+    }
+    .post-description__inline-preview {
+      display: none;
+    }
+    .post-description {
+      position: relative;
+      width: 100%;
+      height: var(--post-desc-h);
+      min-height: var(--post-desc-h);
+      flex: 0 0 var(--post-desc-h);
+      margin-top: 0;
+      box-sizing: border-box;
+      border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+      background: #fff;
+      overflow: hidden;
+    }
+    .post-description__input {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 128px;
+      overflow: hidden;
+    }
+    .post-description__box {
+      position: absolute;
+      left: 16px;
+      top: 16px;
+      width: 328px;
+      height: 100px;
+      overflow: hidden;
+      color: rgba(0, 0, 0, 0.34);
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+    .post-description__tags {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 128px;
+      height: 48px;
+      background: #fff;
+    }
+    .post-description__tagbar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 10px;
+      height: 28px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+    }
+    .post-description__tag {
+      position: absolute;
+      top: 0;
+      height: 28px;
+      border: 0;
+      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.05);
+      color: #000;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.3;
+      padding: 5px 8px;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: default;
+    }
+    .post-description__tag--hashtags {
+      left: 16px;
+      width: 98px;
+    }
+    .post-description__tag--mention {
+      left: 122px;
+      width: 90px;
+    }
+    .post-description__tag-icon {
+      width: 14px;
+      height: 14px;
+      display: block;
+      flex: 0 0 auto;
+    }
+    .post-description__tag-icon img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .post-page--split .post-preview-card {
+      display: none;
+    }
+    .post-page--split .post-description {
+      width: 100%;
+      height: var(--post-desc-h);
+      min-height: var(--post-desc-h);
+      flex-basis: var(--post-desc-h);
+    }
+    .post-page--split .post-description__input {
+      left: 0;
+      right: auto;
+      width: 208px;
+      height: 160px;
+    }
+    .post-page--split .post-description__box {
+      left: 16px;
+      top: 0;
+      width: 192px;
+      height: 160px;
+    }
+    .post-page--split .post-description__tags {
+      top: 160px;
+      height: 48px;
+    }
+    .post-page--split .post-description__inline-preview {
+      position: absolute;
+      left: 224px;
+      top: 0;
+      display: block;
+      width: 120px;
+      height: 160px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .post-description__inline-preview video,
+    .post-description__inline-preview img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .post-description__inline-preview .post-preview-cover {
+      height: 32px;
+      font-size: 13px;
+      z-index: 1;
+    }
+    .post-description__inline-preview .post-preview-play {
+      z-index: 1;
+    }
+    .post-list {
+      position: relative;
+      width: 100%;
+      height: var(--post-list-h);
+      min-height: var(--post-list-h);
+      flex: 0 0 var(--post-list-h);
+      margin-top: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .post-list__item {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 52px;
+      background: #fff;
+    }
+    .post-list__item--privacy {
+      top: 0;
+    }
+    .post-list__item--more {
+      top: 52px;
+    }
+    .post-list__item--share {
+      top: 104px;
+    }
+    .post-list__title-area {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      top: 10px;
+      height: 32px;
+    }
+    .post-list__leading {
+      position: absolute;
+      left: 0;
+      top: 6px;
+      width: 20px;
+      height: 20px;
+    }
+    .post-list__label {
+      position: absolute;
+      left: 28px;
+      right: 16px;
+      top: 5.5px;
+      overflow: hidden;
+      color: #202020;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .post-list__chevron {
+      position: absolute;
+      right: 0;
+      top: 8px;
+      width: 8px;
+      height: 16px;
+    }
+    .post-list__share-title {
+      position: absolute;
+      left: 16px;
+      top: 15.5px;
+      width: 142px;
+      height: 21px;
+    }
+    .post-list__share-title .post-list__leading {
+      top: 0.5px;
+    }
+    .post-list__share-label {
+      position: absolute;
+      left: 28px;
+      top: 0;
+      width: 114px;
+      overflow: hidden;
+      color: #000;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.3;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .post-list__share-icons {
+      position: absolute;
+      left: 164px;
+      top: 8px;
+      width: 180px;
+      height: 36px;
+    }
+    .post-list__share-icon {
+      position: absolute;
+      top: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .post-list__share-icon:nth-child(1) {
+      left: 0;
+    }
+    .post-list__share-icon:nth-child(2) {
+      left: 48px;
+    }
+    .post-list__share-icon:nth-child(3) {
+      left: 96px;
+    }
+    .post-list__share-icon:nth-child(4) {
+      left: 144px;
+    }
+    .post-list__share-icon img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      display: block;
+      transform: translate(-50%, -50%);
+    }
+    .post-list__share-icon--large img {
+      width: 28px;
+      height: 28px;
+    }
+    .post-list__share-icon--medium img {
+      width: 24px;
+      height: 24px;
+    }
+    .post-list img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+    }
     .shoot-ui {
       position: absolute;
       left: 0;
@@ -3268,8 +4046,7 @@
                 <button
                   type="button"
                   class="demo-phone-left-nav__btn"
-                  disabled
-                  aria-disabled="true"
+                  data-demo-nav-base="post"
                 >
                   Post
                 </button>
@@ -3491,6 +4268,156 @@
                   </div>
                 </div>
 
+                <section class="post-page" id="postPage" aria-label="Post 页面预览" aria-hidden="true">
+                  <div class="post-topbar" aria-label="Navigation Bar" data-name="Navigation Bar">
+                    <button type="button" class="post-topbar__leading" tabindex="-1" aria-label="返回">
+                      <img src="https://www.figma.com/api/mcp/asset/a84a8951-4e40-4241-91e4-fa03b8734f56" alt="" decoding="async" />
+                    </button>
+                  </div>
+                  <div class="post-content">
+                    <div class="post-preview-card" id="postPreviewCard">
+                      <video
+                        src="assets/preview.mp4"
+                        muted
+                        loop
+                        playsinline
+                        autoplay
+                        preload="auto"
+                        aria-hidden="true"
+                      ></video>
+                      <span class="post-preview-play" aria-hidden="true"></span>
+                      <span class="post-preview-cover">Select Cover</span>
+                    </div>
+                    <div class="post-photo-preview" aria-hidden="true">
+                      <img
+                        class="post-photo-preview__img post-photo-preview__img--max"
+                        src="https://www.figma.com/api/mcp/asset/d9808000-a226-467a-b704-c0c3aad6ea25"
+                        alt=""
+                        decoding="async"
+                        data-node-id="9:351"
+                        data-name="Max"
+                      />
+                      <img
+                        class="post-photo-preview__img post-photo-preview__img--min"
+                        src="https://www.figma.com/api/mcp/asset/21b25def-0afd-451b-af5b-77c292c41dbc"
+                        alt=""
+                        decoding="async"
+                        data-node-id="9:361"
+                        data-name="Min"
+                      />
+                      <img
+                        class="post-photo-preview__img post-photo-preview__img--mini"
+                        src="https://www.figma.com/api/mcp/asset/2be2d545-83b0-422e-8b54-7c002089387d"
+                        alt=""
+                        decoding="async"
+                        data-node-id="9:354"
+                        data-name="Mini"
+                      />
+                      <span class="post-photo-preview__label">Preview</span>
+                    </div>
+                    <div class="post-multi-preview" aria-hidden="true">
+                      <div class="post-multi-preview__track" data-node-id="8:254" data-name="Multi-Photo Preview max">
+                        <div class="post-multi-preview__photo" data-node-id="8:255" data-name="Photo 1">
+                          <img src="https://www.figma.com/api/mcp/asset/710d3798-f3bd-4920-a347-2cf9d120ec9e" alt="" decoding="async" />
+                          <span class="post-multi-preview__label">Cover</span>
+                          <span class="post-multi-preview__select">Select cover</span>
+                        </div>
+                        <div class="post-multi-preview__photo" data-node-id="8:258" data-name="Photo 2">
+                          <img src="https://www.figma.com/api/mcp/asset/392c2587-91fd-4f8c-af91-7dea4e737c1f" alt="" decoding="async" />
+                        </div>
+                        <div class="post-multi-preview__photo" data-node-id="8:259" data-name="Photo 3">
+                          <img src="https://www.figma.com/api/mcp/asset/380fb52b-0b33-4bee-bc82-583db766098b" alt="" decoding="async" />
+                        </div>
+                      </div>
+                      <div class="post-multi-preview__mini" data-node-id="8:299" data-name="Multi-Photo Preview mini">
+                        <div class="post-multi-preview__photo" data-node-id="8:301" data-name="Photo 1">
+                          <img src="https://www.figma.com/api/mcp/asset/d7cc8f47-1334-4505-a2aa-defd23d1de58" alt="" decoding="async" />
+                          <span class="post-multi-preview__label">Cover</span>
+                          <span class="post-multi-preview__select">Select cover</span>
+                        </div>
+                        <div class="post-multi-preview__photo" data-node-id="8:305" data-name="Photo 3">
+                          <img src="https://www.figma.com/api/mcp/asset/c8bb95ac-7a92-4a3a-8644-b98ce9e4d992" alt="" decoding="async" />
+                        </div>
+                        <div class="post-multi-preview__photo" data-node-id="8:304" data-name="Photo 2">
+                          <img src="https://www.figma.com/api/mcp/asset/c3fe0bf6-4192-43e1-88ff-de95320963c2" alt="" decoding="async" />
+                        </div>
+                        <div class="post-multi-preview__photo" data-node-id="8:306" data-name="Photo 4">
+                          <img src="https://www.figma.com/api/mcp/asset/3ab33662-465d-4a69-baca-63522d366b12" alt="" decoding="async" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="post-description" id="postDescription">
+                      <div class="post-description__input">
+                        <div class="post-description__box">Add description</div>
+                      </div>
+                      <div class="post-description__inline-preview" aria-hidden="true">
+                        <video
+                          src="assets/preview.mp4"
+                          muted
+                          loop
+                          playsinline
+                          autoplay
+                          preload="auto"
+                        ></video>
+                        <span class="post-preview-play" aria-hidden="true"></span>
+                        <span class="post-preview-cover">Select Cover</span>
+                      </div>
+                      <div class="post-description__tags">
+                        <div class="post-description__tagbar">
+                          <button type="button" class="post-description__tag post-description__tag--hashtags" tabindex="-1">
+                            <span class="post-description__tag-icon" aria-hidden="true">
+                              <img src="https://www.figma.com/api/mcp/asset/615e3499-3df9-4ff9-bbef-fe3e5d01efb4" alt="" decoding="async" />
+                            </span>
+                            <span>Hashtags</span>
+                          </button>
+                          <button type="button" class="post-description__tag post-description__tag--mention" tabindex="-1">
+                            <span class="post-description__tag-icon" aria-hidden="true">
+                              <img src="https://www.figma.com/api/mcp/asset/0dd88a9d-de5b-44d2-86c7-ca1f89ecc07c" alt="" decoding="async" />
+                            </span>
+                            <span>Mention</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="post-list" id="postList" data-node-id="4:281" data-name="List" aria-label="Post List">
+                      <div class="post-list__item post-list__item--privacy" data-node-id="4:282" data-name="List Item / Privacy Settings">
+                        <div class="post-list__title-area">
+                          <img class="post-list__leading" src="https://www.figma.com/api/mcp/asset/3230cc9c-e86f-47e4-b289-f88cb837d4ca" alt="" decoding="async" />
+                          <span class="post-list__label">Everyone can view this post</span>
+                          <img class="post-list__chevron" src="https://www.figma.com/api/mcp/asset/4e3b83c2-4bd3-495b-a730-9d9a00ea8298" alt="" decoding="async" />
+                        </div>
+                      </div>
+                      <div class="post-list__item post-list__item--more" data-node-id="4:290" data-name="List Item / More options">
+                        <div class="post-list__title-area">
+                          <img class="post-list__leading" src="https://www.figma.com/api/mcp/asset/b8144d2f-366f-4b1a-8352-d2ba37870714" alt="" decoding="async" />
+                          <span class="post-list__label">More options</span>
+                          <img class="post-list__chevron" src="https://www.figma.com/api/mcp/asset/4e3b83c2-4bd3-495b-a730-9d9a00ea8298" alt="" decoding="async" />
+                        </div>
+                      </div>
+                      <div class="post-list__item post-list__item--share" data-node-id="4:298" data-name="List Item / Share to">
+                        <div class="post-list__share-title">
+                          <img class="post-list__leading" src="https://www.figma.com/api/mcp/asset/bd109120-f9b5-47e9-907d-1102867d24f2" alt="" decoding="async" />
+                          <span class="post-list__share-label">Share to</span>
+                        </div>
+                        <div class="post-list__share-icons">
+                          <span class="post-list__share-icon post-list__share-icon--large">
+                            <img src="https://www.figma.com/api/mcp/asset/6aaa3cfb-ef37-4ef9-889b-7153891d68e5" alt="" decoding="async" />
+                          </span>
+                          <span class="post-list__share-icon post-list__share-icon--medium">
+                            <img src="https://www.figma.com/api/mcp/asset/8df1292c-8917-4d16-b5bc-951582f5af2e" alt="" decoding="async" />
+                          </span>
+                          <span class="post-list__share-icon post-list__share-icon--large">
+                            <img src="https://www.figma.com/api/mcp/asset/ca01aff1-25ad-4962-b549-2d9fc11fd389" alt="" decoding="async" />
+                          </span>
+                          <span class="post-list__share-icon post-list__share-icon--medium">
+                            <img src="https://www.figma.com/api/mcp/asset/ca32f1ca-12d8-4ed7-bce3-6f8f54b76a28" alt="" decoding="async" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
                 <div id="bottomButton" class="bottom-button-anchor" aria-hidden="true">
                   <div class="bottom-button-layer--shoot">BottomButton 预留 48</div>
                   <div class="bottom-button-layer--edit">
@@ -3518,6 +4445,20 @@
                       </button>
                       <button type="button" class="edit-bottom-btn edit-bottom-btn--next" tabindex="-1">Next</button>
                     </div>
+                  </div>
+                  <div class="bottom-button-layer--post" data-node-id="3:712" data-name="Button Group">
+                    <button type="button" class="post-bottom-btn post-bottom-btn--drafts" tabindex="-1" data-node-id="3:715" data-name="Button">
+                      <span class="post-bottom-btn__icon" aria-hidden="true">
+                        <img src="https://www.figma.com/api/mcp/asset/7be3c2c5-244c-4f0c-99ba-a5a9f6b17c44" alt="" decoding="async" />
+                      </span>
+                      <span>Drafts</span>
+                    </button>
+                    <button type="button" class="post-bottom-btn post-bottom-btn--post" tabindex="-1" data-node-id="3:724" data-name="Button">
+                      <span class="post-bottom-btn__icon" aria-hidden="true">
+                        <img src="https://www.figma.com/api/mcp/asset/b110eb4b-916e-4b66-85d2-b29f524f0d1f" alt="" decoding="async" />
+                      </span>
+                      <span>Post</span>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -3557,6 +4498,32 @@
               <span class="phone-page-hover-btn__shoot-text">Shoot</span>
             </div>
           </div>
+          <nav class="post-secondary-nav" id="postSecondaryNav" aria-label="Post 二级导航">
+            <div class="post-secondary-nav__rail">
+              <button
+                type="button"
+                class="post-secondary-nav__btn post-secondary-nav__btn--active"
+                data-post-subpage="video"
+                aria-current="page"
+              >
+                Video
+              </button>
+              <button
+                type="button"
+                class="post-secondary-nav__btn"
+                data-post-subpage="photo"
+              >
+                Photo
+              </button>
+              <button
+                type="button"
+                class="post-secondary-nav__btn"
+                data-post-subpage="multi-photo"
+              >
+                Multi-Photo
+              </button>
+            </div>
+          </nav>
         </div>
         </div>
       </section>
@@ -3682,6 +4649,7 @@
       const W = 360;
       /** 与滑块轨道锚点一致：H/W ≈ 2.111 / 2.167 / 2.222 / 2.239（W=360 时 H） */
       const COMMON_MODEL_H = Object.freeze([760, 780, 800, 806]);
+      const COMMON_MODEL_H_SET = new Set(COMMON_MODEL_H);
       const FRAME_H = (W * 16) / 9;
       const BB_H = 48;
       /** BottomButton 底边距：相对逻辑画幅底 / Navigation（或 Gesture）上沿 */
@@ -3692,6 +4660,21 @@
       const SHOOT_UI_RING_BLEED_PX = 4;
       /** Shoot UI（快门）底距画幅底：裁剪或「>16:9 + BottomButton 在画幅内 + 吃 StatusBar」时用 */
       const SHOOT_UI_BOTTOM_COMPACT_DP = 32;
+      const POST_NAV_BAR_H = 52;
+      const POST_PREVIEW_MIN_W = 120;
+      const POST_PREVIEW_MIN_H = 160;
+      const POST_PREVIEW_MAX_W = 168;
+      const POST_PREVIEW_MAX_H = 224;
+      const POST_PHOTO_COMPACT_PREVIEW = 96;
+      const POST_MULTI_PREVIEW_H = 160;
+      const POST_MULTI_COMPACT_PREVIEW = 96;
+      const POST_DESC_H = 176;
+      const POST_SPLIT_DESC_H = 208;
+      const POST_LIST_H = 156;
+      const POST_BOTTOM_ROOT_H = 64;
+      const POST_BOTTOM_BUTTON_TOP = 12;
+      const POST_BOTTOM_TO_NAV_GAP = 4;
+      const POST_DESC_TO_BOTTOM_MIN_GAP = 130;
 
       const demoRoot = document.getElementById("demo");
       const introEl = document.getElementById("intro");
@@ -3701,6 +4684,14 @@
       const preview = document.getElementById("preview");
       const previewVideo = preview
         ? preview.querySelector(".preview-video")
+        : null;
+      const postPage = document.getElementById("postPage");
+      const postPreviewCard = document.getElementById("postPreviewCard");
+      const postPreviewVideo = postPreviewCard
+        ? postPreviewCard.querySelector("video")
+        : null;
+      const postInlinePreviewVideo = postPage
+        ? postPage.querySelector(".post-description__inline-preview video")
         : null;
       const bottomButton = document.getElementById("bottomButton");
       const shootUi = document.getElementById("shootUi");
@@ -3732,6 +4723,10 @@
         ? phonePageHoverBtn.querySelector(".phone-page-hover-btn__edit-text")
         : null;
       const demoPhoneLeftNav = document.getElementById("demoPhoneLeftNav");
+      const postSecondaryNav = document.getElementById("postSecondaryNav");
+      const postSecondaryNavButtons = postSecondaryNav
+        ? postSecondaryNav.querySelectorAll(".post-secondary-nav__btn[data-post-subpage]")
+        : null;
       const demoNavBaseButtons = demoPhoneLeftNav
         ? demoPhoneLeftNav.querySelectorAll(
             ".demo-phone-left-nav__btn[data-demo-nav-base]",
@@ -3751,8 +4746,63 @@
       let navDemoBase = "shoot";
       let capsulePreviewActive = false;
       let phonePageMode = "shoot";
+      let postSubpageMode = "video";
+
+      function setTextIfChanged(el, value) {
+        if (!el) return;
+        const next = String(value);
+        if (el.textContent !== next) {
+          el.textContent = next;
+        }
+      }
+
+      function setAttrIfChanged(el, name, value) {
+        if (!el) return;
+        const next = String(value);
+        if (el.getAttribute(name) !== next) {
+          el.setAttribute(name, next);
+        }
+      }
+
+      function removeAttrIfPresent(el, name) {
+        if (el && el.hasAttribute(name)) {
+          el.removeAttribute(name);
+        }
+      }
+
+      function setHiddenIfChanged(el, hidden) {
+        if (el && el.hidden !== hidden) {
+          el.hidden = hidden;
+        }
+      }
+
+      function toggleClassIfChanged(el, name, on) {
+        if (!el) return;
+        if (el.classList.contains(name) !== on) {
+          el.classList.toggle(name, on);
+        }
+      }
+
+      function setStyleIfChanged(el, name, value) {
+        if (!el) return;
+        const next = String(value);
+        if (el.style.getPropertyValue(name) !== next) {
+          el.style.setProperty(name, next);
+        }
+      }
+
+      function setStylePropIfChanged(el, name, value) {
+        if (!el) return;
+        const next = String(value);
+        if (el.style[name] !== next) {
+          el.style[name] = next;
+        }
+      }
 
       function computeEffectivePhonePageMode() {
+        if (navDemoBase === "post") {
+          return "post";
+        }
         return capsulePreviewActive
           ? navDemoBase === "shoot"
             ? "edit"
@@ -3761,31 +4811,42 @@
       }
 
       function syncDemoNavChrome() {
-        if (demoHeadEyebrow) {
-          demoHeadEyebrow.textContent =
-            navDemoBase === "edit" ? "Edit adaptation lab" : "Shoot adaptation lab";
-        }
-        if (demoHeadTitle) {
-          demoHeadTitle.textContent =
-            navDemoBase === "edit" ? "EditPage Adaptation" : "ShootPage Adaptation";
-        }
+        setTextIfChanged(
+          demoHeadEyebrow,
+          navDemoBase === "post"
+            ? "Post adaptation lab"
+            : navDemoBase === "edit"
+              ? "Edit adaptation lab"
+              : "Shoot adaptation lab",
+        );
+        setTextIfChanged(
+          demoHeadTitle,
+          navDemoBase === "post"
+            ? "PostPage Adaptation"
+            : navDemoBase === "edit"
+              ? "EditPage Adaptation"
+              : "ShootPage Adaptation",
+        );
         if (capsuleHoverShootText && capsuleHoverEditText) {
-          if (navDemoBase === "shoot") {
-            capsuleHoverShootText.textContent = "Shoot";
-            capsuleHoverEditText.textContent = "Edit";
+          if (navDemoBase === "post") {
+            setTextIfChanged(capsuleHoverShootText, "Post");
+            setTextIfChanged(capsuleHoverEditText, "");
+          } else if (navDemoBase === "shoot") {
+            setTextIfChanged(capsuleHoverShootText, "Shoot");
+            setTextIfChanged(capsuleHoverEditText, "Edit");
           } else {
-            capsuleHoverShootText.textContent = "Edit";
-            capsuleHoverEditText.textContent = "Shoot";
+            setTextIfChanged(capsuleHoverShootText, "Edit");
+            setTextIfChanged(capsuleHoverEditText, "Shoot");
           }
         }
         if (demoNavBaseButtons) {
           demoNavBaseButtons.forEach(function (btn) {
             var on = btn.getAttribute("data-demo-nav-base") === navDemoBase;
-            btn.classList.toggle("demo-phone-left-nav__btn--active", on);
+            toggleClassIfChanged(btn, "demo-phone-left-nav__btn--active", on);
             if (on) {
-              btn.setAttribute("aria-current", "page");
+              setAttrIfChanged(btn, "aria-current", "page");
             } else {
-              btn.removeAttribute("aria-current");
+              removeAttrIfPresent(btn, "aria-current");
             }
           });
         }
@@ -3793,7 +4854,19 @@
 
       function syncPhonePageHoverUI() {
         if (!phonePageHoverBtn) return;
-        phonePageHoverBtn.setAttribute(
+        if (phonePageHoverWrap) {
+          toggleClassIfChanged(
+            phonePageHoverWrap,
+            "phone-page-hover-wrap--locked",
+            navDemoBase === "post",
+          );
+        }
+        if (navDemoBase === "post") {
+          setAttrIfChanged(phonePageHoverBtn, "aria-label", "基准 Post；当前无临时预览页");
+          return;
+        }
+        setAttrIfChanged(
+          phonePageHoverBtn,
           "aria-label",
           navDemoBase === "shoot"
             ? capsulePreviewActive
@@ -3808,19 +4881,44 @@
       function applyPhonePageMode() {
         phonePageMode = computeEffectivePhonePageMode();
         const isEdit = phonePageMode === "edit";
-        if (phone) phone.classList.toggle("phone-page--edit", isEdit);
+        const isPost = phonePageMode === "post";
+        if (phone) {
+          toggleClassIfChanged(phone, "phone-page--edit", isEdit);
+          toggleClassIfChanged(phone, "phone-page--post", isPost);
+        }
+        if (postPage) {
+          toggleClassIfChanged(postPage, "post-subpage--photo", postSubpageMode === "photo");
+          toggleClassIfChanged(postPage, "post-subpage--multi-photo", postSubpageMode === "multi-photo");
+          toggleClassIfChanged(postPage, "post-subpage--video", postSubpageMode === "video");
+        }
         if (rightTools) {
-          rightTools.setAttribute("aria-label", isEdit ? "编辑工具" : "拍摄工具");
+          setAttrIfChanged(rightTools, "aria-label", isPost ? "发布页无右侧工具" : isEdit ? "编辑工具" : "拍摄工具");
+          setAttrIfChanged(rightTools, "aria-hidden", isPost ? "true" : "false");
         }
         if (rightToolsEdit) {
-          rightToolsEdit.setAttribute("aria-hidden", isEdit ? "false" : "true");
+          setAttrIfChanged(rightToolsEdit, "aria-hidden", isEdit ? "false" : "true");
         }
         if (rightToolsShoot) {
-          rightToolsShoot.setAttribute("aria-hidden", isEdit ? "true" : "false");
+          setAttrIfChanged(rightToolsShoot, "aria-hidden", isEdit || isPost ? "true" : "false");
         }
         if (shootUi) {
-          shootUi.hidden = isEdit;
-          shootUi.setAttribute("aria-hidden", isEdit ? "true" : "false");
+          setHiddenIfChanged(shootUi, isEdit || isPost);
+          setAttrIfChanged(shootUi, "aria-hidden", isEdit || isPost ? "true" : "false");
+        }
+        if (postPage) {
+          setAttrIfChanged(postPage, "aria-hidden", isPost ? "false" : "true");
+        }
+        if (postSecondaryNavButtons) {
+          postSecondaryNavButtons.forEach(function (btn) {
+            var mode = btn.getAttribute("data-post-subpage");
+            var on = mode === postSubpageMode;
+            toggleClassIfChanged(btn, "post-secondary-nav__btn--active", on);
+            if (on) {
+              setAttrIfChanged(btn, "aria-current", "page");
+            } else {
+              removeAttrIfPresent(btn, "aria-current");
+            }
+          });
         }
         syncPhonePageHoverUI();
       }
@@ -4202,7 +5300,7 @@
           !hRange
         ) {
           if (demoHeroPhoneSlot) {
-            demoHeroPhoneSlot.style.setProperty("--demo-nav-hit-w", "0px");
+            setStyleIfChanged(demoHeroPhoneSlot, "--demo-nav-hit-w", "0px");
           }
           if (demoPhoneLeftNav) {
             demoPhoneLeftNav.classList.remove("demo-phone-left-nav--active");
@@ -4216,12 +5314,16 @@
 
         const Hi = demoHeroInner.clientHeight;
         const sw = demoHeroPhoneSlot.clientWidth;
+        const activePhoneControl =
+          navDemoBase === "post" && postSecondaryNav ? postSecondaryNav : phonePageHoverBtn;
         const Zh =
-          phonePageHoverBtn && phonePageHoverBtn.offsetHeight > 0
-            ? phonePageHoverBtn.offsetHeight
-            : phonePageHoverWrap.offsetHeight;
+          activePhoneControl && activePhoneControl.offsetHeight > 0
+            ? activePhoneControl.offsetHeight
+            : phonePageHoverBtn && phonePageHoverBtn.offsetHeight > 0
+              ? phonePageHoverBtn.offsetHeight
+              : phonePageHoverWrap.offsetHeight;
         if (Hi < 40 || sw < 8 || Zh < 4) {
-          demoHeroPhoneSlot.style.setProperty("--demo-nav-hit-w", "0px");
+          setStyleIfChanged(demoHeroPhoneSlot, "--demo-nav-hit-w", "0px");
           if (demoPhoneLeftNav) {
             demoPhoneLeftNav.classList.remove("demo-phone-left-nav--active");
           }
@@ -4238,22 +5340,17 @@
         const Po = shellHMax * scale;
         const S = Math.max((Hi - Po - Zh) / 3, DEMO_STACK_S_MIN);
 
-        demoPhoneScaleOuter.style.width = shellW * scale + "px";
-        demoPhoneScaleOuter.style.height = shellHMax * scale + "px";
-        demoPhoneScaleOuter.style.setProperty("--demo-phone-scale", String(scale));
-        demoHeroInner.style.setProperty("--demo-y-gutter", S + "px");
+        setStylePropIfChanged(demoPhoneScaleOuter, "width", shellW * scale + "px");
+        setStylePropIfChanged(demoPhoneScaleOuter, "height", shellHMax * scale + "px");
+        setStyleIfChanged(demoPhoneScaleOuter, "--demo-phone-scale", String(scale));
+        setStyleIfChanged(demoHeroInner, "--demo-y-gutter", S + "px");
 
         const slotR = demoHeroPhoneSlot.getBoundingClientRect();
         const outerR = demoPhoneScaleOuter.getBoundingClientRect();
         const slackL = Math.max(0, Math.round(outerR.left - slotR.left));
         const hitW = slackL > 0 ? Math.max(12, Math.floor(slackL * 0.5)) : 0;
-        demoHeroPhoneSlot.style.setProperty("--demo-nav-hit-w", hitW + "px");
-        if (demoPhoneLeftNav) {
-          demoPhoneLeftNav.classList.toggle(
-            "demo-phone-left-nav--active",
-            hitW >= 8,
-          );
-        }
+        setStyleIfChanged(demoHeroPhoneSlot, "--demo-nav-hit-w", hitW + "px");
+        toggleClassIfChanged(demoPhoneLeftNav, "demo-phone-left-nav--active", hitW >= 8);
       }
 
       let demoHeroLayoutRafId = 0;
@@ -4278,51 +5375,200 @@
         syncDemoHeroPhoneLayout();
       }
 
-      function tick() {
+      let tickRafId = 0;
+
+      function scheduleTick() {
+        if (tickRafId !== 0) {
+          return;
+        }
+        tickRafId = requestAnimationFrame(function () {
+          tickRafId = 0;
+          tick();
+        });
+      }
+
+      function runTickNow() {
+        if (tickRafId !== 0) {
+          cancelAnimationFrame(tickRafId);
+          tickRafId = 0;
+        }
+        tick();
+      }
+
+      function layoutPost(H, statusH, navH) {
+        const stageH = H - navH;
+        const contentTop = statusH + POST_NAV_BAR_H;
+        const bottomTop = H - navH - POST_BOTTOM_ROOT_H - POST_BOTTOM_TO_NAV_GAP;
+        const bottomButtonTop = bottomTop + POST_BOTTOM_BUTTON_TOP;
+        const stackPreviewLimit =
+          bottomTop - contentTop - POST_DESC_H - POST_DESC_TO_BOTTOM_MIN_GAP;
+        const photoCompact =
+          postSubpageMode === "photo" && stackPreviewLimit < POST_PREVIEW_MIN_H;
+        const multiPhotoCompact =
+          postSubpageMode === "multi-photo" && stackPreviewLimit < POST_PREVIEW_MIN_H;
+        const split = postSubpageMode === "video" && stackPreviewLimit < POST_PREVIEW_MIN_H;
+        const descH = split ? POST_SPLIT_DESC_H : POST_DESC_H;
+        const stackPreviewH = Math.round(
+          Math.min(
+            POST_PREVIEW_MAX_H,
+            Math.max(POST_PREVIEW_MIN_H, stackPreviewLimit),
+          ),
+        );
+        const previewH = Math.round(
+          multiPhotoCompact
+            ? POST_MULTI_COMPACT_PREVIEW
+            : postSubpageMode === "multi-photo"
+              ? POST_MULTI_PREVIEW_H
+              : photoCompact
+                ? POST_PHOTO_COMPACT_PREVIEW
+                : split
+                  ? POST_PREVIEW_MIN_H
+                  : stackPreviewH,
+        );
+        const previewW =
+          multiPhotoCompact
+            ? POST_MULTI_COMPACT_PREVIEW
+            : postSubpageMode === "multi-photo"
+              ? 392
+              : photoCompact
+                ? POST_PHOTO_COMPACT_PREVIEW
+                : Math.floor(
+                    Math.min(
+                      POST_PREVIEW_MAX_W,
+                      Math.max(POST_PREVIEW_MIN_W, previewH * (POST_PREVIEW_MIN_W / POST_PREVIEW_MIN_H)),
+                    ),
+                  );
+        const previewTop = 0;
+        const descTop = split ? 0 : previewTop + previewH;
+        const listTop = descTop + descH;
+        const listBottomInContent = listTop + POST_LIST_H;
+        const descToListGap = 0;
+        const descToBottomGap = Math.round(bottomTop - (contentTop + listTop));
+        const listToButtonGap = Math.round(bottomTop - (contentTop + listBottomInContent));
+        const atMin = previewW <= POST_PREVIEW_MIN_W && previewH <= POST_PREVIEW_MIN_H;
+        const photoMin = postSubpageMode === "photo" && !photoCompact && atMin;
+        const phase =
+          multiPhotoCompact
+            ? "Multi-Photo · 96×96"
+            : postSubpageMode === "multi-photo"
+              ? "Multi-Photo"
+              : photoCompact
+                ? "Photo · Mini 96×96"
+                : photoMin
+                  ? "Photo · Min 120×160"
+                  : postSubpageMode === "photo"
+                    ? "Photo · Max"
+                    : split
+                      ? "阶段4 · split"
+                      : previewH >= POST_PREVIEW_MAX_H
+                        ? "阶段1/2 · stack"
+                        : atMin
+                          ? "阶段3 · stack（预览最小）"
+                          : "阶段3 · stack";
+
+        return {
+          stageH,
+          previewW,
+          previewH,
+          previewTop,
+          split,
+          photoCompact,
+          photoMin,
+          multiPhotoCompact,
+          descH,
+          descTop,
+          listTop,
+          bottomTop,
+          bottomButtonTop,
+          phase,
+          descToBottomGap,
+          descToListGap,
+          listToButtonGap,
+        };
+      }
+
+      function readDemoInputs() {
         const H = Number(hRange.value);
         const statusH = Number(sRange.value);
         const navH = navBarHeight();
         const gesture = isGestureNav();
+        return { H, statusH, navH, gesture };
+      }
 
-        phone.style.setProperty("--phone-h", H + "px");
-        phone.style.setProperty("--status-h", statusH + "px");
-        phone.style.setProperty("--nav-h", navH + "px");
+      function computeDemoFrame(input) {
+        const L = layout(input.H, input.statusH, input.navH, input.gesture);
+        const P = layoutPost(input.H, input.statusH, input.navH);
+        return {
+          L,
+          P,
+          dc: L.displayCls,
+          isPostMode: phonePageMode === "post",
+        };
+      }
+
+      function tick() {
+        const input = readDemoInputs();
+        const H = input.H;
+        const statusH = input.statusH;
+        const navH = input.navH;
+        const gesture = input.gesture;
+        const frame = computeDemoFrame(input);
+        const L = frame.L;
+        const P = frame.P;
+        const dc = frame.dc;
+        const isPostMode = frame.isPostMode;
+
+        setStyleIfChanged(phone, "--phone-h", H + "px");
+        setStyleIfChanged(phone, "--status-h", statusH + "px");
+        setStyleIfChanged(phone, "--nav-h", navH + "px");
 
         if (phoneNav) {
-          phoneNav.classList.toggle("nav--gesture", gesture);
-          phoneNav.setAttribute(
+          toggleClassIfChanged(phoneNav, "nav--gesture", gesture);
+          setAttrIfChanged(
+            phoneNav,
             "aria-label",
             gesture ? "系统手势导航示意" : "系统导航三键示意"
           );
-          phoneNav.setAttribute(
+          setAttrIfChanged(
+            phoneNav,
             "title",
             gesture ? "GestureBar 24dp" : "NavigationBar 48dp"
           );
         }
         if (gestureNavInput) {
-          gestureNavInput.setAttribute("aria-checked", gesture ? "true" : "false");
+          setAttrIfChanged(gestureNavInput, "aria-checked", gesture ? "true" : "false");
         }
 
-        const L = layout(H, statusH, navH, gesture);
-        const dc = L.displayCls;
-
-        shootFrame.style.setProperty("--frame-top", L.frameTop + "px");
+        setStyleIfChanged(shootFrame, "--frame-top", L.frameTop + "px");
         if (bottomButton) {
-          bottomButton.style.transform = "translateY(" + L.bbTop + "px)";
+          setStylePropIfChanged(
+            bottomButton,
+            "transform",
+            "translateY(" + (isPostMode ? P.bottomTop : L.bbTop) + "px)",
+          );
         }
 
-        preview.style.setProperty("--preview-crop-top", L.previewCropTop + "px");
-        preview.style.setProperty("--preview-crop-bottom", L.previewCropBottom + "px");
+        setStyleIfChanged(preview, "--preview-crop-top", L.previewCropTop + "px");
+        setStyleIfChanged(preview, "--preview-crop-bottom", L.previewCropBottom + "px");
+        if (postPage) {
+          toggleClassIfChanged(postPage, "post-page--split", P.split);
+          toggleClassIfChanged(postPage, "post-photo-min", P.photoMin);
+          toggleClassIfChanged(postPage, "post-photo-compact", P.photoCompact);
+          toggleClassIfChanged(postPage, "post-multi-compact", P.multiPhotoCompact);
+          setStyleIfChanged(postPage, "--post-preview-w", P.previewW + "px");
+          setStyleIfChanged(postPage, "--post-preview-h", P.previewH + "px");
+          setStyleIfChanged(postPage, "--post-desc-h", P.descH + "px");
+        }
 
         if (shootUi && !shootUi.hidden) {
-          shootUi.style.setProperty("--shoot-ui-bottom", Math.max(24, L.shootUiBottom) + "px");
+          setStyleIfChanged(shootUi, "--shoot-ui-bottom", Math.max(24, L.shootUiBottom) + "px");
         }
-        topUi.style.setProperty("--top-ui-offset", L.topUiOffset + "px");
+        setStyleIfChanged(topUi, "--top-ui-offset", L.topUiOffset + "px");
 
-        phone.classList.toggle("is-crop", L.crop);
-        phone.classList.toggle("is-h-gesture-immersive", gesture && L.cls.letter === "H");
-        phone.classList.toggle("phone--status-immersive", Boolean(L.occupyStatusBar));
-        if (demoHeroInner) demoHeroInner.classList.toggle("demo-hero-inner--crop-hint", L.crop);
+        toggleClassIfChanged(phone, "is-crop", L.crop);
+        toggleClassIfChanged(phone, "is-h-gesture-immersive", gesture && L.cls.letter === "H");
+        toggleClassIfChanged(phone, "phone--status-immersive", Boolean(L.occupyStatusBar));
+        toggleClassIfChanged(demoHeroInner, "demo-hero-inner--crop-hint", !isPostMode && L.crop);
 
         const r = dc.r.toFixed(4);
         const band =
@@ -4332,59 +5578,96 @@
               ? "屏比 ≤ 16/9"
               : "16/9 < 屏比 < 20/9";
 
-        hVal.textContent = String(H);
-        sVal.textContent = String(statusH);
+        setTextIfChanged(hVal, H);
+        setTextIfChanged(sVal, statusH);
 
-        const gearDisplay = displayGear(dc.letter, L.dSub, gesture);
-        st.gear.textContent = gearDisplay;
-        st.band.textContent = band;
-        st.h.textContent = String(H) + " px";
-        st.w.textContent = String(W) + " px";
-        st.ratio.textContent = r;
-        st.statusH.textContent = statusH + " px（模拟）";
-        st.navHLine.textContent =
-          navH + " px（" + (gesture ? "手势条 24" : "三键示意 48") + "）";
-        if (st.navType) {
-          st.navType.textContent = gesture
-            ? "底部固定 · 手势条 · 24dp"
-            : "底部固定 · 三键示意 · 48dp";
-        }
+        const gearDisplay = isPostMode ? P.phase : displayGear(dc.letter, L.dSub, gesture);
+        setTextIfChanged(st.gear, gearDisplay);
+        setTextIfChanged(st.band, isPostMode ? "Post stack" : band);
+        setTextIfChanged(st.h, String(H) + " px");
+        setTextIfChanged(st.w, String(W) + " px");
+        setTextIfChanged(st.ratio, r);
+        setTextIfChanged(st.statusH, statusH + " px（模拟）");
+        setTextIfChanged(st.navHLine, navH + " px（" + (gesture ? "手势条 24" : "三键示意 48") + "）");
+        setTextIfChanged(
+          st.navType,
+          gesture ? "底部固定 · 手势条 · 24dp" : "底部固定 · 三键示意 · 48dp",
+        );
         if (st.axisNote) {
           if (gesture && L.cls.letter === "H") {
-            st.axisNote.textContent =
+            setTextIfChanged(
+              st.axisNote,
               "H（手势）：Stage 与屏同高（0…H）；画幅可至屏底并叠在手势条之下；BottomButton 底距 GestureBar 上沿 " +
               BB_EDGE_GAP +
               "dp（" +
               navH +
-              "px 手势区上沿为锚）。顶部仍可由 StatusBar 叠画幅。";
+              "px 手势区上沿为锚）。顶部仍可由 StatusBar 叠画幅。",
+            );
           } else {
-            st.axisNote.textContent =
+            setTextIfChanged(
+              st.axisNote,
               "坐标：Stage 顶为 0，底为 " +
               (gesture ? "GestureBar" : "Navigation") +
               " 上沿（C = H − " +
               navH +
-              "）。";
+              "）。",
+            );
           }
         }
-        st.expr.textContent = L.exprLine;
+        setTextIfChanged(
+          st.expr,
+          isPostMode
+            ? "Post：Preview=" +
+              P.previewW +
+              "×" +
+              P.previewH +
+              "；Desc→#bottomButton=" +
+              P.descToBottomGap +
+              "dp；Desc→List=" +
+              P.descToListGap +
+              "dp；List→#bottomButton=" +
+              P.listToButtonGap +
+              "dp"
+            : L.exprLine,
+        );
 
-        st.occupyStatus.textContent = L.occupyStatusBar
-          ? "是（画幅顶 < Status 底）"
-          : "否";
-        st.topUi.textContent = L.topUiOffset.toFixed(0) + " px";
-        st.bbInFrame.textContent = L.bbInsideFrame ? "是" : "否";
-        st.shootUi.textContent =
-          phonePageMode === "edit"
-            ? "—（EditPage 预览，ShootUI 已隐藏）"
-            : L.shootUiBottom.toFixed(0) + " px（" + L.shootUiBottomRule + "）";
-        st.previewCrop.textContent =
-          "顶 " +
-          L.previewCropTop.toFixed(1) +
-          " px · 底 " +
-          L.previewCropBottom.toFixed(1) +
-          " px";
+        setTextIfChanged(
+          st.occupyStatus,
+          isPostMode ? "否（Post 白底顶栏）" : L.occupyStatusBar ? "是（画幅顶 < Status 底）" : "否",
+        );
+        setTextIfChanged(st.topUi, isPostMode ? "—（Post 顶栏固定 52px）" : L.topUiOffset.toFixed(0) + " px");
+        setTextIfChanged(st.bbInFrame, isPostMode ? "—（Post 独立按钮）" : L.bbInsideFrame ? "是" : "否");
+        setTextIfChanged(
+          st.shootUi,
+          phonePageMode === "post"
+            ? "—（PostPage 无 ShootUI）"
+            : phonePageMode === "edit"
+              ? "—（EditPage 预览，ShootUI 已隐藏）"
+              : L.shootUiBottom.toFixed(0) + " px（" + L.shootUiBottomRule + "）",
+        );
+        setTextIfChanged(
+          st.previewCrop,
+          isPostMode
+            ? "Post 预览 " +
+              P.previewW +
+              "×" +
+              P.previewH +
+              " · Desc→#bottomButton " +
+              P.descToBottomGap +
+              "dp · Desc→List " +
+              P.descToListGap +
+              "dp · List→#bottomButton " +
+              P.listToButtonGap +
+              "dp"
+            : "顶 " + L.previewCropTop.toFixed(1) + " px · 底 " + L.previewCropBottom.toFixed(1) + " px",
+        );
 
-        st.note.textContent = L.note;
+        setTextIfChanged(
+          st.note,
+          isPostMode
+            ? "Post：Navigation Bar 高 52px；预览图贴 Navigation Bar 底部 0dp；Description Area 贴预览图底部 0dp；List 贴 Description 底部 0dp。"
+            : L.note,
+        );
 
         const slackNav = L.C - L.frameBottom;
         let slackTxt;
@@ -4398,57 +5681,69 @@
         } else {
           slackTxt = "0 px（贴合）";
         }
-        kpi.gear.textContent = gearDisplay;
-        kpi.wh.textContent = W + "×" + H + " px";
-        kpi.ratio.textContent = r;
-        const commonModel = COMMON_MODEL_H.includes(H);
-        if (kpiRatioCell) kpiRatioCell.classList.toggle("kpi-cell--common-model", commonModel);
-        if (kpiRatioCommon) {
-          kpiRatioCommon.hidden = !commonModel;
-        }
-        kpi.band.textContent =
-          dc.letter === "A"
-            ? "≥20:9"
-            : dc.letter === "H"
-              ? "≤16:9"
-              : "16:9—20:9";
-        kpi.frameNav.textContent = slackTxt;
-        opsHint.textContent =
-          "判据：H−" +
-          FRAME_H +
-          "−48=" +
-          L.cls.expr.toFixed(0) +
-          " · 阈 Status+Nav+8=" +
-          (statusH + navH + 8).toFixed(0) +
-          " · Navigation " +
-          navH +
-          "px " +
-          (gesture ? "手势底栏（示意）" : "三键底栏（示意）") +
-          " · BottomButton 与画幅底或导航顶外边距 " +
-          BB_EDGE_GAP +
-          "dp";
+        setTextIfChanged(kpi.gear, gearDisplay);
+        setTextIfChanged(kpi.wh, W + "×" + H + " px");
+        setTextIfChanged(kpi.ratio, r);
+        const commonModel = COMMON_MODEL_H_SET.has(H);
+        toggleClassIfChanged(kpiRatioCell, "kpi-cell--common-model", commonModel);
+        setHiddenIfChanged(kpiRatioCommon, !commonModel);
+        setTextIfChanged(
+          kpi.band,
+          isPostMode
+            ? "Post stack"
+            : dc.letter === "A"
+              ? "≥20:9"
+              : dc.letter === "H"
+                ? "≤16:9"
+                : "16:9—20:9",
+        );
+        setTextIfChanged(
+          kpi.frameNav,
+          isPostMode ? "Preview " + P.previewW + "×" + P.previewH + " · Button ↑Nav 4dp" : slackTxt,
+        );
+        setTextIfChanged(
+          opsHint,
+          isPostMode
+            ? "Post 判据：当 #bottomButton 顶部到 PostDescription 底部 < " +
+              POST_DESC_TO_BOTTOM_MIN_GAP +
+              "dp 时压缩预览；Bottom Button 组件固定在 Navigation 上方 4dp（当前 Desc→#bottomButton " +
+              P.descToBottomGap +
+              "dp）。"
+            : "判据：H−" +
+              FRAME_H +
+              "−48=" +
+              L.cls.expr.toFixed(0) +
+              " · 阈 Status+Nav+8=" +
+              (statusH + navH + 8).toFixed(0) +
+              " · Navigation " +
+              navH +
+              "px " +
+              (gesture ? "手势底栏（示意）" : "三键底栏（示意）") +
+              " · BottomButton 与画幅底或导航顶外边距 " +
+              BB_EDGE_GAP +
+              "dp",
+        );
         scheduleDemoHeroPhoneLayout();
       }
 
-      hRange.addEventListener("input", tick);
-      sRange.addEventListener("input", tick);
+      hRange.addEventListener("input", scheduleTick);
+      sRange.addEventListener("input", scheduleTick);
       if (gestureNavInput) {
-        gestureNavInput.addEventListener("input", tick);
+        gestureNavInput.addEventListener("input", scheduleTick);
       }
 
       if (phonePageHoverWrap) {
-        function deferHoverLayoutTick() {
-          requestAnimationFrame(tick);
-        }
         phonePageHoverWrap.addEventListener("pointerenter", function () {
+          if (navDemoBase === "post") return;
           capsulePreviewActive = true;
           applyPhonePageMode();
-          deferHoverLayoutTick();
+          scheduleTick();
         });
         phonePageHoverWrap.addEventListener("pointerleave", function () {
+          if (navDemoBase === "post") return;
           capsulePreviewActive = false;
           applyPhonePageMode();
-          deferHoverLayoutTick();
+          scheduleTick();
         });
       }
 
@@ -4459,19 +5754,41 @@
             return;
           }
           var next = btn.getAttribute("data-demo-nav-base");
-          if (next !== "shoot" && next !== "edit") {
+          if (next !== "shoot" && next !== "edit" && next !== "post") {
             return;
           }
           demoPhoneLeftNav.classList.add("demo-phone-left-nav--flush-hover");
           navDemoBase = next;
+          capsulePreviewActive = false;
           syncDemoNavChrome();
           applyPhonePageMode();
-          requestAnimationFrame(tick);
+          scheduleTick();
           requestAnimationFrame(function () {
             requestAnimationFrame(function () {
               demoPhoneLeftNav.classList.remove("demo-phone-left-nav--flush-hover");
             });
           });
+          if (typeof e.pointerType === "string" && e.pointerType === "mouse") {
+            requestAnimationFrame(function () {
+              btn.blur();
+            });
+          }
+        });
+      }
+
+      if (postSecondaryNav) {
+        postSecondaryNav.addEventListener("click", function (e) {
+          var btn = e.target.closest(".post-secondary-nav__btn[data-post-subpage]");
+          if (!btn || btn.disabled) {
+            return;
+          }
+          var next = btn.getAttribute("data-post-subpage");
+          if (next !== "video" && next !== "photo" && next !== "multi-photo") {
+            return;
+          }
+          postSubpageMode = next;
+          applyPhonePageMode();
+          scheduleTick();
           if (typeof e.pointerType === "string" && e.pointerType === "mouse") {
             requestAnimationFrame(function () {
               btn.blur();
@@ -4493,11 +5810,14 @@
       const pathNoHash = window.location.pathname + window.location.search;
 
       function syncPreviewVideoPlayback() {
-        if (!previewVideo) return;
         if (demoRoot.hidden) {
-          previewVideo.pause();
+          if (previewVideo) previewVideo.pause();
+          if (postPreviewVideo) postPreviewVideo.pause();
+          if (postInlinePreviewVideo) postInlinePreviewVideo.pause();
         } else {
-          previewVideo.play().catch(function () {});
+          if (previewVideo) previewVideo.play().catch(function () {});
+          if (postPreviewVideo) postPreviewVideo.play().catch(function () {});
+          if (postInlinePreviewVideo) postInlinePreviewVideo.play().catch(function () {});
         }
       }
 
@@ -4519,7 +5839,7 @@
           if (location.hash !== "#demo") {
             history.pushState({ shootAdaptDemo: 1 }, "", pathNoHash + "#demo");
           }
-          tick();
+          runTickNow();
           runDemoHeroPhoneLayoutNow();
           syncPreviewVideoPlayback();
         };
@@ -4535,6 +5855,8 @@
         const useVt = typeof document.startViewTransition === "function" && !prefersReducedMotion();
         const update = function () {
           if (previewVideo) previewVideo.pause();
+          if (postPreviewVideo) postPreviewVideo.pause();
+          if (postInlinePreviewVideo) postInlinePreviewVideo.pause();
           demoRoot.hidden = true;
           introEl.hidden = false;
           if (location.hash === "#demo") {
@@ -4557,7 +5879,7 @@
           introEl.hidden = true;
           demoRoot.hidden = false;
           skipDemoEnterTransition = true;
-          tick();
+          runTickNow();
           runDemoHeroPhoneLayoutNow();
           syncPreviewVideoPlayback();
         } else {
@@ -4574,7 +5896,7 @@
       }
       syncDemoNavChrome();
       applyPhonePageMode();
-      tick();
+      runTickNow();
       runDemoHeroPhoneLayoutNow();
       syncPreviewVideoPlayback();
     })();
