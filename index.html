@@ -4652,7 +4652,7 @@
       const FRAME_H = (W * 16) / 9;
       const BB_H = 48;
       /** BottomButton 底边距：相对逻辑画幅底 / Navigation（或 Gesture）上沿 */
-      const BB_EDGE_GAP = 4;
+      const BB_EDGE_GAP = 0;
       const NAV_H_THREE = 48;
       const NAV_H_GESTURE = 24;
       /** 快门外环 3px + drop-shadow(0,2,4)，盒子 bottom 对齐仍会略压进 BottomButton 区，在「紫条在画幅内」时追加抬升 */
@@ -4969,7 +4969,10 @@
         return H / W;
       }
 
-      /** 屏高 − 画幅高度 − BottomButton（48）中的「余量」判据；Navigation 高度为 navH 参数 */
+      /**
+       * 屏高 − 画幅高度 − BottomButton（48）中的「余量」判据；Navigation 高度为 navH 参数。
+       * B/E 在常规 8dp 间距不足后，继续压缩至 0dp；小于 0dp 才进入 C/F。
+       */
       function classify(H, statusH, navH) {
         const r = aspect(H);
         const expr = H - FRAME_H - BB_H;
@@ -4977,8 +4980,8 @@
         if (r >= 20 / 9 - 1e-9) return { letter: "A", expr, r };
         if (r <= 16 / 9 + 1e-9) return { letter: "H", expr, r };
 
-        if (expr >= statusH + navH + 8) return { letter: "B", expr, r };
-        if (expr > navH && expr < statusH + navH + 8) return { letter: "C", expr, r };
+        if (expr >= statusH + navH + BB_EDGE_GAP) return { letter: "B", expr, r };
+        if (expr > navH && expr < statusH + navH + BB_EDGE_GAP) return { letter: "C", expr, r };
         if (navH >= expr) return { letter: "D", expr, r };
 
         return { letter: "?", expr, r };
@@ -5008,6 +5011,8 @@
         let note = "";
         /** 对外展示档位：B 底部对齐若与 Status 重叠则降为 C（手势下展示 F） */
         let displayClsLetter = cls.letter;
+        let beFrameToBottomGap = null;
+        let beCompressed = false;
 
         /** C／F 档几何共用（画幅钉底、紫条区算法） */
         function applyGeometryC() {
@@ -5183,7 +5188,7 @@
           bbTop = bbBottom - BB_H;
         }
 
-        /* B：若「手势居中 E」导致画幅顶吃进 Status，优先改用底对齐 B／E；仍重叠再降为 C／F */
+        /* B/E：顶部贴齐后先压缩「画幅底→#bottomButton 顶」间距，压到 <0 再进入 C/F */
         if (cls.letter === "B" && frameTop < statusH - 1e-6) {
           const gap8 = 8;
           const usedGestureCenter =
@@ -5199,9 +5204,28 @@
               "dp）";
           }
           if (frameTop < statusH - 1e-6) {
-            applyGeometryC();
-            setNoteC(true);
-            displayClsLetter = "C";
+            const compressedFrameTop = statusH;
+            const compressedFrameBottom = compressedFrameTop + FRAME_H;
+            const compressedGap = bbTop - compressedFrameBottom;
+            if (compressedGap >= -1e-6) {
+              frameTop = compressedFrameTop;
+              frameBottom = compressedFrameBottom;
+              previewCropTop = 0;
+              beFrameToBottomGap = Math.max(0, compressedGap);
+              beCompressed = true;
+              note = gestureNav
+                ? "E（手势）：画幅顶贴 StatusBar 底后，保持顶部 0dp，不立刻进入 F；压缩画幅底→#bottomButton 顶间距至 " +
+                  beFrameToBottomGap.toFixed(0) +
+                  "dp，<0dp 再进入 F"
+                : "B：画幅顶贴 StatusBar 底后，保持顶部 0dp，不立刻进入 C；压缩画幅底→#bottomButton 顶间距至 " +
+                  beFrameToBottomGap.toFixed(0) +
+                  "dp，<0dp 再进入 C";
+            } else {
+              beFrameToBottomGap = compressedGap;
+              applyGeometryC();
+              setNoteC(true);
+              displayClsLetter = "C";
+            }
           }
         }
 
@@ -5245,16 +5269,32 @@
           shootUiBottomRule = "默认距画幅底 24dp";
         }
 
+        if (cls.letter === "B" && beFrameToBottomGap === null) {
+          beFrameToBottomGap = bbTop - frameBottom;
+        }
+
         const exprLine =
           "屏高 − 画幅高度 − " +
           BB_H +
           " = " +
           cls.expr.toFixed(0) +
-          "  （StatusBar+NavigationBar+8=" +
-          (statusH + navH + 8).toFixed(0) +
+          "  （常规 B/E: StatusBar+NavigationBar+" +
+          (BB_EDGE_GAP + 8) +
+          "=" +
+          (statusH + navH + BB_EDGE_GAP + 8).toFixed(0) +
+          "；压缩下限: StatusBar+NavigationBar+" +
+          BB_EDGE_GAP +
+          "=" +
+          (statusH + navH + BB_EDGE_GAP).toFixed(0) +
           ", NavigationBar=" +
           navH +
-          "）";
+          "）" +
+          (cls.letter === "B"
+            ? "；B/E 间距判据 #bottomButton.top − 画幅底 = " +
+              beFrameToBottomGap.toFixed(0) +
+              "dp" +
+              (beCompressed ? "（顶部已贴齐，压缩中）" : "")
+            : "");
 
         return {
           cls,
@@ -5277,6 +5317,8 @@
           bbContainOk,
           dSlackNav,
           dGapBefore,
+          beFrameToBottomGap,
+          beCompressed,
           exprLine,
           occupyStatusBar,
           bbInsideFrame,
@@ -5712,8 +5754,14 @@
               FRAME_H +
               "−48=" +
               L.cls.expr.toFixed(0) +
-              " · 阈 Status+Nav+8=" +
-              (statusH + navH + 8).toFixed(0) +
+              " · 常规B/E阈 Status+Nav+" +
+              (BB_EDGE_GAP + 8) +
+              "=" +
+              (statusH + navH + BB_EDGE_GAP + 8).toFixed(0) +
+              " · 压缩下限 Status+Nav+" +
+              BB_EDGE_GAP +
+              "=" +
+              (statusH + navH + BB_EDGE_GAP).toFixed(0) +
               " · Navigation " +
               navH +
               "px " +
