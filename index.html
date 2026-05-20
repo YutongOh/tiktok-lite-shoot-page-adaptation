@@ -8,7 +8,8 @@
        assets/share-cover.png。所有 og:image / twitter:image / JSON-LD
        均指向该文件的 **HTTPS 绝对 URL**（抓取端不认相对路径）。
     2) 更新封面：替换 assets/share-cover.png，推荐尺寸 1200×630（1.91:1，
-       与 og:image 元数据一致）。推送后等待 Pages 部署；各平台可能缓存数小时。
+       与 og:image 元数据一致）。meta 里图片 URL 可带 ?v= 序号做缓存击穿。
+       推送后等待 Pages 部署；各平台可能缓存数小时。
     3) 与 App 内「视频/多图 Post 封面」无关：那是业务里用户选的帧或图；
        本仓库是适配实验室单页，不动态换图。
     4) 首屏旁路 <img class="seo-unfurl-thumb">：部分爬虫优先从 DOM 抽第一张
@@ -24,7 +25,7 @@
     rel="preload"
     as="image"
     type="image/png"
-    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
   />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
@@ -43,11 +44,11 @@
   />
   <meta
     property="og:image"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
   />
   <meta
     property="og:image:secure_url"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
   />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -58,7 +59,7 @@
   />
   <meta
     name="thumbnail"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
   />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Creation 适配实验室 — A / B / C / D / H" />
@@ -68,7 +69,7 @@
   />
   <meta
     name="twitter:image"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
   />
   <meta
     name="twitter:image:alt"
@@ -78,7 +79,7 @@
   <meta property="og:locale" content="zh_CN" />
   <link
     rel="image_src"
-    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
   />
   <script type="application/ld+json">
     {
@@ -90,7 +91,7 @@
           "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/",
           "name": "Creation 适配实验室 — A / B / C / D / H",
           "inLanguage": "zh-CN",
-          "image": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+          "image": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
         },
         {
           "@type": "WebPage",
@@ -102,7 +103,7 @@
           "isPartOf": { "@id": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/#website" },
           "primaryImageOfPage": {
             "@type": "ImageObject",
-            "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png",
+            "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2",
             "width": 1200,
             "height": 630
           }
@@ -4040,7 +4041,7 @@
 <body>
   <img
     class="seo-unfurl-thumb"
-    src="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png"
+    src="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
     alt=""
     width="1200"
     height="630"

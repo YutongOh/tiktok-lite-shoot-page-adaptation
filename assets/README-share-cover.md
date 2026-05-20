@@ -4,7 +4,7 @@
 
 1. **Single static file**: `assets/share-cover.png` (committed in this repo).
 2. **All social / chat link previews** read **`og:image` / `twitter:image`** in `index.html`, which point to the **HTTPS absolute URL** on GitHub Pages:
-   - `https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png`
+   - `https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png` (HTML meta uses `?v=…` to bust link-preview caches when you update the file)
 3. **Why absolute URLs**: crawlers (Slack, iMessage, WeChat, etc.) require a full `https://…` URL; relative paths are ignored.
 4. **Hidden `<img class="seo-unfurl-thumb">`**: some crawlers scrape the DOM for a large image; we mirror the same asset so they don’t fall back to a random hero image.
 5. **Not the in-app “Select Cover”**: this lab page does not publish user-generated posts; replacing `share-cover.png` only affects **link unfurl**, not TikTok client behaviour.
