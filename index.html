@@ -43,6 +43,28 @@
     name="twitter:image:alt"
     content="Creation 适配实验室 — Lite Creation 页面适配演示"
   />
+  <meta property="og:site_name" content="Creation 适配实验室" />
+  <meta property="og:locale" content="zh_CN" />
+  <link
+    rel="image_src"
+    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/og-cover.png"
+  />
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/",
+      "name": "Creation 适配实验室 — A / B / C / D / H",
+      "description": "TikTok Lite Creation 适配实验室：专注于 Lite Creation 链路各页面适配，实时查看不同比例机型下的页面效果。",
+      "inLanguage": "zh-CN",
+      "image": {
+        "@type": "ImageObject",
+        "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/og-cover.png",
+        "width": 1200,
+        "height": 800
+      }
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -104,6 +126,25 @@
       line-height: 1.45;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+    }
+    /**
+     * 部分文档 / IM 的链接预览从 DOM 抽图并排在 og:image 之前；
+     * 隐藏块置于 body 最前，先于 Demo 内大量外链缩略图。
+     */
+    .seo-unfurl-thumb {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      border: 0;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+    .seo-unfurl-thumb img {
+      display: block;
+      max-width: none;
     }
 
     /* —— Aurora 风格欢迎页（无外链视频，用渐变模拟极光） —— */
@@ -3955,6 +3996,17 @@
   </style>
 </head>
 <body>
+  <div class="seo-unfurl-thumb" aria-hidden="true">
+    <img
+      src="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/og-cover.png"
+      alt=""
+      width="1200"
+      height="800"
+      decoding="async"
+      fetchpriority="low"
+      loading="lazy"
+    />
+  </div>
   <div id="intro" class="intro-gate">
     <main class="intro-split">
       <section class="intro-hero" aria-label="视觉">
