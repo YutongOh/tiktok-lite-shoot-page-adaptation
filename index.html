@@ -2642,6 +2642,7 @@
       flex-direction: column;
       align-items: center;
       width: 100%;
+      gap: 12px;
     }
     .phone-page--edit .right-tools-shoot {
       display: none;
@@ -2653,29 +2654,18 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-start;
       width: 100%;
-      padding: 4px 0 12px;
+      padding: 0;
       gap: 2px;
       box-sizing: border-box;
       color: #fff;
     }
-    /* Figma：部分行有水平内边距（与 node 2:1005 / 2:1019 / 2:1040 / 2:1043 一致） */
-    .right-tools-edit__item--px14 {
-      padding-left: 14px;
-      padding-right: 14px;
+    /* Figma 36:859：Adjust clips / Privacy settings 占位高于单行标签项 */
+    .right-tools-edit__item--cell60 {
+      min-height: 60px;
     }
-    .right-tools-edit__item--px8 {
-      padding-left: 8px;
-      padding-right: 8px;
-    }
-    .right-tools-edit__item--px3 {
-      padding-left: 3px;
-      padding-right: 3px;
-    }
-    .right-tools-edit__item--px10 {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
+    /* 原 Figma px 对齐类已由新 Toolbar 单列淘汰 */
     /* 外框 28×28，与 Figma size-[28px] + overflow-clip 一致 */
     .right-tools-edit__icon {
       position: relative;
@@ -2683,6 +2673,7 @@
       height: 28px;
       flex-shrink: 0;
       overflow: hidden;
+      margin-top: 4px;
     }
     /* 内层 slot = Figma 中绝对定位的「画幅」；图在画幅内 contain，禁止形变 */
     .right-tools-edit__slot {
@@ -2723,21 +2714,9 @@
       bottom: 4.17%;
       left: 6.25%;
     }
-    /* Icon_Color/Track — Subtract (Stroke) 层 */
-    .right-tools-edit__slot--adjust-stroke {
-      top: 14.58%;
-      right: 0;
-      bottom: 14.58%;
-      left: 0;
-      z-index: 0;
-    }
-    /* Icon_Color/Track — track 层 */
-    .right-tools-edit__slot--adjust-track {
-      top: 16.67%;
-      right: 2.08%;
-      bottom: 16.67%;
-      left: 2.08%;
-      z-index: 1;
+    /* Icon_Color/Track — Figma Dev 单层输出，满铺 28 框 */
+    .right-tools-edit__slot--track-single {
+      inset: 0;
     }
     /* Icon_Color/Filter */
     .right-tools-edit__slot--filter {
@@ -2769,6 +2748,9 @@
       white-space: nowrap;
       width: auto;
       max-width: 56px;
+    }
+    .right-tools-edit__label--semibold {
+      font-weight: 600;
     }
 
     /* Shoot/Edit Hover：与手机列间距由 --demo-y-gutter 脚本控制。
@@ -4151,97 +4133,62 @@
                         <div class="right-tool-label">Beautify</div>
                       </div>
                     </div>
-                    <div class="right-tools-edit" aria-hidden="true">
+                    <div class="right-tools-edit" data-node-id="36:859" data-name="EditPage ToolBar" aria-hidden="true">
                       <div class="right-tools-edit__item">
-                        <div class="right-tools-edit__icon" aria-hidden="true">
-                          <div class="right-tools-edit__slot right-tools-edit__slot--gear">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/4621007f-250e-426a-8460-1a78f02555f9"
-                              alt=""
-                              decoding="async"
-                            />
-                          </div>
-                        </div>
-                        <span class="right-tools-edit__label">Privacy settings</span>
-                      </div>
-                      <div class="right-tools-edit__item right-tools-edit__item--px14">
                         <div class="right-tools-edit__icon" aria-hidden="true">
                           <div class="right-tools-edit__slot right-tools-edit__slot--text">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/7c4b629f-77a2-477e-b22c-2dad43a63477"
-                              alt=""
-                              decoding="async"
-                            />
+                            <img src="assets/edit/text.svg" alt="" decoding="async" />
                           </div>
                         </div>
-                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Text</span>
-                      </div>
-                      <div class="right-tools-edit__item right-tools-edit__item--px8">
-                        <div class="right-tools-edit__icon" aria-hidden="true">
-                          <div class="right-tools-edit__slot right-tools-edit__slot--sticker">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/105e30b0-52da-48ee-ad2a-bfeff5bdb820"
-                              alt=""
-                              decoding="async"
-                            />
-                          </div>
-                        </div>
-                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Stickers</span>
+                        <span class="right-tools-edit__label right-tools-edit__label--semibold">Text</span>
                       </div>
                       <div class="right-tools-edit__item">
                         <div class="right-tools-edit__icon" aria-hidden="true">
-                          <div class="right-tools-edit__slot right-tools-edit__slot--adjust-stroke">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/329cf435-24ad-4357-964f-ac92df4545ce"
-                              alt=""
-                              decoding="async"
-                            />
-                          </div>
-                          <div class="right-tools-edit__slot right-tools-edit__slot--adjust-track">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/6800a6e3-dc79-4955-aca7-24341669ad45"
-                              alt=""
-                              decoding="async"
-                            />
+                          <div class="right-tools-edit__slot right-tools-edit__slot--sticker">
+                            <img src="assets/edit/sticker.svg" alt="" decoding="async" />
                           </div>
                         </div>
-                        <span class="right-tools-edit__label">Adjust clips</span>
+                        <span class="right-tools-edit__label right-tools-edit__label--semibold right-tools-edit__label--nowrap">Stickers</span>
                       </div>
                       <div class="right-tools-edit__item">
                         <div class="right-tools-edit__icon" aria-hidden="true">
                           <div class="right-tools-edit__slot right-tools-edit__slot--filter">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/e1da686d-81dc-4d0e-9618-8d850bdb39a1"
-                              alt=""
-                              decoding="async"
-                            />
+                            <img src="assets/edit/filter.svg" alt="" decoding="async" />
                           </div>
                         </div>
-                        <span class="right-tools-edit__label">Filters</span>
+                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Filters</span>
                       </div>
-                      <div class="right-tools-edit__item right-tools-edit__item--px3">
+                      <div class="right-tools-edit__item right-tools-edit__item--cell60">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--track-single">
+                            <img src="assets/edit/track.svg" alt="" decoding="async" />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label right-tools-edit__label--semibold">Adjust clips</span>
+                      </div>
+                      <div class="right-tools-edit__item">
                         <div class="right-tools-edit__icon" aria-hidden="true">
                           <div class="right-tools-edit__slot right-tools-edit__slot--mic">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/dc447be2-e00b-4990-875b-b993e711c864"
-                              alt=""
-                              decoding="async"
-                            />
+                            <img src="assets/edit/mic.svg" alt="" decoding="async" />
                           </div>
                         </div>
                         <span class="right-tools-edit__label right-tools-edit__label--nowrap">Voiceover</span>
                       </div>
-                      <div class="right-tools-edit__item right-tools-edit__item--px10">
+                      <div class="right-tools-edit__item right-tools-edit__item--cell60">
                         <div class="right-tools-edit__icon" aria-hidden="true">
-                          <div class="right-tools-edit__slot right-tools-edit__slot--effect">
-                            <img
-                              src="https://www.figma.com/api/mcp/asset/80fce20f-470d-41ef-a9dd-a1d5a9e66f4d"
-                              alt=""
-                              decoding="async"
-                            />
+                          <div class="right-tools-edit__slot right-tools-edit__slot--gear">
+                            <img src="assets/edit/gear.svg" alt="" decoding="async" />
                           </div>
                         </div>
-                        <span class="right-tools-edit__label right-tools-edit__label--nowrap">Effects</span>
+                        <span class="right-tools-edit__label right-tools-edit__label--semibold">Privacy settings</span>
+                      </div>
+                      <div class="right-tools-edit__item">
+                        <div class="right-tools-edit__icon" aria-hidden="true">
+                          <div class="right-tools-edit__slot right-tools-edit__slot--effect">
+                            <img src="assets/edit/effect.svg" alt="" decoding="async" />
+                          </div>
+                        </div>
+                        <span class="right-tools-edit__label right-tools-edit__label--semibold right-tools-edit__label--nowrap">Effects</span>
                       </div>
                     </div>
                     </div>
@@ -4419,14 +4366,13 @@
 
                 <div id="bottomButton" class="bottom-button-anchor" aria-hidden="true">
                   <div class="bottom-button-layer--shoot">BottomButton 预留 48</div>
-                  <div class="bottom-button-layer--edit">
+                  <div class="bottom-button-layer--edit" data-node-id="36:999" data-name="EditPage BottomButton">
                     <div class="edit-bottom-row">
                       <button type="button" class="edit-bottom-btn edit-bottom-btn--story" tabindex="-1">
-                        Your Story
                         <span class="edit-bottom-story-ico" aria-hidden="true">
                           <img
                             class="edit-bottom-story-img--ring"
-                            src="https://www.figma.com/api/mcp/asset/ed2f85d2-56f0-4911-b2ba-91fc65f1243d"
+                            src="assets/edit/story-ring.svg"
                             alt=""
                             width="28"
                             height="28"
@@ -4434,13 +4380,14 @@
                           />
                           <img
                             class="edit-bottom-story-img--inner"
-                            src="https://www.figma.com/api/mcp/asset/2b079c94-a624-413a-b9fe-ffdced6fa7ae"
+                            src="assets/edit/story-inner.png"
                             alt=""
                             width="22"
                             height="22"
                             decoding="async"
                           />
                         </span>
+                        Your Story
                       </button>
                       <button type="button" class="edit-bottom-btn edit-bottom-btn--next" tabindex="-1">Next</button>
                     </div>
