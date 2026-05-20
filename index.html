@@ -1,116 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <!--
-    分享封面选取逻辑（本站 GitHub Pages 静态页）
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    1) 唯一信源：链接预览（iMessage / Slack / 微信等）统一使用仓库内
-       assets/share-cover.png。所有 og:image / twitter:image / JSON-LD
-       均指向该文件的 **HTTPS 绝对 URL**（抓取端不认相对路径）。
-    2) 更新封面：替换 assets/share-cover.png，推荐尺寸 1200×630（1.91:1，
-       与 og:image 元数据一致）。meta 里图片 URL 可带 ?v= 序号做缓存击穿。
-       推送后等待 Pages 部署；各平台可能缓存数小时。
-    3) 与 App 内「视频/多图 Post 封面」无关：那是业务里用户选的帧或图；
-       本仓库是适配实验室单页，不动态换图。
-    4) 首屏旁路 <img class="seo-unfurl-thumb">：部分爬虫优先从 DOM 抽第一张
-       可见大图；提供与 meta 同源的大尺寸图，减少被判无效后改用正文内其它图。
-    5) canonical / og:url：与线上一致，避免索引歧义。
-  -->
   <meta charset="UTF-8" />
-  <link
-    rel="canonical"
-    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/"
-  />
-  <link
-    rel="preload"
-    as="image"
-    type="image/png"
-    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-  />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content="TikTok Lite Creation 适配实验室：专注于 Lite Creation 链路各页面适配，实时查看不同比例机型下的页面效果。"
-  />
-  <meta property="og:type" content="website" />
-  <meta
-    property="og:url"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/"
-  />
-  <meta property="og:title" content="Creation 适配实验室 — A / B / C / D / H" />
-  <meta
-    property="og:description"
-    content="TikTok Lite Creation 适配实验室：专注于 Lite Creation 链路各页面适配，实时查看不同比例机型下的页面效果。"
-  />
-  <meta
-    property="og:image"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-  />
-  <meta
-    property="og:image:secure_url"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-  />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:type" content="image/png" />
-  <meta
-    property="og:image:alt"
-    content="Creation 适配实验室 — Lite Creation 页面适配演示"
-  />
-  <meta
-    name="thumbnail"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-  />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Creation 适配实验室 — A / B / C / D / H" />
-  <meta
-    name="twitter:description"
-    content="TikTok Lite Creation 适配实验室：专注于 Lite Creation 链路各页面适配，实时查看不同比例机型下的页面效果。"
-  />
-  <meta
-    name="twitter:image"
-    content="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-  />
-  <meta
-    name="twitter:image:alt"
-    content="Creation 适配实验室 — Lite Creation 页面适配演示"
-  />
-  <meta property="og:site_name" content="Creation 适配实验室" />
-  <meta property="og:locale" content="zh_CN" />
-  <link
-    rel="image_src"
-    href="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-  />
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "@id": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/#website",
-          "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/",
-          "name": "Creation 适配实验室 — A / B / C / D / H",
-          "inLanguage": "zh-CN",
-          "image": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-        },
-        {
-          "@type": "WebPage",
-          "@id": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/#webpage",
-          "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/",
-          "name": "Creation 适配实验室 — A / B / C / D / H",
-          "description": "TikTok Lite Creation 适配实验室：专注于 Lite Creation 链路各页面适配，实时查看不同比例机型下的页面效果。",
-          "inLanguage": "zh-CN",
-          "isPartOf": { "@id": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/#website" },
-          "primaryImageOfPage": {
-            "@type": "ImageObject",
-            "url": "https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2",
-            "width": 1200,
-            "height": 630
-          }
-        }
-      ]
-    }
-  </script>
   <title>Creation 适配实验室 — A / B / C / D / H</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -173,21 +65,6 @@
       line-height: 1.45;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-    }
-    /**
-     * 链接预览：勿用 1px+clip 隐藏首张图——会被判为无效继而改用正文大图。
-     * 屏外保留与 og:image 一致的排版尺寸，且不使用 loading=lazy（部分爬虫不加载懒图）。
-     */
-    img.seo-unfurl-thumb {
-      position: absolute;
-      left: -10000px;
-      top: 0;
-      width: 1200px;
-      height: 630px;
-      margin: 0;
-      padding: 0;
-      border: 0;
-      display: block;
     }
 
     /* —— Aurora 风格欢迎页（无外链视频，用渐变模拟极光） —— */
@@ -4039,16 +3916,6 @@
   </style>
 </head>
 <body>
-  <img
-    class="seo-unfurl-thumb"
-    src="https://yutongoh.github.io/tiktok-lite-shoot-page-adaptation/assets/share-cover.png?v=2"
-    alt=""
-    width="1200"
-    height="630"
-    decoding="async"
-    fetchpriority="high"
-    aria-hidden="true"
-  />
   <div id="intro" class="intro-gate">
     <main class="intro-split">
       <section class="intro-hero" aria-label="视觉">
