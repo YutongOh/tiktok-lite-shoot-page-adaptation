@@ -3138,18 +3138,19 @@
       height: 44px;
       transform: translate(-50%, -50%);
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(51, 51, 51, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 2px;
+      box-sizing: border-box;
     }
-    .post-preview-play::after {
-      content: "";
-      position: absolute;
-      left: 18px;
-      top: 13px;
-      width: 0;
-      height: 0;
-      border-top: 9px solid transparent;
-      border-bottom: 9px solid transparent;
-      border-left: 14px solid #fff;
+    .post-preview-play img {
+      display: block;
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
     .post-preview-cover {
       position: absolute;
@@ -3160,7 +3161,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(51, 51, 51, 0.6);
       color: #fff;
       font-size: 13px;
       font-weight: 600;
@@ -3417,6 +3418,12 @@
       left: 122px;
       width: 90px;
     }
+    .post-description__tag--expand {
+      right: 16px;
+      left: auto;
+      width: 28px;
+      padding: 5px 7px;
+    }
     .post-description__tag-icon {
       width: 14px;
       height: 14px;
@@ -3464,8 +3471,7 @@
       overflow: hidden;
       background: #fff;
     }
-    .post-description__inline-preview video,
-    .post-description__inline-preview img {
+    .post-description__inline-preview > video {
       display: block;
       width: 100%;
       height: 100%;
@@ -4255,7 +4261,7 @@
                 <section class="post-page" id="postPage" aria-label="Post 页面预览" aria-hidden="true">
                   <div class="post-topbar" aria-label="Navigation Bar" data-name="Navigation Bar">
                     <button type="button" class="post-topbar__leading" tabindex="-1" aria-label="返回">
-                      <img src="https://www.figma.com/api/mcp/asset/a84a8951-4e40-4241-91e4-fa03b8734f56" alt="" decoding="async" />
+                      <img src="assets/post/nav-back.svg" alt="" decoding="async" />
                     </button>
                   </div>
                   <div class="post-content">
@@ -4269,13 +4275,15 @@
                         preload="auto"
                         aria-hidden="true"
                       ></video>
-                      <span class="post-preview-play" aria-hidden="true"></span>
-                      <span class="post-preview-cover">Select Cover</span>
+                      <span class="post-preview-play" aria-hidden="true">
+                        <img src="assets/post/play.svg" alt="" decoding="async" />
+                      </span>
+                      <span class="post-preview-cover">Select cover</span>
                     </div>
                     <div class="post-photo-preview" aria-hidden="true">
                       <img
                         class="post-photo-preview__img post-photo-preview__img--max"
-                        src="https://www.figma.com/api/mcp/asset/d9808000-a226-467a-b704-c0c3aad6ea25"
+                        src="assets/post/photo-max.png"
                         alt=""
                         decoding="async"
                         data-node-id="9:351"
@@ -4283,7 +4291,7 @@
                       />
                       <img
                         class="post-photo-preview__img post-photo-preview__img--min"
-                        src="https://www.figma.com/api/mcp/asset/21b25def-0afd-451b-af5b-77c292c41dbc"
+                        src="assets/post/photo-min.png"
                         alt=""
                         decoding="async"
                         data-node-id="9:361"
@@ -4291,7 +4299,7 @@
                       />
                       <img
                         class="post-photo-preview__img post-photo-preview__img--mini"
-                        src="https://www.figma.com/api/mcp/asset/2be2d545-83b0-422e-8b54-7c002089387d"
+                        src="assets/post/photo-mini.png"
                         alt=""
                         decoding="async"
                         data-node-id="9:354"
@@ -4302,31 +4310,31 @@
                     <div class="post-multi-preview" aria-hidden="true">
                       <div class="post-multi-preview__track" data-node-id="8:254" data-name="Multi-Photo Preview max">
                         <div class="post-multi-preview__photo" data-node-id="8:255" data-name="Photo 1">
-                          <img src="https://www.figma.com/api/mcp/asset/710d3798-f3bd-4920-a347-2cf9d120ec9e" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-1.png" alt="" decoding="async" />
                           <span class="post-multi-preview__label">Cover</span>
                           <span class="post-multi-preview__select">Select cover</span>
                         </div>
                         <div class="post-multi-preview__photo" data-node-id="8:258" data-name="Photo 2">
-                          <img src="https://www.figma.com/api/mcp/asset/392c2587-91fd-4f8c-af91-7dea4e737c1f" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-2.png" alt="" decoding="async" />
                         </div>
                         <div class="post-multi-preview__photo" data-node-id="8:259" data-name="Photo 3">
-                          <img src="https://www.figma.com/api/mcp/asset/380fb52b-0b33-4bee-bc82-583db766098b" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-3.png" alt="" decoding="async" />
                         </div>
                       </div>
                       <div class="post-multi-preview__mini" data-node-id="8:299" data-name="Multi-Photo Preview mini">
                         <div class="post-multi-preview__photo" data-node-id="8:301" data-name="Photo 1">
-                          <img src="https://www.figma.com/api/mcp/asset/d7cc8f47-1334-4505-a2aa-defd23d1de58" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-1.png" alt="" decoding="async" />
                           <span class="post-multi-preview__label">Cover</span>
                           <span class="post-multi-preview__select">Select cover</span>
                         </div>
                         <div class="post-multi-preview__photo" data-node-id="8:305" data-name="Photo 3">
-                          <img src="https://www.figma.com/api/mcp/asset/c8bb95ac-7a92-4a3a-8644-b98ce9e4d992" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-3.png" alt="" decoding="async" />
                         </div>
                         <div class="post-multi-preview__photo" data-node-id="8:304" data-name="Photo 2">
-                          <img src="https://www.figma.com/api/mcp/asset/c3fe0bf6-4192-43e1-88ff-de95320963c2" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-2.png" alt="" decoding="async" />
                         </div>
                         <div class="post-multi-preview__photo" data-node-id="8:306" data-name="Photo 4">
-                          <img src="https://www.figma.com/api/mcp/asset/3ab33662-465d-4a69-baca-63522d366b12" alt="" decoding="async" />
+                          <img src="assets/post/multi-photo-4.png" alt="" decoding="async" />
                         </div>
                       </div>
                     </div>
@@ -4343,22 +4351,29 @@
                           autoplay
                           preload="auto"
                         ></video>
-                        <span class="post-preview-play" aria-hidden="true"></span>
-                        <span class="post-preview-cover">Select Cover</span>
+                        <span class="post-preview-play" aria-hidden="true">
+                          <img src="assets/post/play.svg" alt="" decoding="async" />
+                        </span>
+                        <span class="post-preview-cover">Select cover</span>
                       </div>
                       <div class="post-description__tags">
                         <div class="post-description__tagbar">
                           <button type="button" class="post-description__tag post-description__tag--hashtags" tabindex="-1">
                             <span class="post-description__tag-icon" aria-hidden="true">
-                              <img src="https://www.figma.com/api/mcp/asset/615e3499-3df9-4ff9-bbef-fe3e5d01efb4" alt="" decoding="async" />
+                              <img src="assets/post/hashtags.svg" alt="" decoding="async" />
                             </span>
                             <span>Hashtags</span>
                           </button>
                           <button type="button" class="post-description__tag post-description__tag--mention" tabindex="-1">
                             <span class="post-description__tag-icon" aria-hidden="true">
-                              <img src="https://www.figma.com/api/mcp/asset/0dd88a9d-de5b-44d2-86c7-ca1f89ecc07c" alt="" decoding="async" />
+                              <img src="assets/post/mention.svg" alt="" decoding="async" />
                             </span>
                             <span>Mention</span>
+                          </button>
+                          <button type="button" class="post-description__tag post-description__tag--expand" tabindex="-1" aria-label="Expand">
+                            <span class="post-description__tag-icon" aria-hidden="true">
+                              <img src="assets/post/expand.svg" alt="" decoding="async" />
+                            </span>
                           </button>
                         </div>
                       </div>
@@ -4366,35 +4381,35 @@
                     <div class="post-list" id="postList" data-node-id="4:281" data-name="List" aria-label="Post List">
                       <div class="post-list__item post-list__item--privacy" data-node-id="4:282" data-name="List Item / Privacy Settings">
                         <div class="post-list__title-area">
-                          <img class="post-list__leading" src="https://www.figma.com/api/mcp/asset/3230cc9c-e86f-47e4-b289-f88cb837d4ca" alt="" decoding="async" />
+                          <img class="post-list__leading" src="assets/post/privacy.svg" alt="" decoding="async" />
                           <span class="post-list__label">Everyone can view this post</span>
-                          <img class="post-list__chevron" src="https://www.figma.com/api/mcp/asset/4e3b83c2-4bd3-495b-a730-9d9a00ea8298" alt="" decoding="async" />
+                          <img class="post-list__chevron" src="assets/post/chevron.svg" alt="" decoding="async" />
                         </div>
                       </div>
                       <div class="post-list__item post-list__item--more" data-node-id="4:290" data-name="List Item / More options">
                         <div class="post-list__title-area">
-                          <img class="post-list__leading" src="https://www.figma.com/api/mcp/asset/b8144d2f-366f-4b1a-8352-d2ba37870714" alt="" decoding="async" />
+                          <img class="post-list__leading" src="assets/post/more-options.svg" alt="" decoding="async" />
                           <span class="post-list__label">More options</span>
-                          <img class="post-list__chevron" src="https://www.figma.com/api/mcp/asset/4e3b83c2-4bd3-495b-a730-9d9a00ea8298" alt="" decoding="async" />
+                          <img class="post-list__chevron" src="assets/post/chevron.svg" alt="" decoding="async" />
                         </div>
                       </div>
                       <div class="post-list__item post-list__item--share" data-node-id="4:298" data-name="List Item / Share to">
                         <div class="post-list__share-title">
-                          <img class="post-list__leading" src="https://www.figma.com/api/mcp/asset/bd109120-f9b5-47e9-907d-1102867d24f2" alt="" decoding="async" />
+                          <img class="post-list__leading" src="assets/post/share-to.svg" alt="" decoding="async" />
                           <span class="post-list__share-label">Share to</span>
                         </div>
                         <div class="post-list__share-icons">
                           <span class="post-list__share-icon post-list__share-icon--large">
-                            <img src="https://www.figma.com/api/mcp/asset/6aaa3cfb-ef37-4ef9-889b-7153891d68e5" alt="" decoding="async" />
+                            <img src="assets/post/share-whatsapp.svg" alt="" decoding="async" />
                           </span>
                           <span class="post-list__share-icon post-list__share-icon--medium">
-                            <img src="https://www.figma.com/api/mcp/asset/8df1292c-8917-4d16-b5bc-951582f5af2e" alt="" decoding="async" />
+                            <img src="assets/post/share-messenger.svg" alt="" decoding="async" />
                           </span>
                           <span class="post-list__share-icon post-list__share-icon--large">
-                            <img src="https://www.figma.com/api/mcp/asset/ca01aff1-25ad-4962-b549-2d9fc11fd389" alt="" decoding="async" />
+                            <img src="assets/post/share-snapchat.svg" alt="" decoding="async" />
                           </span>
                           <span class="post-list__share-icon post-list__share-icon--medium">
-                            <img src="https://www.figma.com/api/mcp/asset/ca32f1ca-12d8-4ed7-bce3-6f8f54b76a28" alt="" decoding="async" />
+                            <img src="assets/post/share-messages.svg" alt="" decoding="async" />
                           </span>
                         </div>
                       </div>
@@ -4433,13 +4448,13 @@
                   <div class="bottom-button-layer--post" data-node-id="3:712" data-name="Button Group">
                     <button type="button" class="post-bottom-btn post-bottom-btn--drafts" tabindex="-1" data-node-id="3:715" data-name="Button">
                       <span class="post-bottom-btn__icon" aria-hidden="true">
-                        <img src="https://www.figma.com/api/mcp/asset/7be3c2c5-244c-4f0c-99ba-a5a9f6b17c44" alt="" decoding="async" />
+                        <img src="assets/post/drafts.svg" alt="" decoding="async" />
                       </span>
                       <span>Drafts</span>
                     </button>
                     <button type="button" class="post-bottom-btn post-bottom-btn--post" tabindex="-1" data-node-id="3:724" data-name="Button">
                       <span class="post-bottom-btn__icon" aria-hidden="true">
-                        <img src="https://www.figma.com/api/mcp/asset/b110eb4b-916e-4b66-85d2-b29f524f0d1f" alt="" decoding="async" />
+                        <img src="assets/post/post.svg" alt="" decoding="async" />
                       </span>
                       <span>Post</span>
                     </button>
