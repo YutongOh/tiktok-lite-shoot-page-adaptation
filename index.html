@@ -93,6 +93,19 @@
       --intro-demo-outer-pad: 8px;
       --intro-demo-split-gap: clamp(8px, 2vw, 16px);
       --intro-demo-hero-radius: clamp(16px, 3vw, 24px);
+      /* Demo 控制台间距：4px 基线，与 --grid-gutter 对齐 */
+      --demo-space-xs: 4px;
+      --demo-space-sm: 8px;
+      --demo-space-md: 12px;
+      --demo-space-lg: 16px;
+      --demo-space-xl: 20px;
+      --demo-space-2xl: 24px;
+      --demo-head-eyebrow-gap: var(--demo-space-sm);
+      --demo-head-block-gap: var(--demo-space-lg);
+      --demo-console-gap: var(--demo-space-xl);
+      --demo-section-gap: var(--demo-space-2xl);
+      --demo-section-title-gap: var(--demo-space-md);
+      --demo-kpi-gap: var(--demo-space-md);
     }
     @media (min-width: 1024px) {
       :root {
@@ -125,12 +138,14 @@
       outline-offset: 2px;
     }
     #intro-main,
+    #demo-main,
     #demo-panel {
       scroll-margin-top: max(16px, env(safe-area-inset-top));
     }
     body {
       margin: 0;
       min-height: 100vh;
+      overflow-x: clip;
       background: var(--demo-bg);
       color: var(--demo-text);
       font-family: var(--font-sans);
@@ -1614,16 +1629,63 @@
 
     /* Demo 控制台：简约卡片体系（分层阴影 + 半透明描边 + hover 对比提升） */
     .demo-root .page-head {
-      border-bottom-color: var(--demo-border);
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
     }
     .demo-root .page-eyebrow {
       color: var(--demo-text-muted);
+      margin: 0 0 var(--demo-head-eyebrow-gap);
     }
     .demo-root h1,
     .demo-root .page-head-title-row h1 {
       color: var(--demo-text);
       font-weight: 500;
       letter-spacing: -0.03em;
+      margin: 0;
+    }
+    .demo-root .page-head-title-row {
+      margin: 0;
+      gap: var(--demo-space-md) var(--demo-space-lg);
+    }
+    .demo-root .demo-panel .sidebar-stack {
+      flex: 0 0 auto;
+      min-height: 0;
+      gap: var(--demo-section-gap);
+    }
+    .demo-root .sidebar-stack > section > .panel-title,
+    .demo-root .aux-panel > .panel-title {
+      margin: 0 0 var(--demo-section-title-gap);
+      padding-bottom: var(--demo-space-sm);
+      border-bottom: 1px solid var(--demo-border);
+    }
+    .demo-root .kpi-grid {
+      gap: var(--demo-kpi-gap);
+    }
+    .demo-root .kpi-cell {
+      padding: var(--demo-space-md) var(--demo-space-lg);
+      gap: var(--demo-space-sm);
+    }
+    .demo-root .ops-panel {
+      padding: var(--demo-space-lg);
+    }
+    .demo-root .ops-panel > h3 {
+      margin: 0 0 var(--demo-section-title-gap);
+      padding-bottom: var(--demo-space-sm);
+      border-bottom: 1px solid var(--demo-border);
+    }
+    .demo-root .aux-panel {
+      gap: var(--demo-section-title-gap);
+    }
+    .demo-root .stats-grid {
+      row-gap: var(--demo-section-gap);
+      column-gap: var(--demo-space-lg);
+    }
+    .demo-root .stat-card {
+      padding: var(--demo-space-lg);
+    }
+    .demo-root .stat-card h3 {
+      margin: 0 0 var(--demo-section-title-gap);
     }
     .demo-root .nav-mode-switch {
       color: var(--demo-text-secondary);
@@ -1681,6 +1743,7 @@
     }
     .demo-root .kpi-cell .kpi-value {
       color: var(--demo-text);
+      font-variant-numeric: tabular-nums;
     }
     .demo-root .kpi-cell--ratio.kpi-cell--common-model {
       background: var(--demo-surface-muted);
@@ -1708,6 +1771,7 @@
     .demo-root .stat-row .v {
       color: var(--demo-text);
       font-weight: 500;
+      font-variant-numeric: tabular-nums;
     }
     .demo-root .stat-note {
       color: var(--demo-text-secondary);
@@ -1858,10 +1922,7 @@
       flex: none;
       min-width: 0;
       overflow: visible;
-    }
-    .demo-root .demo-panel .sidebar-stack {
-      flex: 0 0 auto;
-      min-height: 0;
+      gap: var(--demo-console-gap);
     }
     .demo-root .demo-panel .aux-panel {
       flex: 0 0 auto;
@@ -3352,6 +3413,13 @@
       opacity: 0.38;
       cursor: not-allowed;
     }
+    .post-secondary-nav__btn:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .post-secondary-nav__btn:focus:not(:focus-visible) {
+      outline: none;
+    }
 
     /* EditPage：整块 ShootUI（模式条 + 快门行）不参与布局与命中；与 [hidden] 双保险 */
     .phone-page--edit #shootUi {
@@ -4214,6 +4282,10 @@
 
     /* 无障碍：单次媒体块聚合（intro / view-transition / 底部胶囊 / 左侧导航） */
     @media (prefers-reduced-motion: reduce) {
+      .intro-gate,
+      .demo-root {
+        transition: none !important;
+      }
       .intro-hero-glow-base {
         animation: none;
       }
@@ -4308,30 +4380,9 @@
 </head>
 <body>
   <a class="skip-link" href="#intro-main" id="skipLink">跳到主要内容</a>
-  <div id="intro" class="intro-gate">
+  <div id="intro" class="intro-gate" aria-hidden="false">
     <main class="intro-split" id="intro-main">
       <section class="intro-hero" aria-label="视觉">
-        <div class="intro-hero-glow" aria-hidden="true">
-          <div class="intro-hero-glow-base"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--1" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--2" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--3" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--4" aria-hidden="true"></div>
-          <div class="intro-hero-conic" aria-hidden="true"></div>
-          <div class="intro-hero-rotor intro-hero-rotor--a">
-            <div class="intro-hero-gradient-sheet"></div>
-          </div>
-          <div class="intro-hero-rotor intro-hero-rotor--b">
-            <div class="intro-hero-gradient-sheet intro-hero-gradient-sheet--dodge"></div>
-          </div>
-          <div class="intro-hero-sheen" aria-hidden="true"></div>
-          <div class="intro-hero-glow-light"></div>
-          <div class="intro-hero-glow-orb" aria-hidden="true"></div>
-          <div class="intro-hero-particles" aria-hidden="true"></div>
-          <div class="intro-hero-particle-sparks" aria-hidden="true"></div>
-          <div class="intro-hero-noise" aria-hidden="true"></div>
-        </div>
-        <div class="intro-hero-glass" aria-hidden="true"></div>
         <div class="intro-hero-inner intro-reveal">
           <div class="intro-hero-headings">
             <p class="intro-hero-label" translate="no">TikTok Lite</p>
@@ -4357,34 +4408,13 @@
     </main>
   </div>
 
-  <div id="demo" class="demo-root" hidden>
-    <button type="button" class="demo-back" id="demoBack">
+  <div id="demo" class="demo-root" hidden aria-hidden="true">
+    <button type="button" class="demo-back" id="demoBack" aria-label="返回欢迎页">
       <span class="demo-back__clip" aria-hidden="true"></span>
       <span class="demo-back__label">返回欢迎页</span>
     </button>
     <main class="demo-split" id="demo-main">
       <section class="demo-hero" aria-label="手机预览">
-        <div class="intro-hero-glow" aria-hidden="true">
-          <div class="intro-hero-glow-base"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--1" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--2" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--3" aria-hidden="true"></div>
-          <div class="intro-hero-mesh intro-hero-mesh--4" aria-hidden="true"></div>
-          <div class="intro-hero-conic" aria-hidden="true"></div>
-          <div class="intro-hero-rotor intro-hero-rotor--a">
-            <div class="intro-hero-gradient-sheet"></div>
-          </div>
-          <div class="intro-hero-rotor intro-hero-rotor--b">
-            <div class="intro-hero-gradient-sheet intro-hero-gradient-sheet--dodge"></div>
-          </div>
-          <div class="intro-hero-sheen" aria-hidden="true"></div>
-          <div class="intro-hero-glow-light"></div>
-          <div class="intro-hero-glow-orb" aria-hidden="true"></div>
-          <div class="intro-hero-particles" aria-hidden="true"></div>
-          <div class="intro-hero-particle-sparks" aria-hidden="true"></div>
-          <div class="intro-hero-noise" aria-hidden="true"></div>
-        </div>
-        <div class="intro-hero-glass" aria-hidden="true"></div>
         <div class="demo-hero-inner">
           <div class="demo-hero-phone-slot" id="demoHeroPhoneSlot">
             <nav
@@ -4888,7 +4918,7 @@
                     <div class="nav-mode-switch__accent-left-inner"></div>
                   </div>
                   <div class="nav-mode-switch__accent-right" aria-hidden="true"></div>
-                  <input type="checkbox" id="gestureNavInput" role="switch" aria-checked="false" class="nav-mode-switch__input" />
+                  <input type="checkbox" id="gestureNavInput" role="switch" aria-checked="false" autocomplete="off" class="nav-mode-switch__input" />
                   <span class="nav-mode-switch__thumb-slide" aria-hidden="true">
                     <span class="nav-mode-switch__thumb-slide-inner">
                       <span class="nav-mode-switch__thumb-ring"></span>
@@ -4940,7 +4970,7 @@
                   <span>屏高 H（1dp = 1px；W=360 定宽，轨道深色刻度为常用 H/W）</span>
                   <span class="val" id="hVal">720</span>
                 </span>
-                <input id="hRange" name="screen-height" type="range" min="600" max="828" step="1" value="720" aria-valuetext="720 px" />
+                <input id="hRange" name="screen-height" type="range" min="600" max="828" step="1" value="720" autocomplete="off" aria-valuetext="720 px" />
               </label>
             </div>
             <div class="control-block">
@@ -4949,7 +4979,7 @@
                   <span>StatusBar 高度（模拟）</span>
                   <span class="val" id="sVal">40</span>
                 </span>
-                <input id="sRange" name="status-bar-height" type="range" min="24" max="48" step="1" value="40" aria-valuetext="40 px" />
+                <input id="sRange" name="status-bar-height" type="range" min="24" max="48" step="1" value="40" autocomplete="off" aria-valuetext="40 px" />
               </label>
             </div>
             <p class="ops-hint" id="ops-hint">—</p>
@@ -6190,6 +6220,8 @@
       function syncDemoChrome(inDemo) {
         setSkipLinkTarget(inDemo);
         setThemeColor(inDemo);
+        if (introEl) introEl.setAttribute("aria-hidden", inDemo ? "true" : "false");
+        if (demoRoot) demoRoot.setAttribute("aria-hidden", inDemo ? "false" : "true");
       }
 
       function parseDemoLocation() {
